@@ -1,11 +1,36 @@
-/* Datenträger – schlichter Skin für alle drei Arten (Phase 1). */
+/* Datenträger – schlichter Skin für alle drei Arten (Phase 1).
+   Phase 2 bekommt je Art einen eigenen Skin; die Klassen hier bleiben. */
 
 .datentraeger-ansicht {
   --dt-schirm-bg: #0f1417;
   --dt-schirm-text: #d9e7dd;
   --dt-schirm-rand: #2d3a40;
   --dt-akzent: #8fd1a8;
+  --dt-blau: #7fb2ff;
+  --dt-bernstein: #e0b44f;
+  --dt-rot: #e06c5f;
 }
+
+/* ---------- Leiste für den GM ---------- */
+
+.datentraeger-ansicht .dt-gm-leiste {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-block: 0.25rem 0.5rem;
+  font-size: var(--font-size-13, 13px);
+}
+.datentraeger-ansicht .dt-gm-leiste .dt-ansicht-als {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 1 1 14rem;
+}
+.datentraeger-ansicht .dt-gm-leiste select { flex: 1; min-width: 10rem; }
+.datentraeger-ansicht .dt-gm-leiste button { flex: 0 0 auto; width: auto; }
+
+/* ---------- Schirm ---------- */
 
 .datentraeger-ansicht .dt-schirm {
   background: var(--dt-schirm-bg);
@@ -28,6 +53,7 @@
   opacity: 0.8;
   margin-bottom: 0.5rem;
 }
+.datentraeger-ansicht .dt-lesestand { text-transform: none; letter-spacing: 0; }
 
 .datentraeger-ansicht .dt-text p { margin: 0 0 0.6em; }
 .datentraeger-ansicht .dt-text a { color: var(--dt-akzent); }
@@ -39,7 +65,14 @@
   border: none;
 }
 
-.datentraeger-ansicht .dt-audio audio { width: 100%; }
+.datentraeger-ansicht .dt-audio {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.datentraeger-ansicht .dt-audio audio { flex: 1 1 16rem; min-width: 0; }
+.datentraeger-ansicht .dt-audio button { flex: 0 0 auto; width: auto; }
 
 .datentraeger-ansicht .dt-gm-notiz {
   margin-top: 0.75rem;
@@ -48,7 +81,95 @@
 }
 .datentraeger-ansicht .dt-gm-notiz summary { cursor: pointer; }
 
-/* Bearbeiten */
+/* ---------- Was Spieler an Lücken sehen ---------- */
+
+.datentraeger-ansicht .dt-cordex {
+  color: var(--dt-akzent);
+  letter-spacing: 0.06em;
+}
+.datentraeger-ansicht .dt-zerfallen {
+  display: inline-block;
+  min-height: 1em;
+  vertical-align: middle;
+  border-radius: 2px;
+  background: repeating-linear-gradient(90deg, #05080a 0 6px, #11181c 6px 9px);
+}
+.datentraeger-ansicht .dt-befallen {
+  color: var(--dt-blau);
+  animation: dt-flackern 2.6s steps(1, end) infinite;
+}
+.datentraeger-ansicht .dt-rauschen { color: #8f9aa1; letter-spacing: 0.04em; }
+.datentraeger-ansicht .dt-uebersprochen { color: var(--dt-bernstein); font-style: italic; }
+.datentraeger-ansicht .dt-abgerissen {
+  color: var(--dt-rot);
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+.datentraeger-ansicht .dt-gesperrt {
+  font-family: var(--font-monospace, monospace);
+  color: var(--dt-bernstein);
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  padding: 0 0.3em;
+}
+.datentraeger-ansicht .dt-geschwaerzt { color: #000; background: #000; }
+.datentraeger-ansicht .dt-beschaedigt { font-family: var(--font-monospace, monospace); color: #e08a4f; }
+
+/* Wer lesen kann: dezent markiert, damit Erinys merkt, dass sie hier mehr sieht. */
+.datentraeger-ansicht .dt-gelesen {
+  text-decoration: underline dotted var(--dt-akzent);
+  text-underline-offset: 3px;
+}
+
+@keyframes dt-flackern {
+  0%, 100% { opacity: 1; }
+  8% { opacity: 0.35; }
+  10% { opacity: 1; }
+  52% { opacity: 0.6; text-shadow: 0 0 4px var(--dt-blau); }
+  54% { opacity: 1; text-shadow: none; }
+}
+
+/* ---------- Was der GM sieht ---------- */
+
+.datentraeger-ansicht .dt-gm {
+  --dt-farbe: #9ab;
+  background: color-mix(in srgb, var(--dt-farbe) 18%, transparent);
+  border-bottom: 2px solid var(--dt-farbe);
+  border-radius: 2px;
+  padding: 0 0.1em;
+}
+.datentraeger-ansicht .dt-gm[data-art="unübersetzt"],
+.datentraeger-ansicht .dt-gm[data-art="fremd"] { --dt-farbe: #5fc9b0; }
+.datentraeger-ansicht .dt-gm[data-art="zerfallen"] { --dt-farbe: #8a8f94; }
+.datentraeger-ansicht .dt-gm[data-art="befallen"] { --dt-farbe: #4f8cff; }
+.datentraeger-ansicht .dt-gm[data-art="verrauscht"] { --dt-farbe: #a0a8b0; }
+.datentraeger-ansicht .dt-gm[data-art="übersprochen"] { --dt-farbe: #e0b44f; }
+.datentraeger-ansicht .dt-gm[data-art="abgerissen"] { --dt-farbe: #e06c5f; }
+.datentraeger-ansicht .dt-gm[data-art="gesperrt"] { --dt-farbe: #d9a441; }
+.datentraeger-ansicht .dt-gm[data-art="geschwärzt"] { --dt-farbe: #c8c8c8; }
+.datentraeger-ansicht .dt-gm[data-art="überschrieben"] { --dt-farbe: #c97fd6; }
+.datentraeger-ansicht .dt-gm[data-art="beschädigt"] { --dt-farbe: #e08a4f; }
+.datentraeger-ansicht .dt-gm.dt-gm-fehler {
+  --dt-farbe: #ff4d4d;
+  border-bottom-style: dashed;
+}
+.datentraeger-ansicht .dt-gm-ersatz {
+  font-style: italic;
+  opacity: 0.75;
+  margin-left: 0.3em;
+}
+.datentraeger-ansicht .dt-gm-ersatz::before { content: "→ "; }
+.datentraeger-ansicht .dt-gm-marke { font-size: 0.85em; color: var(--dt-farbe); }
+
+/* ---------- Bewegung abschaltbar ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  body:not(.dt-bewegung-an) .datentraeger-ansicht * { animation: none !important; }
+}
+body.dt-bewegung-aus .datentraeger-ansicht * { animation: none !important; }
+
+/* ---------- Bearbeiten ---------- */
+
 .datentraeger .dt-bearbeiten .dt-werkzeug {
   display: flex;
   align-items: center;
@@ -58,3 +179,34 @@
 .datentraeger .dt-bearbeiten .dt-werkzeug button { flex: 0 0 auto; width: auto; }
 .datentraeger .dt-bearbeiten prose-mirror.dt-editor { min-height: 260px; }
 .datentraeger .dt-bearbeiten prose-mirror.dt-editor-klein { min-height: 120px; }
+
+.datentraeger .dt-markierungen h4 { margin: 0.5rem 0 0.25rem; }
+.datentraeger .dt-markierungen ol { margin: 0; padding-left: 1.5rem; }
+.datentraeger .dt-markierungen li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.6rem;
+  padding-block: 0.2rem;
+  border-bottom: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+}
+.datentraeger .dt-markierungen .dt-m-art { font-weight: bold; }
+.datentraeger .dt-markierungen .dt-m-text { opacity: 0.8; }
+.datentraeger .dt-markierungen .dt-m-warnung { flex-basis: 100%; color: #c0392b; font-size: 0.9em; }
+.datentraeger .dt-markierungen .dt-ungueltig .dt-m-art { color: #c0392b; }
+
+/* ---------- Markier-Dialog ---------- */
+
+.dt-dialog .dt-dialog-charaktere {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+}
+.dt-dialog fieldset { margin-top: 0.5rem; }
+
+/* ---------- Fenster „Leser“ ---------- */
+
+.datentraeger-leser table { width: 100%; }
+.datentraeger-leser td, .datentraeger-leser th { padding: 0.2rem 0.4rem; text-align: left; }
+.datentraeger-leser .dt-mitte { text-align: center; }
+.datentraeger-leser select { width: auto; }
+.datentraeger-leser .dt-liest { margin-left: 0.35rem; }

@@ -10,7 +10,29 @@
     <prose-mirror name="system.text" value="{{source.system.text}}" data-document-uuid="{{document.uuid}}"
                   class="dt-editor"></prose-mirror>
     <p class="hint">{{localize "DATENTRAEGER.Bearbeiten.LueckenDieserArt"}}: {{lueckenHilfe}}</p>
+    <p class="hint">{{localize "DATENTRAEGER.Bearbeiten.Syntax"}}</p>
   </div>
+
+  <section class="dt-markierungen">
+    <h4>{{localize "DATENTRAEGER.Bearbeiten.Markierungen"}}</h4>
+    {{#if markierungen.length}}
+    <ol>
+      {{#each markierungen}}
+      <li class="{{#unless gueltig}}dt-ungueltig{{/unless}}">
+        <span class="dt-m-art" data-art="{{art}}">{{art}}</span>
+        <span class="dt-m-leser"><i class="fa-solid fa-glasses" inert></i> {{leser}}</span>
+        <span class="dt-m-text">„{{text}}“{{#if ersatz}} → „{{ersatz}}“{{/if}}</span>
+        {{#each warnungen}}
+        <span class="dt-m-warnung"><i class="fa-solid fa-triangle-exclamation" inert></i> {{this}}</span>
+        {{/each}}
+      </li>
+      {{/each}}
+    </ol>
+    {{else}}
+    <p class="hint">{{localize "DATENTRAEGER.Bearbeiten.KeineMarkierungen"}}</p>
+    {{/if}}
+    <p class="hint">{{localize "DATENTRAEGER.Bearbeiten.NachSpeichern"}}</p>
+  </section>
 
   <div class="form-group stacked">
     <label>{{localize "DATENTRAEGER.Daten.FIELDS.gmNotiz.label"}}</label>

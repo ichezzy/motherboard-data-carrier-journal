@@ -5,9 +5,25 @@
   </header>
   {{/if}}
 
+  {{#if istGM}}
+  <div class="dt-gm-leiste">
+    <label class="dt-ansicht-als">
+      <i class="fa-solid fa-eye" inert></i> {{localize "DATENTRAEGER.Ansicht.Als"}}
+      <select data-dt-ansicht>
+        <option value="">{{localize "DATENTRAEGER.Ansicht.GmAlles"}}</option>
+        {{#each spielerListe}}
+        <option value="{{id}}" {{#if gewaehlt}}selected{{/if}}>{{name}} ({{charakter}})</option>
+        {{/each}}
+      </select>
+    </label>
+    <button type="button" data-dt-aktion="leser"><i class="fa-solid fa-glasses" inert></i> {{localize "DATENTRAEGER.Ansicht.Leser"}}</button>
+  </div>
+  {{/if}}
+
   <div class="dt-schirm" data-art="{{system.art}}">
     <div class="dt-schirm-kopf">
       <span class="dt-art-label">{{artLabel}}</span>
+      {{#if lesestand}}<span class="dt-lesestand">{{lesestand}}</span>{{/if}}
     </div>
     {{#if bild}}<img class="dt-bild" src="{{bild}}" alt="">{{/if}}
     <section class="dt-text">{{{ansicht}}}</section>

@@ -1,0 +1,34 @@
+<section class="dt-leser">
+  <p class="hint">{{localize "DATENTRAEGER.Leser.Hinweis"}}</p>
+  {{#if zeilen.length}}
+  <table>
+    <thead>
+      <tr>
+        <th>{{localize "DATENTRAEGER.Leser.Charakter"}}</th>
+        <th>{{localize "DATENTRAEGER.Leser.Spieler"}}</th>
+        <th>{{localize "DATENTRAEGER.Leser.Ancestry"}}</th>
+        <th>{{localize "DATENTRAEGER.Leser.Erkannt"}}</th>
+        <th>{{localize "DATENTRAEGER.Leser.LiestWieClank"}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each zeilen}}
+      <tr>
+        <td>{{name}}</td>
+        <td>{{spieler}}</td>
+        <td>{{ancestry}}</td>
+        <td class="dt-mitte">{{#if erkannt}}<i class="fa-solid fa-check" inert></i>{{else}}–{{/if}}</td>
+        <td>
+          <select data-actor-id="{{id}}">
+            {{#each optionen}}<option value="{{wert}}" {{#if gewaehlt}}selected{{/if}}>{{label}}</option>{{/each}}
+          </select>
+          {{#if liest}}<i class="fa-solid fa-glasses dt-liest" inert></i>{{/if}}
+        </td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+  {{else}}
+  <p>{{localize "DATENTRAEGER.Leser.Keine"}}</p>
+  {{/if}}
+</section>
