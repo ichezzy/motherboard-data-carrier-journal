@@ -1,0 +1,60 @@
+/* Datenträger – schlichter Skin für alle drei Arten (Phase 1). */
+
+.datentraeger-ansicht {
+  --dt-schirm-bg: #0f1417;
+  --dt-schirm-text: #d9e7dd;
+  --dt-schirm-rand: #2d3a40;
+  --dt-akzent: #8fd1a8;
+}
+
+.datentraeger-ansicht .dt-schirm {
+  background: var(--dt-schirm-bg);
+  color: var(--dt-schirm-text);
+  border: 1px solid var(--dt-schirm-rand);
+  border-radius: 6px;
+  padding: 0.75rem 1rem 1rem;
+  margin-block: 0.5rem;
+  line-height: 1.55;
+}
+
+.datentraeger-ansicht .dt-schirm-kopf {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: var(--font-size-12, 12px);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--dt-akzent);
+  opacity: 0.8;
+  margin-bottom: 0.5rem;
+}
+
+.datentraeger-ansicht .dt-text p { margin: 0 0 0.6em; }
+.datentraeger-ansicht .dt-text a { color: var(--dt-akzent); }
+
+.datentraeger-ansicht .dt-bild {
+  display: block;
+  max-width: 100%;
+  margin: 0 auto 0.75rem;
+  border: none;
+}
+
+.datentraeger-ansicht .dt-audio audio { width: 100%; }
+
+.datentraeger-ansicht .dt-gm-notiz {
+  margin-top: 0.75rem;
+  border-left: 3px solid #a33;
+  padding: 0.25rem 0.75rem;
+}
+.datentraeger-ansicht .dt-gm-notiz summary { cursor: pointer; }
+
+/* Bearbeiten */
+.datentraeger .dt-bearbeiten .dt-werkzeug {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.datentraeger .dt-bearbeiten .dt-werkzeug button { flex: 0 0 auto; width: auto; }
+.datentraeger .dt-bearbeiten prose-mirror.dt-editor { min-height: 260px; }
+.datentraeger .dt-bearbeiten prose-mirror.dt-editor-klein { min-height: 120px; }

@@ -1,0 +1,32 @@
+{
+  "id": "datentraeger",
+  "title": "Datenträger",
+  "description": "Eine Journal-Seitenart für Funde: Text mit Lücken, die jeder Charakter anders lesen kann, dazu Audio. Für White Signal (Daggerheart).",
+  "version": "0.1.0",
+  "authors": [
+    { "name": "Chezzy" }
+  ],
+  "compatibility": {
+    "minimum": "14",
+    "verified": "14.365",
+    "maximum": "14"
+  },
+  "esmodules": ["scripts/main.mjs"],
+  "styles": ["styles/datentraeger.css"],
+  "languages": [
+    { "lang": "de", "name": "Deutsch", "path": "lang/de.json" },
+    { "lang": "en", "name": "English", "path": "lang/de.json" }
+  ],
+  "socket": true,
+  "documentTypes": {
+    "JournalEntryPage": {
+      "datentraeger": {
+        "htmlFields": ["text", "gmNotiz"],
+        "filePathFields": {
+          "audio": ["AUDIO"],
+          "bild": ["IMAGE"]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "TYPES": {
+    "JournalEntryPage": {
+      "datentraeger": {
+        "datentraeger": "Datenträger"
+      }
+    }
+  },
+  "DATENTRAEGER": {
+    "Sheet": "Datenträger",
+    "Art": {
+      "anthanen": "Anthanen",
+      "signal": "Signal",
+      "modul": "Modul"
+    },
+    "Daten": {
+      "FIELDS": {
+        "art": {
+          "label": "Art",
+          "hint": "Bestimmt die Optik und welche Lücken der Markier-Dialog anbietet."
+        },
+        "text": {
+          "label": "Text",
+          "hint": "Text mit Markierungen in doppelten geschweiften Klammern."
+        },
+        "audio": {
+          "label": "Audio",
+          "hint": "Eine mp3- oder ogg-Datei, optional."
+        },
+        "bild": {
+          "label": "Bild",
+          "hint": "Optional."
+        },
+        "gmNotiz": {
+          "label": "GM-Notiz",
+          "hint": "Erscheint bei keinem Spieler in der Ansicht. In Phase 1 kann ein Spieler sie über die Entwicklerkonsole trotzdem auslesen."
+        }
+      }
+    },
+    "Bearbeiten": {
+      "LueckenDieserArt": "Lücken dieser Art",
+      "Markierungen": "Markierungen",
+      "KeineMarkierungen": "Noch keine Markierungen.",
+      "NachSpeichern": "Stand nach dem letzten Speichern.",
+      "Niemand": "nur GM",
+      "Syntax": "Syntax: {{Art | Leser: Text >> Ersatz}} – Leser: Clank (Ancestry), @Name (Charakter). {{abgerissen}} schneidet ab hier ab."
+    },
+    "Markieren": {
+      "Knopf": "Lücke markieren",
+      "Titel": "Lücke markieren",
+      "Auswahl": "Ausgewählt",
+      "ArtDerLuecke": "Art der Lücke",
+      "Ersatz": "Ersatztext",
+      "ErsatzHinweis": "Nur bei übersprochen, überschrieben, gesperrt und befallen: Wer nicht lesen kann, sieht ihn statt des Originals.",
+      "WerLiest": "Wer kann lesen? Eine Regel reicht.",
+      "Ancestry": "Ancestry",
+      "AncestryHinweis": "Mehrere mit Komma trennen.",
+      "Charaktere": "Charaktere",
+      "KeineCharaktere": "Keine Charaktere in dieser Welt.",
+      "StufeSpaeter": "Lesestufe (Duality-Ergebnis) kommt in Phase 2. Bei „zerfallen“ fehlt die Stelle für alle.",
+      "Ok": "Markieren",
+      "Abbrechen": "Abbrechen",
+      "KeinEditor": "Der Editor ist noch nicht bereit. Klick einmal in den Text und versuch es noch mal.",
+      "NichtLeer": "Markiere zuerst ein Stück Text. Nur „abgerissen“ und „zerfallen“ gehen ohne.",
+      "EinAbsatz": "Eine Markierung muss innerhalb eines Absatzes bleiben."
+    },
+    "Ansicht": {
+      "Als": "Ansicht",
+      "GmAlles": "GM – alles",
+      "KeinCharakter": "kein Charakter",
+      "Leser": "Leser",
+      "FuerAlle": "Für alle abspielen",
+      "StoppAlle": "Für alle stoppen",
+      "GmNotiz": "GM-Notiz",
+      "SignalVerloren": "– Signal verloren –",
+      "FuerDichLesbar": "Für dich lesbar",
+      "SoSiehtEs": "So sieht es {name}",
+      "LiestAls": "liest als {name}",
+      "Lesbar": "lesbar",
+      "Abgerissen": "abgerissen – ab hier fehlt alles"
+    },
+    "Warnung": {
+      "UnbekannteArt": "Unbekannte Lücke „{art}“ – Spieler sehen hier eine dunkle Lücke.",
+      "UeberAbsatz": "Geht über mehrere Absätze – besser je Absatz markieren.",
+      "UnbekannterCharakter": "Kein Charakter „{name}“ gefunden.",
+      "UnbekannteAncestry": "Kein Charakter mit der Ancestry „{name}“ gefunden.",
+      "StufePhase2": "Lesestufe „{stufe}“ wirkt erst ab Phase 2.",
+      "ZerfallenOhneLeser": "„zerfallen“ fehlt für alle – die Leser werden ignoriert.",
+      "AndereArt": "Gehört eigentlich zur Art „{art}“.",
+      "LeerText": "Kein Text markiert."
+    },
+    "Leser": {
+      "Titel": "Leser",
+      "Hinweis": "Wer liest wie Clank? Das Modul erkennt es an der Ancestry. Mit „Ja“ oder „Nein“ legst du es von Hand fest.",
+      "Charakter": "Charakter",
+      "Spieler": "Spieler",
+      "Ancestry": "Ancestry",
+      "Erkannt": "Erkannt",
+      "LiestWieClank": "Liest wie Clank",
+      "Auto": "Automatisch",
+      "Ja": "Ja",
+      "Nein": "Nein",
+      "Keine": "Keine Spielercharaktere in dieser Welt."
+    },
+    "Einstellung": {
+      "Bewegung": {
+        "Name": "Bewegung",
+        "Hint": "Flackern und andere Animationen in Datenträgern. „System“ folgt der Einstellung „Bewegung reduzieren“ deines Betriebssystems.",
+        "system": "Wie im System",
+        "an": "An",
+        "aus": "Aus"
+      },
+      "Leser": {
+        "Name": "Leser",
+        "Label": "Leser verwalten",
+        "Hint": "Welche Charaktere wie Clank lesen."
+      }
+    },
+    "Audio": {
+      "KeineDatei": "Diese Seite hat keine Audiodatei."
+    }
+  }
+}

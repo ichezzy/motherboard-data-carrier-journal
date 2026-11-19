@@ -1,0 +1,20 @@
+<div class="dt-bearbeiten">
+  {{formField systemFields.art value=source.system.art localize=true}}
+  {{formField systemFields.audio value=source.system.audio}}
+  {{formField systemFields.bild value=source.system.bild}}
+
+  <div class="form-group stacked dt-text-gruppe">
+    <div class="dt-werkzeug">
+      <label>{{localize "DATENTRAEGER.Daten.FIELDS.text.label"}}</label>
+    </div>
+    <prose-mirror name="system.text" value="{{source.system.text}}" data-document-uuid="{{document.uuid}}"
+                  class="dt-editor"></prose-mirror>
+    <p class="hint">{{localize "DATENTRAEGER.Bearbeiten.LueckenDieserArt"}}: {{lueckenHilfe}}</p>
+  </div>
+
+  <div class="form-group stacked">
+    <label>{{localize "DATENTRAEGER.Daten.FIELDS.gmNotiz.label"}}</label>
+    <prose-mirror name="system.gmNotiz" value="{{source.system.gmNotiz}}" class="dt-editor dt-editor-klein"></prose-mirror>
+    <p class="hint">{{localize "DATENTRAEGER.Daten.FIELDS.gmNotiz.hint"}}</p>
+  </div>
+</div>

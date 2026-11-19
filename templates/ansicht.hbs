@@ -1,0 +1,28 @@
+<article class="datentraeger-ansicht" data-art="{{system.art}}">
+  {{#if document.title.show}}
+  <header class="journal-page-header">
+    <h{{ueberschrift}}>{{document.name}}</h{{ueberschrift}}>
+  </header>
+  {{/if}}
+
+  <div class="dt-schirm" data-art="{{system.art}}">
+    <div class="dt-schirm-kopf">
+      <span class="dt-art-label">{{artLabel}}</span>
+    </div>
+    {{#if bild}}<img class="dt-bild" src="{{bild}}" alt="">{{/if}}
+    <section class="dt-text">{{{ansicht}}}</section>
+  </div>
+
+  {{#if audio}}
+  <div class="dt-audio">
+    <audio controls preload="metadata" src="{{audio}}"></audio>
+  </div>
+  {{/if}}
+
+  {{#if gmNotiz}}
+  <details class="dt-gm-notiz">
+    <summary><i class="fa-solid fa-user-secret" inert></i> {{localize "DATENTRAEGER.Ansicht.GmNotiz"}}</summary>
+    <div class="dt-gm-notiz-text">{{{gmNotiz}}}</div>
+  </details>
+  {{/if}}
+</article>
