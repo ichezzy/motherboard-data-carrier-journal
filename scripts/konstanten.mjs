@@ -58,3 +58,25 @@ export const STANDARD_ANCESTRY = "Clank";
 
 /** Die Ancestry Clank im SRD-Kompendium von Daggerheart 2.12.9 (Foundryborne). */
 export const CLANK_UUID = "Compendium.daggerheart.ancestries.Item.ed8BoLR4SHOpeV00";
+
+/* -------------------------------------------- */
+/*  Phase 3: Geheimmodus und Entschlüsseln      */
+/* -------------------------------------------- */
+
+/** Anfragen an den GM (Foundry User#query – der Server leitet sie nur an ihn weiter). */
+export const QUERY = {
+  sicht: `${MODUL_ID}.sicht`,
+  entschluesseln: `${MODUL_ID}.entschluesseln`,
+  freigeben: `${MODUL_ID}.freigeben`
+};
+
+/** Daggerheart-Traits (Schlüssel wie im System). */
+export const TRAITS = ["agility", "strength", "finesse", "instinct", "presence", "knowledge"];
+
+/** Welcher Trait zum Entschlüsseln passt, wenn die Seite nichts anderes sagt. */
+export const STANDARD_TRAIT = { anthanen: "knowledge", signal: "instinct", modul: "finesse" };
+
+export const STANDARD_DIFFICULTY = 12;
+
+/** Wie lange ein Wurf im Chat für das Entschlüsseln gilt. */
+export const WURF_GUELTIG_MS = 10 * 60 * 1000;

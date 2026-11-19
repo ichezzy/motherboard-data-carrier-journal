@@ -95,7 +95,11 @@ export function cordexText(text) {
 
 /** Ein Wort als SVG. */
 export function cordexSvg(wort, label = "Cordex") {
-  const indizes = cordexIndizes(wort);
+  return svgAusIndizes(cordexIndizes(wort), label);
+}
+
+/** Zeichen-Nummern als SVG (für gespeicherte Platzhalter, siehe cordexPlatzhalter). */
+export function svgAusIndizes(indizes, label = "Cordex") {
   const breite = indizes.length * 12 - 2;
   const pfade = indizes
     .map((i, n) => `<path transform="translate(${n * 12} 0)" d="${zeichenPfad(i)}"/>`)
@@ -113,4 +117,32 @@ export function cordexHtml(text, label = "Cordex") {
     .split(/([\p{L}\p{N}]+)/u)
     .map((teil, i) => (i % 2 ? cordexSvg(teil, label) : escapeHtml(teil)))
     .join("");
+}
+
+/**
+ * Für gespeicherte Seiten (Journal „Funde“): Der Server filtert SVG aus HTML-Feldern,
+ * erlaubt aber <span> mit data-Attributen. Darum stehen dort nur die Zeichen-Nummern –
+ * nie das Wort – und die Ansicht macht daraus wieder SVG (cordexAufloesen).
+ */
+export function cordexPlatzhalter(text, label = "Cordex") {
+  return String(text ?? "")
+    .split(/([\p{L}\p{N}]+)/u)
+    .map((teil, i) => {
+      if (!(i % 2)) return escapeHtml(teil);
+      const indizes = cordexIndizes(teil);
+      return `<span class="dt-cordex-ziel" data-cordex="${indizes.join(".")}" aria-label="${escapeHtml(label)}">`
+        + `${indizes.map(n => UNICODE[n]).join("")}</span>`;
+    })
+    .join("");
+}
+
+/** Im Browser: Platzhalter-Spans durch SVG ersetzen. */
+export function cordexAufloesen(element, label = "Cordex") {
+  for (const ziel of element?.querySelectorAll?.("span.dt-cordex-ziel[data-cordex]") ?? []) {
+    const indizes = ziel.dataset.cordex.split(".").map(Number).filter(n => Number.isInteger(n));
+    if (!indizes.length) continue;
+    const vorlage = document.createElement("template");
+    vorlage.innerHTML = svgAusIndizes(indizes, label);
+    ziel.replaceWith(vorlage.content);
+  }
 }

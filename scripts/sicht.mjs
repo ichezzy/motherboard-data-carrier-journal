@@ -3,7 +3,7 @@
  * und in Phase 3 beim GM, der dann nur das Ergebnis über den Socket schickt.
  */
 import { zerlege, htmlZuText, escapeHtml, falte } from "./syntax.mjs";
-import { cordexHtml, fnv1a, zufall } from "./cordex.mjs";
+import { cordexHtml, cordexPlatzhalter, fnv1a, zufall } from "./cordex.mjs";
 import { STUFEN, STANDARD_ERSATZ, OHNE_LESER, OHNE_TEXT } from "./konstanten.mjs";
 
 /**
@@ -99,14 +99,14 @@ function salat(text, z) {
   return text.replace(/\S/g, () => zeichen[Math.floor(z() * zeichen.length)]);
 }
 
-function verdeckt(luecke, texte) {
+function verdeckt(luecke, texte, archiv = false) {
   const text = htmlZuText(luecke.inhalt);
   const z = zufall(fnv1a(luecke.roh));
   const ersatz = luecke.ersatz ?? (STANDARD_ERSATZ[luecke.art] ? escapeHtml(STANDARD_ERSATZ[luecke.art]) : null);
   switch (luecke.art) {
     case "unübersetzt":
     case "fremd":
-      return span("cordex", cordexHtml(text, texte.cordex), luecke.art);
+      return span("cordex", archiv ? cordexPlatzhalter(text, texte.cordex) : cordexHtml(text, texte.cordex), luecke.art);
     case "befallen":
       return span("befallen", luecke.ersatz ?? escapeHtml(stottern(text, z)), luecke.art);
     case "verrauscht":
@@ -170,44 +170,89 @@ const STANDARD_TEXTE = {
   lesbar: "lesbar",
   niemand: "nur GM",
   abgerissen: "abgerissen – ab hier fehlt alles",
-  cordex: "Cordex"
+  cordex: "Cordex",
+  zerfallenFehlschlag: "zerfallen beim Entschlüsseln",
+  kaputt: {
+    anthanen: "Der Takt bricht. Blaues Licht frisst die Zeilen.",
+    signal: "– Signal verloren –",
+    modul: "DATENTRÄGER BESCHÄDIGT · LESEN NICHT MÖGLICH"
+  }
 };
+
+/**
+ * Failure with Fear: Der Träger ist kaputt – für alle Spieler ist alles unleserlich,
+ * auch der Text ohne Markierung. Zeilen bleiben als Zeilen erkennbar.
+ */
+function kaputt(rohHtml, art, t) {
+  const z = zufall(fnv1a(rohHtml));
+  const zeilen = htmlZuText(String(rohHtml).replace(/<\/(p|h[1-6]|li|blockquote|div)>|<br\s*\/?>/gi, "\n"))
+    .split("\n")
+    .map(s => s.trim())
+    .filter(Boolean);
+  const klasse = art === "anthanen" ? "befallen" : art === "signal" ? "rauschen" : "beschaedigt";
+  const meldung = `<p class="dt-kaputt-meldung">${escapeHtml(t.kaputt?.[art] ?? t.kaputt?.modul ?? "")}</p>`;
+  const rest = zeilen.map(zeile => {
+    const inhalt = klasse === "rauschen" ? rauschen(zeile, z) : escapeHtml(salat(zeile, z));
+    return `<p>${span(`${klasse} dt-kaputt`, inhalt, "zerstört")}</p>`;
+  }).join("");
+  return meldung + rest;
+}
 
 /**
  * Die Seite so bauen, wie dieser Leser sie sieht.
  * @param {string} rohHtml       Text mit Markierungen
  * @param {Leser} leser
  * @param {Partial<typeof STANDARD_TEXTE>} [texte]  Übersetzte Beschriftungen
- * @returns {{html: string, gesamt: number, lesbar: number, abgeschnitten: boolean}}
+ * @param {object} [zustand]     Was mit dem Träger passiert ist (Phase 3)
+ * @param {boolean} [zustand.zerstoert]   Failure with Fear – alles unleserlich (außer für den GM)
+ * @param {number[]} [zustand.zerfallen]  Failure with Hope – diese Lücken fehlen für alle
+ * @param {string} [zustand.art]          Art der Seite, für die Optik von „zerstört“
+ * @param {boolean} [zustand.archiv]      Für gespeicherte Seiten: Cordex als Platzhalter statt SVG
+ * @returns {{html: string, gesamt: number, lesbar: number, abgeschnitten: boolean, zerstoert: boolean}}
  */
-export function baueSicht(rohHtml, leser, texte = {}) {
-  const t = { ...STANDARD_TEXTE, ...texte };
+export function baueSicht(rohHtml, leser, texte = {}, zustand = {}) {
+  const t = { ...STANDARD_TEXTE, ...texte, kaputt: { ...STANDARD_TEXTE.kaputt, ...(texte.kaputt ?? {}) } };
+  const zerfallen = new Set(zustand.zerfallen ?? []);
+  const archiv = Boolean(zustand.archiv);
+  const stuecke = zerlege(rohHtml);
+  const gesamt = stuecke.filter(s => s.typ === "luecke").length;
+
+  if (zustand.zerstoert && !leser.gm) {
+    return { html: kaputt(rohHtml, zustand.art ?? "modul", t), gesamt, lesbar: 0, abgeschnitten: false, zerstoert: true };
+  }
+
   let html = "";
-  let gesamt = 0;
   let lesbar = 0;
   let abgeschnitten = false;
 
-  for (const stueck of zerlege(rohHtml)) {
+  for (const stueck of stuecke) {
     if (stueck.typ === "text") {
       html += stueck.html;
       continue;
     }
-    gesamt++;
     if (leser.gm) {
       lesbar++;
-      html += gmAnsicht(stueck, t);
+      let gm = gmAnsicht(stueck, t);
+      if (zerfallen.has(stueck.nr)) {
+        gm = `<span class="dt-gm-zerfallen" data-tooltip="${escapeHtml(t.zerfallenFehlschlag)}">${gm}</span>`;
+      }
+      html += gm;
+      continue;
+    }
+    if (zerfallen.has(stueck.nr)) {
+      html += span("zerfallen", " ".repeat(laenge(htmlZuText(stueck.inhalt))), "zerfallen");
       continue;
     }
     const kann = kannLesen(stueck, leser);
     if (kann) lesbar++;
     if (stueck.art === "abgerissen" && !kann) {
-      html += verdeckt(stueck, t);
+      html += verdeckt(stueck, t, archiv);
       abgeschnitten = true;
       break;
     }
-    html += kann ? gelesen(stueck, t) : verdeckt(stueck, t);
+    html += kann ? gelesen(stueck, t) : verdeckt(stueck, t, archiv);
   }
 
   if (abgeschnitten) html = schliesseTags(html);
-  return { html, gesamt, lesbar, abgeschnitten };
+  return { html, gesamt, lesbar, abgeschnitten, zerstoert: Boolean(zustand.zerstoert) };
 }
