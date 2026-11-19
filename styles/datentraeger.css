@@ -55,6 +55,7 @@
 }
 .datentraeger-ansicht .dt-lesestand { text-transform: none; letter-spacing: 0; }
 
+.datentraeger-ansicht .dt-text :is(h1, h2, h3, h4, h5, h6, p, li, strong, em, blockquote) { color: inherit; }
 .datentraeger-ansicht .dt-text p { margin: 0 0 0.6em; }
 .datentraeger-ansicht .dt-text a { color: var(--dt-akzent); }
 

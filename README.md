@@ -80,7 +80,7 @@ node --test          # Parser, Sicht, Cordex
 - `scripts/syntax.mjs` · `sicht.mjs` · `cordex.mjs` · `konstanten.mjs` – ohne Foundry, testbar
 - `scripts/leser.mjs` – Ancestry und Charakter aus Foundry lesen
 - `scripts/sheet.mjs` – Ansicht und Bearbeiten (`JournalEntryPageHandlebarsSheet`)
-- `scripts/markieren.mjs` – Knopf und Dialog; Editor-Zugriff über `_onConfigurePlugins`
+- `scripts/markieren.mjs` – Knopf und Dialog; Editor-Zugriff über das `plugins`-Event des `<prose-mirror>` (Listener in `sheet.mjs`, wie Foundrys Text-Sheet)
 - `scripts/audio.mjs` – Socket „für alle“
 - In der Konsole: `game.modules.get("datentraeger").api`
 

@@ -185,15 +185,24 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
   }
 
   /**
-   * Foundry ruft das für jeden <prose-mirror> im Sheet auf, bevor der Editor entsteht.
-   * Ein kleines Plugin merkt sich dabei den Editor des Haupttexts, damit der Knopf
-   * „Lücke markieren“ an die Auswahl kommt.
+   * Jeder <prose-mirror> feuert „plugins“, bevor sein Editor entsteht. In 14.365 hört das
+   * Basis-Fenster nicht darauf – Foundrys eigenes Text-Sheet hängt den Listener selbst an.
+   * Wir auch, unter eigenem Namen, damit es in späteren Versionen nicht doppelt läuft.
    * @inheritDoc
    */
-  _onConfigurePlugins(event) {
-    super._onConfigurePlugins(event);
+  _attachFrameListeners() {
+    super._attachFrameListeners();
+    this.element.addEventListener("plugins", event => this._editorPlugins(event));
+  }
+
+  /**
+   * Ein kleines Plugin merkt sich den Editor des Haupttexts,
+   * damit der Knopf „Lücke markieren“ an die Auswahl kommt.
+   * @param {Event & {plugins: Record<string, object>}} event
+   */
+  _editorPlugins(event) {
     const name = event.target?.getAttribute?.("name") ?? event.target?.name;
-    if (name && name !== "system.text") return;
+    if (name !== "system.text" || !event.plugins) return;
     const { Plugin } = foundry.prosemirror ?? globalThis.ProseMirror;
     event.plugins.datentraegerEditor = new Plugin({
       view: editorView => {
