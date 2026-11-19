@@ -1,8 +1,8 @@
 # Motherboard Data Carrier Journal
 
-Foundry-VTT-Modul für *White Signal* (Daggerheart, Foundryborne). Modul-ID `motherboard-data-carrier-journal`. Eine neue Journal-Seitenart **Datenträger**: Text mit Lücken, die jeder Charakter anders lesen kann, dazu Audio.
+Foundry-VTT-Modul für *White Signal* (Daggerheart, Foundryborne). Modul-ID `motherboard-data-carrier-journal`. Eine neue Journal-Seitenart **Datenträger**: Text mit Lücken, die jeder Charakter anders lesen kann, dazu Audio – mit eigenem Skin für jede der drei Arten.
 
-- Foundry **v14** (getestet gegen die API von 14.365–14.370), Daggerheart **2.12.9**
+- Foundry **v14** (geprüft gegen den Client-Code von 14.365), Daggerheart **2.12.9**
 - Reines ESM, kein Build. Tests mit `node --test`.
 - Die Seitenart heißt intern `motherboard-data-carrier-journal.datentraeger`. Seiten aus der Zeit des Arbeitstitels `datentraeger` zieht das Modul beim ersten Start selbst um (`scripts/umzug.mjs`).
 
@@ -10,17 +10,26 @@ Foundry-VTT-Modul für *White Signal* (Daggerheart, Foundryborne). Modul-ID `mot
 
 1. Einmal: `tools\ziel.txt` anlegen mit dem Ziel, z. B. `aetherion:/srv/foundry/Data/modules/motherboard-data-carrier-journal`.
 2. Aus dem Repo-Ordner: `powershell -ExecutionPolicy Bypass -File tools\deploy.ps1` – führt die Tests aus und kopiert nur die Moduldateien per `scp`.
-3. Beim ersten Mal Foundry neu starten, dann das Modul in der Welt aktivieren. Danach reicht meist F5.
+3. Ein neues Modul braucht einen Neustart von Foundry. Updates: meist reicht F5 in der Welt.
 
 ## Benutzen
 
-**Seite anlegen:** Im Journal *Neue Seite* → Typ **Datenträger**. Art wählen (Anthanen · Signal · Modul), Text schreiben, Audio und Bild über den Dateibrowser.
+**Seite anlegen:** Im Journal *Neue Seite* → Typ **Datenträger**. Art wählen (Anthanen · Signal · Modul), Text schreiben, Audio, Rauschteppich und Bild einstellen.
 
-**Lücke markieren:** Text auswählen → **Lücke markieren** → Art der Lücke und wer lesen kann. Das Modul schreibt die Markierung als Text um die Auswahl. Unter dem Editor steht nach dem Speichern eine Prüfliste mit Warnungen bei Tippfehlern.
+**Lücke markieren:** Text auswählen → **Lücke markieren** → Art der Lücke, wer lesen kann (Ancestry, Charaktere) und ab welchem Ergebnis. Das Modul schreibt die Markierung als Text um die Auswahl. Unter dem Editor steht nach dem Speichern eine Prüfliste mit Warnungen bei Tippfehlern.
 
-**Ansicht:** Jeder Spieler sieht die Seite so, wie sein zugewiesener Charakter sie lesen kann. Der GM sieht alles hervorgehoben (Tooltip: Art und Leser) und kann oben auf *so sieht es Spieler X* umschalten.
+**Ansicht:** Jeder Spieler sieht die Seite so, wie sein zugewiesener Charakter sie lesen kann. Der GM sieht alles hervorgehoben (Tooltip: Art und Leser) und hat eine Leiste:
+- *Ansicht* – so sieht es Spieler X
+- *Leser* – wer liest wie Clank
+- *Ergebnis* und **Zeigen…** – das Ergebnis des Wurfs wählen (vorgeschlagen aus dem letzten Duality-Wurf im Chat) und die Seite allen zeigen. Stellen mit Lesestufe werden ab diesem Ergebnis für alle lesbar.
 
-**Audio:** Jeder kann im Fenster abspielen. Der GM hat *Für alle abspielen* und *Für alle stoppen*.
+**Skins:** Anthanen – Lichtbänder steigen aus der Scheibe und bauen ein Fenster aus Licht, Zeilen erscheinen nacheinander. Signal – Tuner-Schirm, Wörter steigen aus dem Rauschen über das Limen. Modul – kleiner Bernstein-Schirm, Zeile für Zeile. Der Knopf ↻ baut neu auf.
+
+**Journalfenster als Hologramm:** Zeigt ein Journal eine Datenträger-Seite, wird das Fenster selbst durchsichtig und leuchtet. Einstellung *Journalfenster*: je nach Art (nur Anthanen – Licht in der Luft ist alt) · immer · nie.
+
+**Audio:** Jeder kann im Fenster abspielen; darunter läuft der Rauschteppich (Regler daneben, nur für einen selbst). Der GM hat *Für alle abspielen* und *Für alle stoppen* – mit Rauschteppich bei allen.
+
+**Bewegung:** Einstellung *Bewegung* (System · An · Aus) schaltet alle Animationen ab; „System“ folgt *Bewegung reduzieren* des Betriebssystems.
 
 ## Syntax
 
@@ -28,13 +37,14 @@ Foundry-VTT-Modul für *White Signal* (Daggerheart, Foundryborne). Modul-ID `mot
 {{unübersetzt: Die Front ist gefallen.}}
 {{unübersetzt | Clank: Die Front ist gefallen.}}
 {{unübersetzt | Clank, @Erinys: Bergung nach Bedarf.}}
+{{unübersetzt | Success with Hope: Die Kapsel trägt das Siegel der Station.}}
 {{übersprochen: Treffpunkt am Mast >> ♪ Der Ticker hält dich wach! ♪}}
 {{gesperrt: Kontostand 12 Kn >> Version 3.0 erforderlich}}
 {{abgerissen}}
 ```
 
 - `{{ Art | Leser : Text >> Ersatz }}` – Pflicht sind nur Art und Text.
-- **Leser:** `Clank` = Ancestry · `@Erinys` = Charakter (passt auch auf „Erinys Vael“) · `Success with Hope` = Lesestufe (wirkt ab Phase 2). Eine Regel reicht.
+- **Leser:** `Clank` = Ancestry · `@Erinys` = Charakter (passt auch auf „Erinys Vael“) · `Success with Hope` = Lesestufe (lesbar ab diesem Ergebnis: Failure with Fear < Failure with Hope < Success with Fear < Success with Hope < Critical Success). Eine Regel reicht.
 - **`>> Ersatz`** bei übersprochen, überschrieben, gesperrt (Standard *Version 3.0 erforderlich*) und befallen.
 - **`{{abgerissen}}`** ohne Text: ab hier fehlt alles bis zum Seitenende.
 - Groß-/Kleinschreibung egal, `ue` statt `ü` geht. Eine Markierung bleibt in einem Absatz.
@@ -55,7 +65,7 @@ Foundry-VTT-Modul für *White Signal* (Daggerheart, Foundryborne). Modul-ID `mot
 
 Eine Markierung mit unbekannter Art (Tippfehler) bleibt für Spieler **zu** und wird in der Prüfliste rot gemeldet.
 
-**Cordex-Zeichen:** Ein Wort wird als Ganzes zu 2–5 Zeichen (nicht Buchstabe für Buchstabe, also nicht zu knacken). Gleiches Wort → immer dieselben Zeichen. Phase 1 nutzt geometrische Unicode-Formen als Platzhalter.
+**Cordex-Zeichen:** eigene Schrift aus Bausteinen (5 Grundstriche × 4 Kopfzeichen × 2 Seitenstriche = 40 Zeichen), als SVG mit feiner Leiterbahn unter jedem Wort. Ein Wort wird als Ganzes zu 2–5 Zeichen (nicht Buchstabe für Buchstabe, also nicht zu knacken). Gleiches Wort → immer dieselben Zeichen. `node tools/cordex-vorschau.mjs > cordex.html` zeigt alle Zeichen.
 
 ## Clank-Regel
 
@@ -63,29 +73,34 @@ Ein Spieler liest eine Stelle mit `Clank`, wenn sein **zugewiesener Charakter** 
 
 1. Die Ancestry heißt „Clank“ – auch bei Mixed Ancestry („Clank/Elf“).
 2. Die Ancestry stammt vom SRD-Clank im Kompendium (`Compendium.daggerheart.ancestries.Item.ed8BoLR4SHOpeV00`) – hält auch nach Umbenennen.
-3. Häkchen im Fenster **Leser** (Knopf in der Ansicht oder *Einstellungen → Datenträger → Leser verwalten*): Automatisch · Ja · Nein.
+3. Häkchen im Fenster **Leser** (Knopf in der Ansicht oder *Einstellungen → Motherboard Data Carrier Journal → Leser verwalten*): Automatisch · Ja · Nein.
 
 ## Geheimhaltung – ehrlich
 
-**Phase 1 filtert im Browser des Spielers.** Der ganze Rohtext, alle Ersatztexte und die GM-Notiz liegen bei jedem Spieler, der die Seite sehen darf. Wer die Entwicklerkonsole öffnet, kann alles lesen.
+**Bis Phase 3 filtert das Modul im Browser des Spielers.** Der ganze Rohtext, alle Ersatztexte und die GM-Notiz liegen bei jedem Spieler, der die Seite sehen darf. Wer die Entwicklerkonsole öffnet, kann alles lesen.
 
 Nachrüstbar: Die Sicht berechnet `sicht.baueSicht(rohtext, leser)` – ohne Foundry. In Phase 3 läuft dieselbe Funktion beim GM, und Spieler bekommen über den Modul-Socket nur das Ergebnis.
 
 ## Entwicklung
 
 ```
-node --test          # Parser, Sicht, Cordex
+node --test                      # Parser, Sicht, Cordex, Lesestufe
+node tools/cordex-vorschau.mjs   # alle Cordex-Zeichen als HTML
 ```
 
-- `scripts/syntax.mjs` · `sicht.mjs` · `cordex.mjs` · `konstanten.mjs` – ohne Foundry, testbar
+`tools/vorschau.html` zeigt die drei Skins samt Animation und Hologramm-Fenster ohne Foundry – über einen lokalen Webserver aus dem Repo-Ordner öffnen (z. B. `npx http-server .` → `/tools/vorschau.html`).
+
+- `scripts/syntax.mjs` · `sicht.mjs` · `cordex.mjs` · `wurf.mjs` · `konstanten.mjs` – ohne Foundry, testbar
 - `scripts/leser.mjs` – Ancestry und Charakter aus Foundry lesen
-- `scripts/sheet.mjs` – Ansicht und Bearbeiten (`JournalEntryPageHandlebarsSheet`)
+- `scripts/sheet.mjs` – Ansicht und Bearbeiten (`JournalEntryPageHandlebarsSheet`; die Ansicht absichtlich ohne `root: true`)
 - `scripts/markieren.mjs` – Knopf und Dialog; Editor-Zugriff über das `plugins`-Event des `<prose-mirror>` (Listener in `sheet.mjs`, wie Foundrys Text-Sheet)
-- `scripts/audio.mjs` – Socket „für alle“
+- `scripts/zeigen.mjs` – Lesestufe, letzter Duality-Wurf, „Zeigen…“
+- `scripts/animation.mjs` · `fenster.mjs` – Aufbau-Animation und Hologramm-Fenster
+- `scripts/audio.mjs` · `rauschen.mjs` – Socket „für alle“, Rauschteppich (Web Audio)
 - In der Konsole: `game.modules.get("motherboard-data-carrier-journal").api`
 
 ## Phasen
 
-1. **Grundgerüst** – Seitenart, Markieren, Ansicht je Spieler mit Clank-Regel, Audio, schlichter Skin. ← jetzt
-2. Drei Skins mit Animation, eigene Cordex-Zeichen, Rauschteppich, Lesestufe aus dem Duality-Ergebnis.
+1. **Grundgerüst** – Seitenart, Markieren, Ansicht je Spieler mit Clank-Regel, Audio, schlichter Skin. ✔
+2. **Skins** – drei Skins mit Animation, Hologramm-Fenster, eigene Cordex-Zeichen, Rauschteppich, Lesestufe aus dem Duality-Ergebnis. ✔ ← jetzt
 3. Geheimmodus über den Socket, Journal *Funde*, Item *Datenträger* als Beute.
