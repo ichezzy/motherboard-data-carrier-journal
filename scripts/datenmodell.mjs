@@ -1,6 +1,6 @@
 import { ARTEN } from "./konstanten.mjs";
 
-const { HTMLField, StringField, FilePathField } = foundry.data.fields;
+const { HTMLField, StringField, FilePathField, NumberField } = foundry.data.fields;
 
 /**
  * Daten einer Journal-Seite vom Typ „Datenträger“.
@@ -21,7 +21,9 @@ export class DatentraegerDaten extends foundry.abstract.TypeDataModel {
       text: new HTMLField({ required: true, blank: true, initial: "" }),
       audio: new FilePathField({ categories: ["AUDIO"], base64: false, required: false, nullable: true, initial: null }),
       bild: new FilePathField({ categories: ["IMAGE"], base64: false, required: false, nullable: true, initial: null }),
-      // Sieht kein Spieler in der Ansicht. Phase 1: liegt trotzdem im Browser der Spieler (siehe README).
+      // Rauschteppich unter dem Audio, 0 = aus. min/max/step → Foundry zeigt einen Schieberegler.
+      rauschen: new NumberField({ required: true, nullable: false, min: 0, max: 1, step: 0.05, initial: 0 }),
+      // Sieht kein Spieler in der Ansicht. Bis Phase 3: liegt trotzdem im Browser der Spieler (siehe README).
       gmNotiz: new HTMLField({ required: true, blank: true, initial: "" })
     };
   }

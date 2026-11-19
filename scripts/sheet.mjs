@@ -7,6 +7,7 @@ import { markiereAuswahl } from "./markieren.mjs";
 import { fuerAlleAbspielen, fuerAlleStoppen } from "./audio.mjs";
 import { stufeVon, setzeStufe, stufenOptionen, zeigenDialog } from "./zeigen.mjs";
 import { starteAufbau } from "./animation.mjs";
+import { starteRauschen, setzeRauschStaerke, stoppeRauschen } from "./rauschen.mjs";
 import { fnv1a } from "./cordex.mjs";
 
 const { JournalEntryPageHandlebarsSheet } = foundry.applications.sheets.journal;
@@ -261,10 +262,37 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
       event.preventDefault();
       zeigenDialog(this.document);
     });
+    // Rauschteppich: Regler gilt nur für diesen Client, Startwert kommt von der Seite.
+    const regler = el.querySelector("input[data-dt-rauschen]");
+    const audio = el.querySelector(".dt-audio audio");
+    const staerke = () => Number(regler?.value ?? this.document.system.rauschen) || 0;
+    const art = this.document.system.art;
+    regler?.addEventListener("input", () => setzeRauschStaerke(staerke()));
+    // Der Player stoppt nur das Rauschen, das er selbst gestartet hat – nicht das von „Für alle“.
+    let vomPlayer = false;
+    if (audio) {
+      audio.addEventListener("play", () => {
+        vomPlayer = true;
+        starteRauschen(staerke(), art);
+      });
+      const ende = () => {
+        if (!vomPlayer) return;
+        vomPlayer = false;
+        stoppeRauschen();
+      };
+      audio.addEventListener("pause", ende);
+      audio.addEventListener("ended", ende);
+    }
+
     el.querySelector("[data-dt-aktion='fuer-alle']")?.addEventListener("click", event => {
       event.preventDefault();
-      if (this.document.system.audio) fuerAlleAbspielen(this.document.system.audio);
-      else ui.notifications.warn("DATENTRAEGER.Audio.KeineDatei", { localize: true });
+      if (!this.document.system.audio) {
+        ui.notifications.warn("DATENTRAEGER.Audio.KeineDatei", { localize: true });
+        return;
+      }
+      vomPlayer = false;
+      if (audio && !audio.paused) audio.pause();
+      fuerAlleAbspielen(this.document.system.audio, { rauschen: staerke(), art });
     });
     el.querySelector("[data-dt-aktion='stopp-alle']")?.addEventListener("click", event => {
       event.preventDefault();

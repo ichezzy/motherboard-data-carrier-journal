@@ -47,6 +47,11 @@
   {{#if audio}}
   <div class="dt-audio">
     <audio controls preload="metadata" src="{{audio}}"></audio>
+    <label class="dt-rausch-regler" data-tooltip="{{localize "DATENTRAEGER.Daten.FIELDS.rauschen.label"}}">
+      <i class="fa-solid fa-wave-square" inert></i>
+      <input type="range" min="0" max="1" step="0.05" value="{{system.rauschen}}" data-dt-rauschen
+             aria-label="{{localize "DATENTRAEGER.Ansicht.Rauschen"}}">
+    </label>
     {{#if istGM}}
     <button type="button" data-dt-aktion="fuer-alle"><i class="fa-solid fa-tower-broadcast" inert></i> {{localize "DATENTRAEGER.Ansicht.FuerAlle"}}</button>
     <button type="button" data-dt-aktion="stopp-alle"><i class="fa-solid fa-stop" inert></i> {{localize "DATENTRAEGER.Ansicht.StoppAlle"}}</button>
