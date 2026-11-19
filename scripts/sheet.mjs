@@ -4,6 +4,7 @@ import { baueSicht, beschreibeRegel } from "./sicht.mjs";
 import { leserFuerUser, spielerCharaktere, erkannteAncestries } from "./leser.mjs";
 import { LeserFenster } from "./leser-fenster.mjs";
 import { markiereAuswahl } from "./markieren.mjs";
+import { fuerAlleAbspielen, fuerAlleStoppen } from "./audio.mjs";
 
 const { JournalEntryPageHandlebarsSheet } = foundry.applications.sheets.journal;
 
@@ -231,6 +232,15 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
     el.querySelector("[data-dt-aktion='leser']")?.addEventListener("click", event => {
       event.preventDefault();
       oeffneLeserFenster();
+    });
+    el.querySelector("[data-dt-aktion='fuer-alle']")?.addEventListener("click", event => {
+      event.preventDefault();
+      if (this.document.system.audio) fuerAlleAbspielen(this.document.system.audio);
+      else ui.notifications.warn("DATENTRAEGER.Audio.KeineDatei", { localize: true });
+    });
+    el.querySelector("[data-dt-aktion='stopp-alle']")?.addEventListener("click", event => {
+      event.preventDefault();
+      fuerAlleStoppen();
     });
   }
 }

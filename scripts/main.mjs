@@ -1,7 +1,8 @@
 import { MODUL_ID, SEITEN_TYP } from "./konstanten.mjs";
 import { DatentraegerDaten } from "./datenmodell.mjs";
 import { DatentraegerSheet, oeffneLeserFenster } from "./sheet.mjs";
-import { registriereEinstellungen } from "./einstellungen.mjs";
+import { registriereEinstellungen, wendeBewegungAn } from "./einstellungen.mjs";
+import { registriereSocket, fuerAlleAbspielen, fuerAlleStoppen } from "./audio.mjs";
 import * as syntax from "./syntax.mjs";
 import * as sicht from "./sicht.mjs";
 import * as leser from "./leser.mjs";
@@ -20,5 +21,10 @@ Hooks.once("init", () => {
   registriereEinstellungen();
 
   // Für Makros und zum Nachsehen in der Konsole: game.modules.get("datentraeger").api
-  game.modules.get(MODUL_ID).api = { syntax, sicht, leser, cordexText, oeffneLeserFenster };
+  game.modules.get(MODUL_ID).api = { syntax, sicht, leser, cordexText, oeffneLeserFenster, fuerAlleAbspielen, fuerAlleStoppen };
+});
+
+Hooks.once("ready", () => {
+  registriereSocket();
+  wendeBewegungAn();
 });

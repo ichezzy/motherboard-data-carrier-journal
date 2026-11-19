@@ -32,6 +32,10 @@
   {{#if audio}}
   <div class="dt-audio">
     <audio controls preload="metadata" src="{{audio}}"></audio>
+    {{#if istGM}}
+    <button type="button" data-dt-aktion="fuer-alle"><i class="fa-solid fa-tower-broadcast" inert></i> {{localize "DATENTRAEGER.Ansicht.FuerAlle"}}</button>
+    <button type="button" data-dt-aktion="stopp-alle"><i class="fa-solid fa-stop" inert></i> {{localize "DATENTRAEGER.Ansicht.StoppAlle"}}</button>
+    {{/if}}
   </div>
   {{/if}}
 
