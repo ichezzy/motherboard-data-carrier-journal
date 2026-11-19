@@ -6,6 +6,9 @@
   <div class="form-group stacked dt-text-gruppe">
     <div class="dt-werkzeug">
       <label>{{localize "DATENTRAEGER.Daten.FIELDS.text.label"}}</label>
+      <button type="button" data-dt-aktion="markieren">
+        <i class="fa-solid fa-highlighter" inert></i> {{localize "DATENTRAEGER.Markieren.Knopf"}}
+      </button>
     </div>
     <prose-mirror name="system.text" value="{{source.system.text}}" data-document-uuid="{{document.uuid}}"
                   class="dt-editor"></prose-mirror>

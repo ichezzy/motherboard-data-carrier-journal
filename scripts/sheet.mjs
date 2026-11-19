@@ -3,6 +3,7 @@ import { luecken, htmlZuText, falte } from "./syntax.mjs";
 import { baueSicht, beschreibeRegel } from "./sicht.mjs";
 import { leserFuerUser, spielerCharaktere, erkannteAncestries } from "./leser.mjs";
 import { LeserFenster } from "./leser-fenster.mjs";
+import { markiereAuswahl } from "./markieren.mjs";
 
 const { JournalEntryPageHandlebarsSheet } = foundry.applications.sheets.journal;
 
@@ -72,6 +73,9 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
 
   /** GM: Ansicht als dieser Benutzer (leer = GM sieht alles). */
   #ansichtAls = "";
+
+  /** Der ProseMirror-Editor des Haupttexts (nur im Bearbeiten-Modus). */
+  #editorView = null;
 
   /* -------------------------------------------- */
   /*  Kontext                                     */
@@ -176,6 +180,46 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
   async _onRender(context, options) {
     await super._onRender(context, options);
     if (this.isView) this._aktiviereAnsicht();
+    else this._aktiviereBearbeiten();
+  }
+
+  /**
+   * Foundry ruft das für jeden <prose-mirror> im Sheet auf, bevor der Editor entsteht.
+   * Ein kleines Plugin merkt sich dabei den Editor des Haupttexts, damit der Knopf
+   * „Lücke markieren“ an die Auswahl kommt.
+   * @inheritDoc
+   */
+  _onConfigurePlugins(event) {
+    super._onConfigurePlugins(event);
+    const name = event.target?.getAttribute?.("name") ?? event.target?.name;
+    if (name && name !== "system.text") return;
+    const { Plugin } = foundry.prosemirror ?? globalThis.ProseMirror;
+    event.plugins.datentraegerEditor = new Plugin({
+      view: editorView => {
+        this.#editorView = editorView;
+        return {
+          destroy: () => {
+            if (this.#editorView === editorView) this.#editorView = null;
+          }
+        };
+      }
+    });
+  }
+
+  _aktiviereBearbeiten() {
+    const knopf = this.element.querySelector("[data-dt-aktion='markieren']");
+    if (!knopf) return;
+    // Mousedown nicht weitergeben, damit der Editor seine Auswahl behält.
+    knopf.addEventListener("mousedown", event => event.preventDefault());
+    knopf.addEventListener("click", event => {
+      event.preventDefault();
+      if (!this.#editorView || this.#editorView.isDestroyed) {
+        ui.notifications.warn("DATENTRAEGER.Markieren.KeinEditor", { localize: true });
+        return;
+      }
+      const art = this.element.querySelector("[name='system.art']")?.value || this.document.system.art;
+      markiereAuswahl(this.#editorView, art);
+    });
   }
 
   _aktiviereAnsicht() {
