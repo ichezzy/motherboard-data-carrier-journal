@@ -4,7 +4,7 @@ import { baueSicht, beschreibeRegel } from "./sicht.mjs";
 import { leserFuerUser, spielerCharaktere, erkannteAncestries } from "./leser.mjs";
 import { LeserFenster } from "./leser-fenster.mjs";
 import { markiereAuswahl } from "./markieren.mjs";
-import { fuerAlleAbspielen, fuerAlleStoppen } from "./audio.mjs";
+import { fuerAlleAbspielen, fuerAlleStoppen, laeuftFuerAlle, markierePlayer } from "./audio.mjs";
 import { stufeVon, setzeStufe, stufenOptionen, zeigenDialog } from "./zeigen.mjs";
 import { starteAufbau } from "./animation.mjs";
 import { starteRauschen, setzeRauschStaerke, stoppeRauschen } from "./rauschen.mjs";
@@ -270,8 +270,14 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
     regler?.addEventListener("input", () => setzeRauschStaerke(staerke()));
     // Der Player stoppt nur das Rauschen, das er selbst gestartet hat – nicht das von „Für alle“.
     let vomPlayer = false;
+    markierePlayer(el.querySelector(".dt-audio"));
     if (audio) {
       audio.addEventListener("play", () => {
+        // Während der GM für alle abspielt, bleibt der eigene Player stumm.
+        if (laeuftFuerAlle()) {
+          audio.pause();
+          return;
+        }
         vomPlayer = true;
         starteRauschen(staerke(), art);
       });

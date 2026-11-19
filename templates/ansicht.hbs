@@ -47,6 +47,7 @@
   {{#if audio}}
   <div class="dt-audio">
     <audio controls preload="metadata" src="{{audio}}"></audio>
+    <span class="dt-fuer-alle-hinweis"><i class="fa-solid fa-tower-broadcast" inert></i> {{localize "DATENTRAEGER.Ansicht.LaeuftFuerAlle"}}</span>
     <label class="dt-rausch-regler" data-tooltip="{{localize "DATENTRAEGER.Daten.FIELDS.rauschen.label"}}">
       <i class="fa-solid fa-wave-square" inert></i>
       <input type="range" min="0" max="1" step="0.05" value="{{system.rauschen}}" data-dt-rauschen

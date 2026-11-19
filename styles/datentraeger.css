@@ -91,6 +91,17 @@
 }
 .datentraeger-ansicht .dt-audio audio { flex: 1 1 16rem; min-width: 0; }
 .datentraeger-ansicht .dt-audio button { flex: 0 0 auto; width: auto; }
+
+/* Während der GM für alle abspielt: eigener Player gesperrt, Hinweis sichtbar */
+.datentraeger-ansicht .dt-fuer-alle-hinweis { display: none; font-size: var(--font-size-12, 12px); }
+.datentraeger-ansicht .dt-audio.dt-fuer-alle audio { pointer-events: none; opacity: 0.35; filter: grayscale(1); }
+.datentraeger-ansicht .dt-audio.dt-fuer-alle .dt-fuer-alle-hinweis {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--dt-akzent);
+  animation: dt-blinken 2s ease-in-out infinite;
+}
 .datentraeger-ansicht .dt-rausch-regler {
   display: flex;
   align-items: center;
