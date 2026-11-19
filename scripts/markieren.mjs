@@ -1,4 +1,4 @@
-import { LUECKEN, ALLE_LUECKEN, MIT_ERSATZ, OHNE_TEXT, STANDARD_ANCESTRY, STANDARD_ERSATZ } from "./konstanten.mjs";
+import { LUECKEN, ALLE_LUECKEN, MIT_ERSATZ, OHNE_TEXT, STANDARD_ANCESTRY, STANDARD_ERSATZ, STUFEN } from "./konstanten.mjs";
 import { escapeHtml, markierungsRahmen } from "./syntax.mjs";
 import { spielerCharaktere } from "./leser.mjs";
 
@@ -45,7 +45,17 @@ export async function markierDialog({ seitenArt, auswahl }) {
               : `<span class="hint">${L("DATENTRAEGER.Markieren.KeineCharaktere")}</span>`}
           </div>
         </div>
-        <p class="hint">${L("DATENTRAEGER.Markieren.StufeSpaeter")}</p>
+        <div class="form-group">
+          <label>${L("DATENTRAEGER.Markieren.Stufe")}</label>
+          <div class="form-fields">
+            <select name="stufe">
+              <option value="">${L("DATENTRAEGER.Markieren.StufeKeine")}</option>
+              ${STUFEN.slice().reverse().map(s => `<option value="${s}">${s}</option>`).join("")}
+            </select>
+          </div>
+          <p class="hint">${L("DATENTRAEGER.Markieren.StufeHinweis")}</p>
+        </div>
+        <p class="hint">${L("DATENTRAEGER.Markieren.ZerfallenHinweis")}</p>
       </fieldset>
     </div>`;
 
@@ -67,7 +77,8 @@ export async function markierDialog({ seitenArt, auswahl }) {
             art: form.elements.art.value,
             ersatz: form.elements.ersatz.value,
             ancestries: ancestry.split(",").map(s => s.trim()).filter(Boolean),
-            charaktere: Array.from(form.querySelectorAll("input[name='charaktere']:checked"), i => i.value)
+            charaktere: Array.from(form.querySelectorAll("input[name='charaktere']:checked"), i => i.value),
+            stufen: form.elements.stufe.value ? [form.elements.stufe.value] : []
           };
         }
       },

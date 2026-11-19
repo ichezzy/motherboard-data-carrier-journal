@@ -17,6 +17,13 @@
       </select>
     </label>
     <button type="button" data-dt-aktion="leser"><i class="fa-solid fa-glasses" inert></i> {{localize "DATENTRAEGER.Ansicht.Leser"}}</button>
+    <label class="dt-stufe-wahl">
+      <i class="fa-solid fa-dice" inert></i> {{localize "DATENTRAEGER.Stufe.Label"}}
+      <select data-dt-stufe>
+        {{#each stufen}}<option value="{{wert}}" {{#if gewaehlt}}selected{{/if}}>{{label}}</option>{{/each}}
+      </select>
+    </label>
+    <button type="button" data-dt-aktion="zeigen"><i class="fa-solid fa-eye" inert></i> {{localize "DATENTRAEGER.Stufe.Zeigen"}}</button>
   </div>
   {{/if}}
 

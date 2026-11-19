@@ -43,7 +43,18 @@
       "KeineMarkierungen": "Noch keine Markierungen.",
       "NachSpeichern": "Stand nach dem letzten Speichern.",
       "Niemand": "nur GM",
-      "Syntax": "Syntax: {{Art | Leser: Text >> Ersatz}} – Leser: Clank (Ancestry), @Name (Charakter). {{abgerissen}} schneidet ab hier ab."
+      "Syntax": "Syntax: {{Art | Leser: Text >> Ersatz}} – Leser: Clank (Ancestry), @Name (Charakter), Success with Hope (Lesestufe). {{abgerissen}} schneidet ab hier ab."
+    },
+    "Stufe": {
+      "Label": "Ergebnis",
+      "Keins": "– kein Ergebnis –",
+      "Zeigen": "Zeigen…",
+      "ZeigenTitel": "Seite zeigen",
+      "ZeigenHinweis": "Stellen mit Lesestufe werden ab diesem Ergebnis für alle lesbar.",
+      "Vorschlag": "Vorschlag aus dem letzten Duality-Wurf ({wer}, {total}): {stufe}.",
+      "OhneDifficulty": "Der Wurf hatte keine Difficulty – Success oder Failure bitte selbst wählen.",
+      "KeinWurf": "Kein Duality-Wurf im Chat gefunden.",
+      "AnAlle": "Danach allen Spielern zeigen"
     },
     "Markieren": {
       "Knopf": "Lücke markieren",
@@ -57,7 +68,10 @@
       "AncestryHinweis": "Mehrere mit Komma trennen.",
       "Charaktere": "Charaktere",
       "KeineCharaktere": "Keine Charaktere in dieser Welt.",
-      "StufeSpaeter": "Lesestufe (Duality-Ergebnis) kommt in Phase 2. Bei „zerfallen“ fehlt die Stelle für alle.",
+      "Stufe": "Lesbar ab Ergebnis",
+      "StufeKeine": "– keine Lesestufe –",
+      "StufeHinweis": "Wird für alle lesbar, wenn du beim Zeigen dieses oder ein besseres Ergebnis wählst.",
+      "ZerfallenHinweis": "Bei „zerfallen“ fehlt die Stelle für alle.",
       "Ok": "Markieren",
       "Abbrechen": "Abbrechen",
       "KeinEditor": "Der Editor ist noch nicht bereit. Klick einmal in den Text und versuch es noch mal.",
@@ -77,14 +91,16 @@
       "SoSiehtEs": "So sieht es {name}",
       "LiestAls": "liest als {name}",
       "Lesbar": "lesbar",
-      "Abgerissen": "abgerissen – ab hier fehlt alles"
+      "Abgerissen": "abgerissen – ab hier fehlt alles",
+      "NeuAufbauen": "Neu aufbauen",
+      "Rauschen": "Rauschen",
+      "Cordex": "Cordex"
     },
     "Warnung": {
       "UnbekannteArt": "Unbekannte Lücke „{art}“ – Spieler sehen hier eine dunkle Lücke.",
       "UeberAbsatz": "Geht über mehrere Absätze – besser je Absatz markieren.",
       "UnbekannterCharakter": "Kein Charakter „{name}“ gefunden.",
       "UnbekannteAncestry": "Kein Charakter mit der Ancestry „{name}“ gefunden.",
-      "StufePhase2": "Lesestufe „{stufe}“ wirkt erst ab Phase 2.",
       "ZerfallenOhneLeser": "„zerfallen“ fehlt für alle – die Leser werden ignoriert.",
       "AndereArt": "Gehört eigentlich zur Art „{art}“.",
       "LeerText": "Kein Text markiert."

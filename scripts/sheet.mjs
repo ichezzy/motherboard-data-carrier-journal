@@ -5,6 +5,7 @@ import { leserFuerUser, spielerCharaktere, erkannteAncestries } from "./leser.mj
 import { LeserFenster } from "./leser-fenster.mjs";
 import { markiereAuswahl } from "./markieren.mjs";
 import { fuerAlleAbspielen, fuerAlleStoppen } from "./audio.mjs";
+import { stufeVon, setzeStufe, stufenOptionen, zeigenDialog } from "./zeigen.mjs";
 
 const { JournalEntryPageHandlebarsSheet } = foundry.applications.sheets.journal;
 
@@ -104,6 +105,8 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
     const istGM = game.user.isGM;
     const alsUser = istGM && this.#ansichtAls ? game.users.get(this.#ansichtAls) : null;
     const leser = leserFuerUser(alsUser ?? game.user);
+    const stufe = stufeVon(this.document);
+    if (!leser.gm) leser.stufe = stufe;
     const sicht = baueSicht(system.text, leser, sichtTexte());
 
     context.ansicht = await anreichern(sicht.html, this.document, leser.gm && this.document.isOwner);
@@ -122,6 +125,7 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
           charakter: u.character?.name ?? L("DATENTRAEGER.Ansicht.KeinCharakter"),
           gewaehlt: u.id === this.#ansichtAls
         }));
+      context.stufen = stufenOptionen(stufe);
       context.lesestand = sicht.gesamt
         ? `${alsUser ? F("DATENTRAEGER.Ansicht.SoSiehtEs", { name: alsUser.name }) + " · " : ""}${sicht.lesbar}/${sicht.gesamt} ${L("DATENTRAEGER.Ansicht.Lesbar")}`
         : "";
@@ -164,7 +168,6 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
     for (const regel of l.leser) {
       if (regel.art === "charakter" && !namen.has(falte(regel.name))) w.push(F("DATENTRAEGER.Warnung.UnbekannterCharakter", { name: regel.name }));
       if (regel.art === "ancestry" && !ancestries.has(falte(regel.name))) w.push(F("DATENTRAEGER.Warnung.UnbekannteAncestry", { name: regel.name }));
-      if (regel.art === "stufe") w.push(F("DATENTRAEGER.Warnung.StufePhase2", { stufe: regel.wert }));
     }
     return w;
   }
@@ -241,6 +244,13 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
     el.querySelector("[data-dt-aktion='leser']")?.addEventListener("click", event => {
       event.preventDefault();
       oeffneLeserFenster();
+    });
+    el.querySelector("select[data-dt-stufe]")?.addEventListener("change", event => {
+      setzeStufe(this.document, event.currentTarget.value);
+    });
+    el.querySelector("[data-dt-aktion='zeigen']")?.addEventListener("click", event => {
+      event.preventDefault();
+      zeigenDialog(this.document);
     });
     el.querySelector("[data-dt-aktion='fuer-alle']")?.addEventListener("click", event => {
       event.preventDefault();
