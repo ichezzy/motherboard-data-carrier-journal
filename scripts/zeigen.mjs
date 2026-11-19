@@ -3,23 +3,16 @@
  * Stellen mit einer Lesestufe werden ab diesem Ergebnis für alle lesbar.
  * Das Ergebnis steht als Flag an der Seite, damit jeder Client es kennt.
  */
-import { MODUL_ID, STUFEN } from "./konstanten.mjs";
+import { STUFEN } from "./konstanten.mjs";
 import { stufeAusWurf } from "./wurf.mjs";
 import { escapeHtml } from "./syntax.mjs";
+import { stufeVon, setzeStufe } from "./seite.mjs";
+import { fundeAktualisieren } from "./funde.mjs";
+
+export { stufeVon, setzeStufe };
 
 const L = key => game.i18n.localize(key);
 const F = (key, data) => game.i18n.format(key, data);
-
-/** Die gezeigte Stufe einer Seite (oder null). */
-export function stufeVon(page) {
-  const wert = page?.getFlag?.(MODUL_ID, "stufe");
-  return STUFEN.includes(wert) ? wert : null;
-}
-
-export async function setzeStufe(page, stufe) {
-  if (STUFEN.includes(stufe)) await page.setFlag(MODUL_ID, "stufe", stufe);
-  else await page.unsetFlag(MODUL_ID, "stufe");
-}
 
 /**
  * Der letzte Duality-Wurf im Chat (Daggerheart von Foundryborne).
@@ -108,5 +101,7 @@ export async function zeigenDialog(page) {
   if (ergebnis.anAlle) {
     const Journal = foundry.documents.collections?.Journal ?? globalThis.Journal;
     await Journal.show(page, { force: true });
+    // Was alle gesehen haben, kommt ins Journal „Funde“.
+    await fundeAktualisieren(page);
   }
 }

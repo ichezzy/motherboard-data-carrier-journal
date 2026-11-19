@@ -1,14 +1,19 @@
 import { MODUL_ID, LUECKEN, OHNE_LESER, OHNE_TEXT, STANDARD_ANCESTRY } from "./konstanten.mjs";
 import { luecken, htmlZuText, falte } from "./syntax.mjs";
-import { baueSicht, beschreibeRegel } from "./sicht.mjs";
-import { leserFuerUser, spielerCharaktere, erkannteAncestries } from "./leser.mjs";
+import { beschreibeRegel } from "./sicht.mjs";
+import { spielerCharaktere, erkannteAncestries } from "./leser.mjs";
 import { LeserFenster } from "./leser-fenster.mjs";
 import { markiereAuswahl } from "./markieren.mjs";
 import { fuerAlleAbspielen, fuerAlleStoppen, laeuftFuerAlle, markierePlayer } from "./audio.mjs";
-import { stufeVon, setzeStufe, stufenOptionen, zeigenDialog } from "./zeigen.mjs";
+import { stufenOptionen, zeigenDialog } from "./zeigen.mjs";
+import { stufeVon, setzeStufe, versuchVon, zustandVon, wurfVon, zuruecksetzen, sichtFuer } from "./seite.mjs";
 import { starteAufbau } from "./animation.mjs";
 import { starteRauschen, setzeRauschStaerke, stoppeRauschen } from "./rauschen.mjs";
-import { fnv1a } from "./cordex.mjs";
+import { fnv1a, cordexAufloesen } from "./cordex.mjs";
+import { GEHEIME_FELDER } from "./datenmodell.mjs";
+import { oeffne, istVerschluesselt, istFund, geheimmodusAn, schluesselBereit, speicherWerte } from "./geheim.mjs";
+import { entschluesseln, entschluesselnSperre, freigeben, sichtVomGM } from "./entschluesseln.mjs";
+import { beuteAnlegen } from "./beute.mjs";
 
 const { JournalEntryPageHandlebarsSheet } = foundry.applications.sheets.journal;
 
@@ -18,18 +23,6 @@ const F = (key, data) => game.i18n.format(key, data);
 /** Text mit Foundry-Verweisen (@UUID, [[/r]] …) anreichern. */
 function anreichern(html, document, secrets) {
   return foundry.applications.ux.TextEditor.implementation.enrichHTML(html ?? "", { relativeTo: document, secrets });
-}
-
-/** Übersetzte Beschriftungen für sicht.mjs. */
-function sichtTexte() {
-  return {
-    signalVerloren: L("DATENTRAEGER.Ansicht.SignalVerloren"),
-    fuerDichLesbar: L("DATENTRAEGER.Ansicht.FuerDichLesbar"),
-    lesbar: L("DATENTRAEGER.Ansicht.Lesbar"),
-    niemand: L("DATENTRAEGER.Bearbeiten.Niemand"),
-    abgerissen: L("DATENTRAEGER.Ansicht.Abgerissen"),
-    cordex: L("DATENTRAEGER.Ansicht.Cordex")
-  };
 }
 
 function kurz(text, max = 70) {
@@ -49,6 +42,13 @@ export function oeffneLeserFenster() {
   return new LeserFenster().render({ force: true });
 }
 
+/** Alle offenen Ansichten neu zeichnen (z. B. wenn der GM online kommt). */
+export function ansichtenNeuZeichnen() {
+  for (const app of foundry.applications.instances.values()) {
+    if (app instanceof DatentraegerSheet && app.isView && app.rendered) app.render();
+  }
+}
+
 /**
  * Ein Sheet, zwei Modi – wie bei Foundrys eigenen Seiten:
  * Ansicht direkt im Journal, Bearbeiten im eigenen Fenster.
@@ -57,7 +57,7 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
   static DEFAULT_OPTIONS = {
     classes: ["datentraeger"],
     window: { icon: "fa-solid fa-compact-disc" },
-    position: { width: 680, height: 760 }
+    position: { width: 700, height: 780 }
   };
 
   static EDIT_PARTS = {
@@ -86,7 +86,7 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
   /** Der ProseMirror-Editor des Haupttexts (nur im Bearbeiten-Modus). */
   #editorView = null;
 
-  /** Text und Ergebnis beim letzten Aufbau – nur bei Änderung neu animieren. */
+  /** Stand beim letzten Aufbau – nur bei Änderung neu animieren. */
   #aufbauSchluessel = null;
 
   /* -------------------------------------------- */
@@ -102,49 +102,108 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
       systemFields: system.schema.fields,
       istGM: game.user.isGM,
       artLabel: L(`DATENTRAEGER.Art.${system.art}`),
-      ueberschrift: Math.min(Math.max(Number(this.document.title?.level) || 1, 1), 6)
+      ueberschrift: Math.min(Math.max(Number(this.document.title?.level) || 1, 1), 6),
+      audio: system.audio || null,
+      bild: system.bild || null
     });
     if (this.isView) await this._bereiteAnsicht(context);
-    else this._bereiteBearbeiten(context);
+    else await this._bereiteBearbeiten(context);
     return context;
   }
 
   /** Kontext für die Ansicht im Journal: jeder sieht die Seite so, wie sein Charakter sie lesen kann. */
   async _bereiteAnsicht(context) {
-    const system = this.document.system;
+    const page = this.document;
     const istGM = game.user.isGM;
+
+    // Seiten im Journal „Funde“: gespeicherte Sicht der Gruppe, ohne Markierungen.
+    if (istFund(page)) {
+      context.fund = true;
+      context.ansicht = await anreichern(page.system.text, page, false);
+      return;
+    }
+
     const alsUser = istGM && this.#ansichtAls ? game.users.get(this.#ansichtAls) : null;
-    const leser = leserFuerUser(alsUser ?? game.user);
-    const stufe = stufeVon(this.document);
-    if (!leser.gm) leser.stufe = stufe;
-    const sicht = baueSicht(system.text, leser, sichtTexte());
+    let sicht = null;
+    try {
+      if (istGM) sicht = await sichtFuer(page, alsUser ?? game.user);
+      else if (istVerschluesselt(page)) sicht = await sichtVomGM(page); // Geheimmodus: nur der GM kennt den Text
+      else sicht = await sichtFuer(page, game.user);
+    } catch (err) {
+      context.fehler = err.message;
+    }
+    if (sicht) {
+      context.ansicht = await anreichern(sicht.html, page, istGM && !alsUser && page.isOwner);
+      context.hinweis = sicht.hinweis ? await anreichern(sicht.hinweis, page, false) : null;
+    }
 
-    context.ansicht = await anreichern(sicht.html, this.document, leser.gm && this.document.isOwner);
-    context.audio = system.audio || null;
-    context.bild = system.bild || null;
-    context.gmNotiz = istGM && !alsUser && system.gmNotiz
-      ? await anreichern(system.gmNotiz, this.document, true)
-      : null;
+    const versuch = versuchVon(page);
+    const zustand = zustandVon(page);
+    const { trait, difficulty } = wurfVon(page);
+    context.zerstoert = zustand.zerstoert;
+    context.wurf = { trait: L(`DATENTRAEGER.Trait.${trait}`), difficulty };
 
-    if (istGM) {
-      context.spielerListe = game.users
-        .filter(u => !u.isGM)
-        .map(u => ({
-          id: u.id,
-          name: u.name,
-          charakter: u.character?.name ?? L("DATENTRAEGER.Ansicht.KeinCharakter"),
-          gewaehlt: u.id === this.#ansichtAls
-        }));
-      context.stufen = stufenOptionen(stufe);
-      context.lesestand = sicht.gesamt
-        ? `${alsUser ? F("DATENTRAEGER.Ansicht.SoSiehtEs", { name: alsUser.name }) + " · " : ""}${sicht.lesbar}/${sicht.gesamt} ${L("DATENTRAEGER.Ansicht.Lesbar")}`
-        : "";
+    if (!istGM) {
+      const eigener = Boolean(versuch && (versuch.userId === game.user.id || versuch.actorId === game.user.character?.id));
+      context.entschluesselnMoeglich = !entschluesselnSperre(page);
+      context.freigebenMoeglich = eigener && !versuch.geteilt && !zustand.zerstoert;
+      if (versuch) {
+        context.versuchText = eigener
+          ? F("DATENTRAEGER.Entschluesseln.StatusEigen", { stufe: versuch.stufe })
+          : versuch.geteilt
+            ? F("DATENTRAEGER.Entschluesseln.StatusGeteilt", { name: versuch.actorName, stufe: versuch.stufe })
+            : F("DATENTRAEGER.Entschluesseln.StatusFremd", { name: versuch.actorName });
+      }
+      context.entschluesselnLeiste = Boolean(
+        context.entschluesselnMoeglich || context.freigebenMoeglich || context.versuchText || context.zerstoert
+      );
+      return;
+    }
+
+    // Nur GM
+    if (!alsUser) {
+      try {
+        const daten = await oeffne(page);
+        context.gmNotiz = daten.gmNotiz ? await anreichern(daten.gmNotiz, page, true) : null;
+      } catch { /* kein Schlüssel – Hinweis steht schon in context.fehler */ }
+    }
+    const stufe = stufeVon(page);
+    context.spielerListe = game.users
+      .filter(u => !u.isGM)
+      .map(u => ({
+        id: u.id,
+        name: u.name,
+        charakter: u.character?.name ?? L("DATENTRAEGER.Ansicht.KeinCharakter"),
+        gewaehlt: u.id === this.#ansichtAls
+      }));
+    context.stufen = stufenOptionen(stufe);
+    context.geheimSymbol = istVerschluesselt(page) ? "fa-lock" : "fa-lock-open";
+    context.geheimTip = L(istVerschluesselt(page) ? "DATENTRAEGER.Geheim.SeiteZu" : "DATENTRAEGER.Geheim.SeiteOffen");
+    context.zuruecksetzbar = Boolean(versuch || zustand.zerstoert || zustand.zerfallen.length || stufe);
+    if (versuch) {
+      context.versuchText = F("DATENTRAEGER.Entschluesseln.StatusGM", {
+        name: versuch.actorName, stufe: versuch.stufe, total: versuch.total, difficulty: versuch.difficulty
+      }) + (versuch.geteilt ? ` · ${L("DATENTRAEGER.Entschluesseln.Geteilt")}` : "");
+    }
+    if (sicht?.gesamt) {
+      context.lesestand = `${alsUser ? F("DATENTRAEGER.Ansicht.SoSiehtEs", { name: alsUser.name }) + " · " : ""}`
+        + `${sicht.lesbar}/${sicht.gesamt} ${L("DATENTRAEGER.Ansicht.Lesbar")}`;
     }
   }
 
-  /** Kontext für das Bearbeiten-Fenster: Hilfe und Prüfliste der Markierungen. */
-  _bereiteBearbeiten(context) {
-    const system = this.document.system;
+  /** Kontext für das Bearbeiten-Fenster: Inhalt (entschlüsselt), Hilfe, Prüfliste. */
+  async _bereiteBearbeiten(context) {
+    const page = this.document;
+    const system = page.system;
+    let daten;
+    try {
+      daten = await oeffne(page);
+    } catch (err) {
+      context.geheimFehlt = err.message;
+      daten = Object.fromEntries(GEHEIME_FELDER.map(f => [f, ""]));
+    }
+    context.edit = daten;
+    context.geheimAn = geheimmodusAn();
     context.lueckenHilfe = (LUECKEN[system.art] ?? []).join(" · ");
 
     const charaktere = spielerCharaktere();
@@ -154,7 +213,7 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
     }));
     const ancestries = new Set([falte(STANDARD_ANCESTRY), ...charaktere.flatMap(a => [...erkannteAncestries(a)])]);
 
-    context.markierungen = luecken(system.text).map(l => ({
+    context.markierungen = luecken(daten.text).map(l => ({
       nr: l.nr + 1,
       art: l.art ?? l.artRoh,
       gueltig: l.gueltig,
@@ -180,6 +239,31 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
       if (regel.art === "ancestry" && !ancestries.has(falte(regel.name))) w.push(F("DATENTRAEGER.Warnung.UnbekannteAncestry", { name: regel.name }));
     }
     return w;
+  }
+
+  /* -------------------------------------------- */
+  /*  Speichern                                   */
+  /* -------------------------------------------- */
+
+  /**
+   * Im Geheimmodus nie Klartext speichern: text, gmNotiz, preis und hinweis werden vor dem
+   * Update verschlüsselt. Ohne Schlüssel bleiben sie unangetastet (nichts wird überschrieben).
+   * @inheritDoc
+   */
+  async _processSubmitData(event, form, submitData, options) {
+    const sys = submitData.system;
+    const page = this.document;
+    if (sys && GEHEIME_FELDER.some(f => f in sys) && (geheimmodusAn() || istVerschluesselt(page))) {
+      if (!(await schluesselBereit())) {
+        for (const f of GEHEIME_FELDER) delete sys[f];
+        ui.notifications.error("DATENTRAEGER.Geheim.KeinSchluessel", { localize: true });
+      } else {
+        const alt = await oeffne(page);
+        const neu = Object.fromEntries(GEHEIME_FELDER.map(f => [f, f in sys ? sys[f] : alt[f]]));
+        Object.assign(sys, await speicherWerte(neu));
+      }
+    }
+    return super._processSubmitData(event, form, submitData, options);
   }
 
   /* -------------------------------------------- */
@@ -247,26 +331,39 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
 
   _aktiviereAnsicht() {
     const el = this.element;
+    const page = this.document;
+    const klick = (aktion, fn) => el.querySelector(`[data-dt-aktion='${aktion}']`)?.addEventListener("click", event => {
+      event.preventDefault();
+      fn(event);
+    });
+
+    cordexAufloesen(el, L("DATENTRAEGER.Ansicht.Cordex"));
+
     el.querySelector("select[data-dt-ansicht]")?.addEventListener("change", event => {
       this.#ansichtAls = event.currentTarget.value;
       this.render();
     });
-    el.querySelector("[data-dt-aktion='leser']")?.addEventListener("click", event => {
-      event.preventDefault();
-      oeffneLeserFenster();
-    });
     el.querySelector("select[data-dt-stufe]")?.addEventListener("change", event => {
-      setzeStufe(this.document, event.currentTarget.value);
+      setzeStufe(page, event.currentTarget.value);
     });
-    el.querySelector("[data-dt-aktion='zeigen']")?.addEventListener("click", event => {
-      event.preventDefault();
-      zeigenDialog(this.document);
+    klick("leser", () => oeffneLeserFenster());
+    klick("zeigen", () => zeigenDialog(page));
+    klick("entschluesseln", () => entschluesseln(page));
+    klick("freigeben", () => freigeben(page));
+    klick("beute", () => beuteAnlegen(page));
+    klick("zuruecksetzen", async () => {
+      const ja = await foundry.applications.api.DialogV2.confirm({
+        window: { title: L("DATENTRAEGER.Entschluesseln.ZuruecksetzenTitel") },
+        content: `<p>${L("DATENTRAEGER.Entschluesseln.ZuruecksetzenFrage")}</p>`
+      });
+      if (ja) zuruecksetzen(page);
     });
+
     // Rauschteppich: Regler gilt nur für diesen Client, Startwert kommt von der Seite.
     const regler = el.querySelector("input[data-dt-rauschen]");
     const audio = el.querySelector(".dt-audio audio");
-    const staerke = () => Number(regler?.value ?? this.document.system.rauschen) || 0;
-    const art = this.document.system.art;
+    const staerke = () => Number(regler?.value ?? page.system.rauschen) || 0;
+    const art = page.system.art;
     regler?.addEventListener("input", () => setzeRauschStaerke(staerke()));
     // Der Player stoppt nur das Rauschen, das er selbst gestartet hat – nicht das von „Für alle“.
     let vomPlayer = false;
@@ -289,31 +386,25 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
       audio.addEventListener("pause", ende);
       audio.addEventListener("ended", ende);
     }
-
-    el.querySelector("[data-dt-aktion='fuer-alle']")?.addEventListener("click", event => {
-      event.preventDefault();
-      if (!this.document.system.audio) {
-        ui.notifications.warn("DATENTRAEGER.Audio.KeineDatei", { localize: true });
-        return;
-      }
+    klick("fuer-alle", () => {
+      if (!page.system.audio) return ui.notifications.warn("DATENTRAEGER.Audio.KeineDatei", { localize: true });
       vomPlayer = false;
       if (audio && !audio.paused) audio.pause();
-      fuerAlleAbspielen(this.document.system.audio, { rauschen: staerke(), art });
+      fuerAlleAbspielen(page.system.audio, { rauschen: staerke(), art });
     });
-    el.querySelector("[data-dt-aktion='stopp-alle']")?.addEventListener("click", event => {
-      event.preventDefault();
-      fuerAlleStoppen();
-    });
+    klick("stopp-alle", () => fuerAlleStoppen());
 
     const ansicht = el.querySelector(".datentraeger-ansicht") ?? el;
-    el.querySelector("[data-dt-aktion='neu']")?.addEventListener("click", event => {
-      event.preventDefault();
-      starteAufbau(ansicht);
-    });
+    klick("neu", () => starteAufbau(ansicht));
 
-    // Aufbau beim ersten Anzeigen, bei neuem Text und bei neuem Ergebnis –
+    // Aufbau beim ersten Anzeigen und wenn sich Text, Ergebnis oder Zustand ändern –
     // nicht, wenn der GM nur die Ansicht umschaltet.
-    const schluessel = `${fnv1a(this.document.system.text ?? "")}|${stufeVon(this.document) ?? ""}`;
+    const versuch = versuchVon(page);
+    const zustand = zustandVon(page);
+    const schluessel = [
+      fnv1a(page.system.geheim || page.system.text || ""), stufeVon(page) ?? "",
+      versuch?.stufe ?? "", versuch?.geteilt ?? "", zustand.zerstoert, zustand.zerfallen.length
+    ].join("|");
     if (schluessel !== this.#aufbauSchluessel) {
       this.#aufbauSchluessel = schluessel;
       starteAufbau(ansicht);

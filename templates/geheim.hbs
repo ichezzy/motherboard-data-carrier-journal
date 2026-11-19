@@ -1,0 +1,52 @@
+<section class="dt-geheim standard-form">
+  <p>{{localize "DATENTRAEGER.Geheim.Erklaerung"}}</p>
+
+  {{#unless krypto}}
+  <p class="dt-warnung"><i class="fa-solid fa-triangle-exclamation" inert></i> {{localize "DATENTRAEGER.Geheim.KeinKrypto"}}</p>
+  {{else}}
+
+  <p class="dt-geheim-stand">
+    {{#if an}}<i class="fa-solid fa-lock" inert></i> {{localize "DATENTRAEGER.Geheim.StandAn"}}
+    {{else}}<i class="fa-solid fa-lock-open" inert></i> {{localize "DATENTRAEGER.Geheim.StandAus"}}{{/if}}
+    · {{stand.verschluesselt}} / {{stand.gesamt}} {{localize "DATENTRAEGER.Geheim.Verschluesselt2"}}
+  </p>
+
+  {{#unless an}}
+  <fieldset>
+    <legend>{{localize "DATENTRAEGER.Geheim.Einrichten"}}</legend>
+    <div class="form-group">
+      <label>{{localize "DATENTRAEGER.Geheim.Wort"}}</label>
+      <div class="form-fields"><input type="password" name="wort" autocomplete="new-password"></div>
+    </div>
+    <div class="form-group">
+      <label>{{localize "DATENTRAEGER.Geheim.Wiederholung"}}</label>
+      <div class="form-fields"><input type="password" name="wiederholung" autocomplete="new-password"></div>
+    </div>
+    <p class="hint">{{localize "DATENTRAEGER.Geheim.WortHinweis"}}</p>
+    <button type="button" data-dt-aktion="einrichten"><i class="fa-solid fa-lock" inert></i> {{localize "DATENTRAEGER.Geheim.EinrichtenKnopf"}}</button>
+  </fieldset>
+  {{/unless}}
+
+  {{#if an}}
+  {{#unless bereit}}
+  <fieldset>
+    <legend>{{localize "DATENTRAEGER.Geheim.Entsperren"}}</legend>
+    <p class="hint">{{localize "DATENTRAEGER.Geheim.EntsperrenHinweis"}}</p>
+    <div class="form-group">
+      <label>{{localize "DATENTRAEGER.Geheim.Wort"}}</label>
+      <div class="form-fields"><input type="password" name="wort" autocomplete="current-password"></div>
+    </div>
+    <button type="button" data-dt-aktion="entsperren"><i class="fa-solid fa-key" inert></i> {{localize "DATENTRAEGER.Geheim.EntsperrenKnopf"}}</button>
+  </fieldset>
+  {{else}}
+  <div class="dt-geheim-knoepfe">
+    {{#if stand.offen}}
+    <button type="button" data-dt-aktion="verschluesseln"><i class="fa-solid fa-lock" inert></i> {{localize "DATENTRAEGER.Geheim.OffeneVerschluesseln"}} ({{stand.offen}})</button>
+    {{/if}}
+    <button type="button" data-dt-aktion="vergessen"><i class="fa-solid fa-eraser" inert></i> {{localize "DATENTRAEGER.Geheim.Vergessen"}}</button>
+    <button type="button" data-dt-aktion="ausschalten"><i class="fa-solid fa-lock-open" inert></i> {{localize "DATENTRAEGER.Geheim.Ausschalten"}}</button>
+  </div>
+  {{/unless}}
+  {{/if}}
+  {{/unless}}
+</section>

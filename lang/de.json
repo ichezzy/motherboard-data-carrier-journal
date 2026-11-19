@@ -33,7 +33,25 @@
         },
         "gmNotiz": {
           "label": "GM-Notiz",
-          "hint": "Erscheint bei keinem Spieler in der Ansicht. Bis zum Geheimmodus (Phase 3) kann ein Spieler sie über die Entwicklerkonsole trotzdem auslesen."
+          "hint": "Erscheint bei keinem Spieler. Im Geheimmodus verschlüsselt, sonst über die Entwicklerkonsole auslesbar."
+        },
+        "preis": {
+          "label": "Preis bei Success with Fear",
+          "hint": "Nur du siehst ihn, wenn ein Spieler mit Success with Fear entschlüsselt. Leer = Standard je Art (Anthanen: das Motherboard hört mit · Signal: der Sender peilt zurück · Modul: PHI protokolliert)."
+        },
+        "hinweis": {
+          "label": "Hinweis bei Failure with Hope",
+          "hint": "Bekommt der Würfelnde statt mehr Text: was man bräuchte, um mehr zu lesen – z. B. ein Netzpfeiler-Terminal oder jemanden, der Cordex liest."
+        },
+        "entschluesseln": {
+          "trait": {
+            "label": "Trait",
+            "hint": "Womit entschlüsselt wird. Standard: Knowledge bei Anthanen, Instinct bei Signal, Finesse bei Modul."
+          },
+          "difficulty": {
+            "label": "Difficulty",
+            "hint": "Gegen diese Difficulty prüft das Modul den Wurf selbst."
+          }
         },
         "rauschen": {
           "label": "Rauschteppich",
@@ -146,6 +164,127 @@
     },
     "Audio": {
       "KeineDatei": "Diese Seite hat keine Audiodatei."
+    },
+    "Trait": {
+      "standard": "Standard je Art",
+      "agility": "Agility",
+      "strength": "Strength",
+      "finesse": "Finesse",
+      "instinct": "Instinct",
+      "presence": "Presence",
+      "knowledge": "Knowledge"
+    },
+    "Geheim": {
+      "Name": "Geheimmodus",
+      "Label": "Geheimmodus einrichten",
+      "Hint": "Text, GM-Notiz, Preis und Hinweis liegen nur verschlüsselt in der Welt. Spieler bekommen vom GM nur, was sie sehen dürfen (der GM muss online sein).",
+      "Erklaerung": "Foundry schickt jedem Spieler alle Journale – auch versteckte. Im Geheimmodus stehen Texte darum nur verschlüsselt in der Welt. Den Schlüssel bildet dein Geheimwort; es bleibt in deinem Browser und erreicht nie den Server. Spieler fragen deinen Client und bekommen nur ihre eigene Sicht.",
+      "StandAn": "Geheimmodus an",
+      "StandAus": "Geheimmodus aus",
+      "Verschluesselt2": "Seiten verschlüsselt",
+      "Einrichten": "Geheimwort festlegen",
+      "Wort": "Geheimwort",
+      "Wiederholung": "Wiederholen",
+      "WortHinweis": "Mindestens 8 Zeichen. Schreib es dir auf – ohne Geheimwort lassen sich verschlüsselte Seiten nicht mehr öffnen. Danach werden alle Datenträger verschlüsselt.",
+      "EinrichtenKnopf": "Einrichten und alle Seiten verschlüsseln",
+      "Entsperren": "Geheimwort auf diesem Gerät eingeben",
+      "EntsperrenHinweis": "Der Geheimmodus ist an, aber dieser Browser kennt das Geheimwort noch nicht.",
+      "EntsperrenKnopf": "Entsperren",
+      "OffeneVerschluesseln": "Offene Seiten verschlüsseln",
+      "Vergessen": "Geheimwort in diesem Browser vergessen",
+      "Ausschalten": "Geheimmodus ausschalten",
+      "AusschaltenTitel": "Geheimmodus ausschalten?",
+      "AusschaltenFrage": "Alle Datenträger werden entschlüsselt und liegen danach wieder im Klartext in der Welt.",
+      "ZuKurz": "Das Geheimwort braucht mindestens 8 Zeichen.",
+      "Ungleich": "Die beiden Eingaben stimmen nicht überein.",
+      "WortFalsch": "Motherboard Data Carrier Journal: Das Geheimwort passt nicht.",
+      "Eingerichtet": "Geheimmodus eingerichtet – {n} Seite(n) verschlüsselt.",
+      "Entsperrt": "Geheimwort angenommen.",
+      "Verschluesselt": "{n} Seite(n) verschlüsselt.",
+      "Ausgeschaltet": "Geheimmodus aus – {n} Seite(n) entschlüsselt.",
+      "KeinKrypto": "Dieser Browser bietet keine Verschlüsselung (WebCrypto). Foundry muss über https laufen.",
+      "KeinSchluessel": "Der Datenträger ist verschlüsselt, und dieser Browser kennt das Geheimwort nicht.",
+      "NurGM": "Nur der GM kann diesen Datenträger öffnen.",
+      "FehltHinweis": "Einstellungen → Motherboard Data Carrier Journal → Geheimmodus. Bis dahin ist der Text gesperrt, damit nichts überschrieben wird.",
+      "BeimSpeichern": "Geheimmodus an: Text, Preis, Hinweis und GM-Notiz werden beim Speichern verschlüsselt.",
+      "SeiteZu": "Verschlüsselt",
+      "SeiteOffen": "Nicht verschlüsselt – über die Entwicklerkonsole lesbar"
+    },
+    "Anfrage": {
+      "KeinGM": "Der Datenträger schweigt – der GM ist nicht online.",
+      "GmOhneSchluessel": "Der Datenträger schweigt – der GM muss erst sein Geheimwort eingeben.",
+      "KeineSeite": "Diese Seite ist kein Datenträger.",
+      "NurGM": "Nur der GM kann das beantworten."
+    },
+    "Entschluesseln": {
+      "Titel": "Entschlüsseln",
+      "Erklaerung": "Ein Spieler kann einmal pro Datenträger entschlüsseln. Er würfelt mit seinem Charakter; das Modul prüft den Wurf und trägt das Ergebnis ein. Erst sieht nur er es – er entscheidet, ob er es für alle freigibt.",
+      "Knopf": "Entschlüsseln",
+      "Difficulty": "Difficulty",
+      "WurfTitel": "Entschlüsseln: {name}",
+      "WurfFehler": "Der Wurf konnte nicht gestartet werden.",
+      "KeinCharakter": "Dir ist kein Charakter zugewiesen.",
+      "SchonVersucht": "An diesem Datenträger wurde schon entschlüsselt.",
+      "Zerstoert": "Der Datenträger ist zerstört.",
+      "ZerstoertKurz": "zerstört",
+      "WurfFehlt": "Der Wurf wurde nicht gefunden.",
+      "WurfAlt": "Der Wurf ist zu alt – bitte neu entschlüsseln.",
+      "WurfVerbraucht": "Dieser Wurf wurde schon verwendet.",
+      "NichtDein": "Das hast nicht du entschlüsselt.",
+      "FreigebenKnopf": "Für alle freigeben",
+      "Freigegeben": "Für alle freigegeben.",
+      "Geteilt": "für alle freigegeben",
+      "StatusEigen": "Du hast entschlüsselt: {stufe}",
+      "StatusGeteilt": "{name} hat entschlüsselt und freigegeben: {stufe}",
+      "StatusFremd": "{name} hat entschlüsselt – noch nicht freigegeben.",
+      "StatusGM": "{name} hat entschlüsselt: {stufe} ({total} gegen {difficulty})",
+      "GmMeldung": "{name} hat „{seite}“ entschlüsselt: {stufe} ({total} gegen {difficulty}).",
+      "Zuruecksetzen": "Zurücksetzen",
+      "ZuruecksetzenTitel": "Datenträger zurücksetzen?",
+      "ZuruecksetzenFrage": "Ergebnis, Entschlüsseln-Versuch und alle Schäden werden entfernt – der Datenträger ist wieder wie neu.",
+      "PreisTitel": "Success with Fear – der Preis",
+      "Verstanden": "Verstanden",
+      "ZerfallenTip": "beim Entschlüsseln zerfallen",
+      "Preis": {
+        "anthanen": "Das Motherboard hört mit. Etwas antwortet – vielleicht nicht jetzt, aber es weiß, wer gelesen hat.",
+        "signal": "Der Sender peilt zurück. Wer da sendet, weiß jetzt, wo ihr seid.",
+        "modul": "PHI protokolliert den Zugriff. Die Kennung des Lesegeräts ist gemeldet."
+      },
+      "Folge": {
+        "zerstoert": "Der Datenträger ist zerstört.",
+        "zerfallen": "Eine Stelle ist zerfallen.",
+        "preis": ""
+      },
+      "Ergebnis": {
+        "lesbar": "Entschlüsselt: {stufe}.",
+        "preis": "Entschlüsselt: {stufe}. Der Zugriff ist nicht unbemerkt geblieben.",
+        "zerfallen": "{stufe}: Ein Stück des Trägers ist zerfallen.",
+        "zerstoert": "{stufe}: Der Datenträger ist zerstört."
+      },
+      "Kaputt": {
+        "anthanen": "Der Takt bricht. Blaues Licht frisst die Zeilen.",
+        "signal": "– Signal verloren –",
+        "modul": "DATENTRÄGER BESCHÄDIGT · LESEN NICHT MÖGLICH"
+      }
+    },
+    "Funde": {
+      "Name": "Funde",
+      "Kurz": "Fund",
+      "Entschluesselt": "Entschlüsselt von {name}: {stufe}",
+      "Fehler": "Das Journal „Funde“ konnte nicht aktualisiert werden (Details in der Konsole)."
+    },
+    "Beute": {
+      "Knopf": "Beute",
+      "Tip": "Ein Loot-Item anlegen, das auf diesen Datenträger zeigt",
+      "Lesen": "Datenträger lesen",
+      "Fehlt": "Der Datenträger zu diesem Item existiert nicht mehr.",
+      "Freigegeben": "Das Journal „{journal}“ ist jetzt für Spieler sichtbar (Beobachter), damit sie den Datenträger öffnen können.",
+      "OhneGeheimmodus": "Ohne Geheimmodus kann ein Spieler den ganzen Text über die Entwicklerkonsole lesen.",
+      "Beschreibung": {
+        "anthanen": "Eine flache, runde Scheibe aus dunklem Metall. Auf ihr liegt kein Staub.",
+        "signal": "Ein Mitschnitt aus dem Puffer eines Masts.",
+        "modul": "Ein graues Plättchen, kaum größer als ein Fingerglied, an einer Kante blanke Kontakte."
+      }
     },
     "Umzug": {
       "Fertig": "Motherboard Data Carrier Journal: {seiten} Seite(n) und {haekchen} Häkchen aus dem alten Modul „datentraeger“ übernommen.",

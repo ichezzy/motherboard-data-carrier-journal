@@ -571,3 +571,94 @@ body.dt-bewegung-aus .mdcj-holo::after { animation: none !important; }
 .datentraeger-leser .dt-mitte { text-align: center; }
 .datentraeger-leser select { width: auto; }
 .datentraeger-leser .dt-liest { margin-left: 0.35rem; }
+
+/* ==================================================================== */
+/*  Phase 3: Geheimmodus, Entschlüsseln, Funde, Beute                    */
+/* ==================================================================== */
+
+.datentraeger-ansicht .dt-geheim-symbol { flex: 0 0 auto; opacity: 0.8; }
+.datentraeger-ansicht .dt-gm-versuch {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: var(--font-size-12, 12px);
+  margin-bottom: 0.4rem;
+}
+.datentraeger-ansicht .dt-gm-versuch button { width: auto; flex: 0 0 auto; }
+
+/* Spieler: Entschlüsseln und Freigeben */
+.datentraeger-ansicht .dt-entschluesseln {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-block: 0.25rem 0.6rem;
+}
+.datentraeger-ansicht .dt-entschluesseln button { width: auto; flex: 0 0 auto; }
+.datentraeger-ansicht .dt-entschluesseln .dt-wurf { opacity: 0.7; font-size: 0.9em; }
+.datentraeger-ansicht .dt-versuch { font-size: var(--font-size-13, 13px); }
+.datentraeger-ansicht .dt-kaputt-text { color: var(--dt-rot); }
+
+/* Hinweis nach Failure with Hope */
+.datentraeger-ansicht .dt-hinweis {
+  margin-top: 0.6rem;
+  padding: 0.4rem 0.6rem;
+  border-left: 2px solid var(--dt-akzent);
+  background: color-mix(in srgb, var(--dt-akzent) 10%, transparent);
+  font-style: italic;
+}
+.datentraeger-ansicht .dt-hinweis p { margin: 0; display: inline; }
+
+/* Warten auf den GM / kein Schlüssel */
+.datentraeger-ansicht .dt-warte {
+  margin: 0.5rem 0;
+  opacity: 0.75;
+  animation: dt-blinken 2.4s ease-in-out infinite;
+}
+
+/* Zerstört: Der Schirm zittert, die Farben kippen */
+.datentraeger-ansicht.dt-zerstoert .dt-schirm { animation: dt-zittern 3.2s steps(1, end) infinite; }
+.datentraeger-ansicht.dt-zerstoert[data-art="anthanen"] .dt-schirm { border-color: rgb(79 140 255 / 0.6); }
+.datentraeger-ansicht.dt-zerstoert[data-art="anthanen"] .dt-scheibe .dt-ring { border-color: rgb(79 140 255 / 0.8); animation-duration: 0.7s; }
+.datentraeger-ansicht .dt-kaputt-meldung {
+  font-family: var(--font-monospace, monospace);
+  letter-spacing: 0.08em;
+  color: var(--dt-rot);
+}
+.datentraeger-ansicht[data-art="anthanen"] .dt-kaputt-meldung { color: var(--dt-blau); }
+@keyframes dt-zittern {
+  0%, 100% { transform: none; filter: none; }
+  7% { transform: translateX(-2px); filter: hue-rotate(40deg); }
+  8% { transform: translateX(2px); }
+  9% { transform: none; filter: none; }
+  61% { transform: translateY(1px) skewX(-1deg); filter: contrast(1.4); }
+  62% { transform: none; filter: none; }
+}
+
+/* GM: beim Entschlüsseln zerfallene Stelle */
+.datentraeger-ansicht .dt-gm-zerfallen .dt-gm {
+  text-decoration: line-through;
+  text-decoration-color: var(--dt-rot);
+  opacity: 0.7;
+}
+
+/* Funde: gespeicherte Cordex-Zeichen (bevor sie zu SVG werden) */
+.datentraeger-ansicht .dt-cordex-ziel { letter-spacing: 0.06em; }
+.datentraeger-ansicht .dt-fund-quelle {
+  font-size: var(--font-size-12, 12px);
+  opacity: 0.75;
+  margin-bottom: 0.5rem;
+}
+
+/* Fenster „Geheimmodus“ */
+.datentraeger-geheim .dt-geheim fieldset { margin-top: 0.5rem; }
+.datentraeger-geheim .dt-geheim button { margin-top: 0.4rem; }
+.datentraeger-geheim .dt-geheim-knoepfe { display: flex; flex-direction: column; gap: 0.4rem; }
+.datentraeger-geheim .dt-geheim-stand { font-weight: 600; }
+.dt-warnung { color: #c0392b; }
+.datentraeger .dt-geheim-zeile { margin-top: 0; }
+.datentraeger .dt-entschluesseln-felder { margin-block: 0.5rem; }
+
+/* Beute-Item: Knopf im Item-Bogen */
+.dt-beute-lesen { width: auto; margin: 0.4rem 0.5rem 0; }

@@ -21,7 +21,7 @@
   "documentTypes": {
     "JournalEntryPage": {
       "datentraeger": {
-        "htmlFields": ["text", "gmNotiz"],
+        "htmlFields": ["text", "gmNotiz", "preis", "hinweis"],
         "filePathFields": {
           "audio": ["AUDIO"],
           "bild": ["IMAGE"]

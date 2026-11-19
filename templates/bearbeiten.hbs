@@ -1,9 +1,16 @@
 <div class="dt-bearbeiten">
+  {{#if geheimFehlt}}
+  <p class="dt-warnung"><i class="fa-solid fa-key" inert></i> {{geheimFehlt}} {{localize "DATENTRAEGER.Geheim.FehltHinweis"}}</p>
+  {{else if geheimAn}}
+  <p class="hint dt-geheim-zeile"><i class="fa-solid fa-lock" inert></i> {{localize "DATENTRAEGER.Geheim.BeimSpeichern"}}</p>
+  {{/if}}
+
   {{formField systemFields.art value=source.system.art localize=true}}
   {{formField systemFields.audio value=source.system.audio}}
   {{formField systemFields.rauschen value=source.system.rauschen}}
   {{formField systemFields.bild value=source.system.bild}}
 
+  {{#unless geheimFehlt}}
   <div class="form-group stacked dt-text-gruppe">
     <div class="dt-werkzeug">
       <label>{{localize "DATENTRAEGER.Daten.FIELDS.text.label"}}</label>
@@ -11,7 +18,7 @@
         <i class="fa-solid fa-highlighter" inert></i> {{localize "DATENTRAEGER.Markieren.Knopf"}}
       </button>
     </div>
-    <prose-mirror name="system.text" value="{{source.system.text}}" data-document-uuid="{{document.uuid}}"
+    <prose-mirror name="system.text" value="{{edit.text}}" data-document-uuid="{{document.uuid}}"
                   class="dt-editor"></prose-mirror>
     <p class="hint">{{localize "DATENTRAEGER.Bearbeiten.LueckenDieserArt"}}: {{lueckenHilfe}}</p>
     <p class="hint">{{localize "DATENTRAEGER.Bearbeiten.Syntax"}}</p>
@@ -38,9 +45,27 @@
     <p class="hint">{{localize "DATENTRAEGER.Bearbeiten.NachSpeichern"}}</p>
   </section>
 
+  <fieldset class="dt-entschluesseln-felder">
+    <legend><i class="fa-solid fa-unlock-keyhole" inert></i> {{localize "DATENTRAEGER.Entschluesseln.Titel"}}</legend>
+    <p class="hint">{{localize "DATENTRAEGER.Entschluesseln.Erklaerung"}}</p>
+    {{formField systemFields.entschluesseln.fields.trait value=source.system.entschluesseln.trait localize=true}}
+    {{formField systemFields.entschluesseln.fields.difficulty value=source.system.entschluesseln.difficulty}}
+    <div class="form-group stacked">
+      <label>{{localize "DATENTRAEGER.Daten.FIELDS.preis.label"}}</label>
+      <prose-mirror name="system.preis" value="{{edit.preis}}" class="dt-editor dt-editor-klein"></prose-mirror>
+      <p class="hint">{{localize "DATENTRAEGER.Daten.FIELDS.preis.hint"}}</p>
+    </div>
+    <div class="form-group stacked">
+      <label>{{localize "DATENTRAEGER.Daten.FIELDS.hinweis.label"}}</label>
+      <prose-mirror name="system.hinweis" value="{{edit.hinweis}}" class="dt-editor dt-editor-klein"></prose-mirror>
+      <p class="hint">{{localize "DATENTRAEGER.Daten.FIELDS.hinweis.hint"}}</p>
+    </div>
+  </fieldset>
+
   <div class="form-group stacked">
     <label>{{localize "DATENTRAEGER.Daten.FIELDS.gmNotiz.label"}}</label>
-    <prose-mirror name="system.gmNotiz" value="{{source.system.gmNotiz}}" class="dt-editor dt-editor-klein"></prose-mirror>
+    <prose-mirror name="system.gmNotiz" value="{{edit.gmNotiz}}" class="dt-editor dt-editor-klein"></prose-mirror>
     <p class="hint">{{localize "DATENTRAEGER.Daten.FIELDS.gmNotiz.hint"}}</p>
   </div>
+  {{/unless}}
 </div>

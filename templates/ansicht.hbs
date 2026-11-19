@@ -1,12 +1,13 @@
-<article class="datentraeger-ansicht" data-art="{{system.art}}">
+<article class="datentraeger-ansicht {{#if zerstoert}}dt-zerstoert{{/if}} {{#if fund}}dt-fund{{/if}}" data-art="{{system.art}}">
   {{#if document.title.show}}
   <header class="journal-page-header">
     <h{{ueberschrift}}>{{document.name}}</h{{ueberschrift}}>
   </header>
   {{/if}}
 
-  {{#if istGM}}
+  {{#if istGM}}{{#unless fund}}
   <div class="dt-gm-leiste">
+    <span class="dt-geheim-symbol" data-tooltip="{{geheimTip}}"><i class="fa-solid {{geheimSymbol}}" inert></i></span>
     <label class="dt-ansicht-als">
       <i class="fa-solid fa-eye" inert></i> {{localize "DATENTRAEGER.Ansicht.Als"}}
       <select data-dt-ansicht>
@@ -24,25 +25,58 @@
       </select>
     </label>
     <button type="button" data-dt-aktion="zeigen"><i class="fa-solid fa-eye" inert></i> {{localize "DATENTRAEGER.Stufe.Zeigen"}}</button>
+    <button type="button" data-dt-aktion="beute" data-tooltip="{{localize "DATENTRAEGER.Beute.Tip"}}"><i class="fa-solid fa-sack" inert></i> {{localize "DATENTRAEGER.Beute.Knopf"}}</button>
+  </div>
+  {{#if versuchText}}
+  <div class="dt-gm-versuch">
+    <i class="fa-solid fa-unlock-keyhole" inert></i> {{versuchText}}
+    {{#if zerstoert}} · <strong>{{localize "DATENTRAEGER.Entschluesseln.ZerstoertKurz"}}</strong>{{/if}}
   </div>
   {{/if}}
+  {{#if zuruecksetzbar}}
+  <div class="dt-gm-versuch"><button type="button" data-dt-aktion="zuruecksetzen"><i class="fa-solid fa-rotate-left" inert></i> {{localize "DATENTRAEGER.Entschluesseln.Zuruecksetzen"}}</button></div>
+  {{/if}}
+  {{/unless}}{{/if}}
 
   <div class="dt-buehne">
     <div class="dt-baender" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <div class="dt-schirm" data-art="{{system.art}}">
       <div class="dt-schirm-kopf">
-        <span class="dt-art-label">{{artLabel}}</span>
+        <span class="dt-art-label">{{artLabel}}{{#if fund}} · {{localize "DATENTRAEGER.Funde.Kurz"}}{{/if}}</span>
         {{#if lesestand}}<span class="dt-lesestand">{{lesestand}}</span>{{/if}}
         <button type="button" class="dt-neu" data-dt-aktion="neu" data-tooltip="{{localize "DATENTRAEGER.Ansicht.NeuAufbauen"}}"
                 aria-label="{{localize "DATENTRAEGER.Ansicht.NeuAufbauen"}}"><i class="fa-solid fa-rotate-right" inert></i></button>
       </div>
       {{#if bild}}<img class="dt-bild" src="{{bild}}" alt="">{{/if}}
+      {{#if fehler}}
+      <p class="dt-warte"><i class="fa-solid fa-satellite-dish" inert></i> {{fehler}}</p>
+      {{else}}
       <section class="dt-text journal-page-content">{{{ansicht}}}</section>
+      {{/if}}
+      {{#if hinweis}}<aside class="dt-hinweis"><i class="fa-solid fa-compass" inert></i> {{{hinweis}}}</aside>{{/if}}
       <span class="dt-cursor" aria-hidden="true"></span>
       <div class="dt-tuner" aria-hidden="true"><div class="dt-limen"></div><div class="dt-rauschband"></div></div>
     </div>
     <div class="dt-scheibe" aria-hidden="true"><div class="dt-ring"></div></div>
   </div>
+
+  {{#unless istGM}}{{#unless fund}}
+  {{#if entschluesselnLeiste}}
+  <div class="dt-entschluesseln">
+    {{#if entschluesselnMoeglich}}
+    <button type="button" data-dt-aktion="entschluesseln">
+      <i class="fa-solid fa-unlock-keyhole" inert></i> {{localize "DATENTRAEGER.Entschluesseln.Knopf"}}
+      <span class="dt-wurf">({{wurf.trait}}, {{localize "DATENTRAEGER.Entschluesseln.Difficulty"}} {{wurf.difficulty}})</span>
+    </button>
+    {{/if}}
+    {{#if versuchText}}<span class="dt-versuch">{{versuchText}}</span>{{/if}}
+    {{#if freigebenMoeglich}}
+    <button type="button" data-dt-aktion="freigeben"><i class="fa-solid fa-share-nodes" inert></i> {{localize "DATENTRAEGER.Entschluesseln.FreigebenKnopf"}}</button>
+    {{/if}}
+    {{#if zerstoert}}<span class="dt-versuch dt-kaputt-text"><i class="fa-solid fa-triangle-exclamation" inert></i> {{localize "DATENTRAEGER.Entschluesseln.Zerstoert"}}</span>{{/if}}
+  </div>
+  {{/if}}
+  {{/unless}}{{/unless}}
 
   {{#if audio}}
   <div class="dt-audio">
