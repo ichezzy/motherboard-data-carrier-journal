@@ -1,7 +1,7 @@
 {
   "TYPES": {
     "JournalEntryPage": {
-      "datentraeger": {
+      "motherboard-data-carrier-journal": {
         "datentraeger": "Datenträger"
       }
     }
@@ -118,6 +118,10 @@
     },
     "Audio": {
       "KeineDatei": "Diese Seite hat keine Audiodatei."
+    },
+    "Umzug": {
+      "Fertig": "Motherboard Data Carrier Journal: {seiten} Seite(n) und {haekchen} Häkchen aus dem alten Modul „datentraeger“ übernommen.",
+      "Fehler": "Motherboard Data Carrier Journal: Umzug fehlgeschlagen in: {journale}. Details in der Konsole (F12)."
     }
   }
 }

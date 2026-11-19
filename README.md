@@ -1,14 +1,14 @@
-# Datenträger
+# Motherboard Data Carrier Journal
 
-Foundry-VTT-Modul für *White Signal* (Daggerheart, Foundryborne). Eine neue Journal-Seitenart **Datenträger**: Text mit Lücken, die jeder Charakter anders lesen kann, dazu Audio.
+Foundry-VTT-Modul für *White Signal* (Daggerheart, Foundryborne). Modul-ID `motherboard-data-carrier-journal`. Eine neue Journal-Seitenart **Datenträger**: Text mit Lücken, die jeder Charakter anders lesen kann, dazu Audio.
 
 - Foundry **v14** (getestet gegen die API von 14.365–14.370), Daggerheart **2.12.9**
 - Reines ESM, kein Build. Tests mit `node --test`.
-- Arbeitstitel `datentraeger`. **Achtung:** Die Seitenart heißt intern `<modul-id>.datentraeger`. Ändert sich die Modul-ID, brauchen bestehende Seiten ein Umzugs-Makro.
+- Die Seitenart heißt intern `motherboard-data-carrier-journal.datentraeger`. Seiten aus der Zeit des Arbeitstitels `datentraeger` zieht das Modul beim ersten Start selbst um (`scripts/umzug.mjs`).
 
 ## Installation auf dem Server
 
-1. Einmal: `tools\ziel.txt` anlegen mit dem Ziel, z. B. `aetherion:/pfad/zu/Data/modules/datentraeger`.
+1. Einmal: `tools\ziel.txt` anlegen mit dem Ziel, z. B. `aetherion:/srv/foundry/Data/modules/motherboard-data-carrier-journal`.
 2. Aus dem Repo-Ordner: `powershell -ExecutionPolicy Bypass -File tools\deploy.ps1` – führt die Tests aus und kopiert nur die Moduldateien per `scp`.
 3. Beim ersten Mal Foundry neu starten, dann das Modul in der Welt aktivieren. Danach reicht meist F5.
 
@@ -82,7 +82,7 @@ node --test          # Parser, Sicht, Cordex
 - `scripts/sheet.mjs` – Ansicht und Bearbeiten (`JournalEntryPageHandlebarsSheet`)
 - `scripts/markieren.mjs` – Knopf und Dialog; Editor-Zugriff über das `plugins`-Event des `<prose-mirror>` (Listener in `sheet.mjs`, wie Foundrys Text-Sheet)
 - `scripts/audio.mjs` – Socket „für alle“
-- In der Konsole: `game.modules.get("datentraeger").api`
+- In der Konsole: `game.modules.get("motherboard-data-carrier-journal").api`
 
 ## Phasen
 

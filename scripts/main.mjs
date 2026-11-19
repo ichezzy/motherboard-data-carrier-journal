@@ -7,6 +7,7 @@ import * as syntax from "./syntax.mjs";
 import * as sicht from "./sicht.mjs";
 import * as leser from "./leser.mjs";
 import { cordexText } from "./cordex.mjs";
+import { zieheAlteDatenUm } from "./umzug.mjs";
 
 Hooks.once("init", () => {
   CONFIG.JournalEntryPage.dataModels[SEITEN_TYP] = DatentraegerDaten;
@@ -20,11 +21,12 @@ Hooks.once("init", () => {
 
   registriereEinstellungen();
 
-  // Für Makros und zum Nachsehen in der Konsole: game.modules.get("datentraeger").api
+  // Für Makros und zum Nachsehen in der Konsole: game.modules.get("motherboard-data-carrier-journal").api
   game.modules.get(MODUL_ID).api = { syntax, sicht, leser, cordexText, oeffneLeserFenster, fuerAlleAbspielen, fuerAlleStoppen };
 });
 
 Hooks.once("ready", () => {
   registriereSocket();
   wendeBewegungAn();
+  zieheAlteDatenUm();
 });

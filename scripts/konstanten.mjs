@@ -3,7 +3,10 @@
  * damit Parser und Sicht auch in Node getestet werden können.
  */
 
-export const MODUL_ID = "datentraeger";
+export const MODUL_ID = "motherboard-data-carrier-journal";
+
+/** Arbeitstitel bis 19.11.2026 – Seiten und Flags von damals zieht umzug.mjs um. */
+export const ALTE_MODUL_ID = "datentraeger";
 
 /** Unter-Typ der Journal-Seite: Module bekommen ihre ID als Präfix. */
 export const SEITEN_TYP = `${MODUL_ID}.datentraeger`;
