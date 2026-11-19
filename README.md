@@ -75,11 +75,36 @@ Ein Spieler liest eine Stelle mit `Clank`, wenn sein **zugewiesener Charakter** 
 2. Die Ancestry stammt vom SRD-Clank im Kompendium (`Compendium.daggerheart.ancestries.Item.ed8BoLR4SHOpeV00`) – hält auch nach Umbenennen.
 3. Häkchen im Fenster **Leser** (Knopf in der Ansicht oder *Einstellungen → Motherboard Data Carrier Journal → Leser verwalten*): Automatisch · Ja · Nein.
 
+## Entschlüsseln
+
+Jede Seite hat **Trait** und **Difficulty** (Standard: Knowledge bei Anthanen, Instinct bei Signal, Finesse bei Modul; Difficulty 12). Ein Spieler mit zugewiesenem Charakter drückt **Entschlüsseln** → der normale Daggerheart-Würfeldialog → der Client des GM prüft den Wurf in der Chatnachricht selbst nach und trägt das Ergebnis ein. **Einmal pro Datenträger.** Zuerst sieht nur der Würfelnde das Ergebnis; mit **Für alle freigeben** teilt er es.
+
+| Ergebnis | Der Würfelnde liest | Was mit dem Träger passiert |
+|---|---|---|
+| Critical Success | alle Stellen mit Lesestufe | nichts |
+| Success with Hope | bis Success with Hope | nichts |
+| Success with Fear | bis Success with Fear | **Preis:** nur der GM sieht den Text aus dem Feld *Preis* (leer = Standard je Art) |
+| Failure with Hope | nur Stellen „ab Failure with Hope“ + Text aus *Hinweis* | **eine Stelle zerfällt** – für alle, dauerhaft |
+| Failure with Fear | nichts | **zerstört** – für alle unleserlich, auch für Clank |
+
+Daggerheart erledigt Hope, Fear und Stress selbst. Der GM kann einen Datenträger **zurücksetzen**.
+
+## Funde und Beute
+
+- **Journal „Funde“:** wird beim ersten Fund angelegt (für Spieler lesbar) und bekommt eine Seite je Datenträger – mit dem, was die **ganze Gruppe** gesehen hat: beim „Zeigen…“ durch den GM und beim „Für alle freigeben“. Was nur Clank lesen kann, steht dort nicht. Cordex steht als Platzhalter darin, nie das Wort.
+- **Beute:** Knopf in der GM-Leiste legt ein Daggerheart-Loot-Item an, das auf die Seite zeigt. Im Item-Bogen erscheint **Datenträger lesen**. Damit Spieler die Seite öffnen können, setzt das Modul das Journal auf „Beobachter“.
+
 ## Geheimhaltung – ehrlich
 
-**Bis Phase 3 filtert das Modul im Browser des Spielers.** Der ganze Rohtext, alle Ersatztexte und die GM-Notiz liegen bei jedem Spieler, der die Seite sehen darf. Wer die Entwicklerkonsole öffnet, kann alles lesen.
+Foundry 14 schickt **jedem** Benutzer alle Journale, alle Einstellungen und die Inhalte aller Kompendien – Rechte verstecken nur in der Oberfläche (im Server-Code geprüft).
 
-Nachrüstbar: Die Sicht berechnet `sicht.baueSicht(rohtext, leser)` – ohne Foundry. In Phase 3 läuft dieselbe Funktion beim GM, und Spieler bekommen über den Modul-Socket nur das Ergebnis.
+**Geheimmodus** (*Einstellungen → Motherboard Data Carrier Journal → Geheimmodus*): Text, GM-Notiz, Preis und Hinweis liegen nur **verschlüsselt** in der Welt (AES-GCM, Schlüssel aus deinem Geheimwort per PBKDF2). Das Geheimwort bleibt in deinem Browser und erreicht nie den Server. Spieler fragen deinen Client per `User#query` – der Server leitet die Anfrage nur an dich weiter und nennt dir den echten Absender – und bekommen nur ihre eigene Sicht zurück. **Der GM muss online sein** und das Geheimwort in seinem Browser eingegeben haben.
+
+- Schreib das Geheimwort auf – ohne es lassen sich verschlüsselte Seiten nicht mehr öffnen.
+- Auf einem anderen Gerät: im Fenster *Geheimmodus* einmal eingeben.
+- Was ein Spieler einmal gesehen hat, liegt in seinem Browser – das ist gewollt.
+- Name, Art, Bild und Audio einer Seite sind nicht verschlüsselt (Dateien in Foundrys Datenordner sind für jeden abrufbar).
+- Ohne Geheimmodus gilt das Verhalten aus Phase 1: Filtern im Browser, über die Entwicklerkonsole lesbar.
 
 ## Entwicklung
 
@@ -97,10 +122,15 @@ node tools/cordex-vorschau.mjs   # alle Cordex-Zeichen als HTML
 - `scripts/zeigen.mjs` – Lesestufe, letzter Duality-Wurf, „Zeigen…“
 - `scripts/animation.mjs` · `fenster.mjs` – Aufbau-Animation und Hologramm-Fenster
 - `scripts/audio.mjs` · `rauschen.mjs` – Socket „für alle“, Rauschteppich (Web Audio)
+- `scripts/krypto.mjs` · `geheim.mjs` · `geheim-fenster.mjs` – Geheimmodus
+- `scripts/anfragen.mjs` – Anfragen an den GM (Sicht, Entschlüsseln, Freigeben)
+- `scripts/seite.mjs` – Flags einer Seite und die Sicht für einen Benutzer
+- `scripts/entschluesseln.mjs` · `funde.mjs` · `beute.mjs`
 - In der Konsole: `game.modules.get("motherboard-data-carrier-journal").api`
 
 ## Phasen
 
 1. **Grundgerüst** – Seitenart, Markieren, Ansicht je Spieler mit Clank-Regel, Audio, schlichter Skin. ✔
-2. **Skins** – drei Skins mit Animation, Hologramm-Fenster, eigene Cordex-Zeichen, Rauschteppich, Lesestufe aus dem Duality-Ergebnis. ✔ ← jetzt
-3. Geheimmodus über den Socket, Journal *Funde*, Item *Datenträger* als Beute.
+2. **Skins** – drei Skins mit Animation, Hologramm-Fenster, eigene Cordex-Zeichen, Rauschteppich, Lesestufe aus dem Duality-Ergebnis. ✔
+3. **Geheimmodus und Entschlüsseln** – verschlüsselter Volltext, Sicht vom GM, Entschlüsseln-Wurf mit Konsequenzen, Journal *Funde*, Beute-Item. ✔ ← jetzt
+4. Text aus Audio: Skript an der Aufnahme ausrichten (Forced Alignment), Lücken im Ton je Zuhörer.
