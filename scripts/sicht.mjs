@@ -3,7 +3,7 @@
  * und in Phase 3 beim GM, der dann nur das Ergebnis über den Socket schickt.
  */
 import { zerlege, htmlZuText, escapeHtml, falte } from "./syntax.mjs";
-import { cordexText, fnv1a, zufall } from "./cordex.mjs";
+import { cordexHtml, fnv1a, zufall } from "./cordex.mjs";
 import { STUFEN, STANDARD_ERSATZ, OHNE_LESER, OHNE_TEXT } from "./konstanten.mjs";
 
 /**
@@ -106,7 +106,7 @@ function verdeckt(luecke, texte) {
   switch (luecke.art) {
     case "unübersetzt":
     case "fremd":
-      return span("cordex", escapeHtml(cordexText(text)), luecke.art);
+      return span("cordex", cordexHtml(text, texte.cordex), luecke.art);
     case "befallen":
       return span("befallen", luecke.ersatz ?? escapeHtml(stottern(text, z)), luecke.art);
     case "verrauscht":
@@ -169,7 +169,8 @@ const STANDARD_TEXTE = {
   fuerDichLesbar: "Für dich lesbar",
   lesbar: "lesbar",
   niemand: "nur GM",
-  abgerissen: "abgerissen – ab hier fehlt alles"
+  abgerissen: "abgerissen – ab hier fehlt alles",
+  cordex: "Cordex"
 };
 
 /**

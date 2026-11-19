@@ -24,7 +24,8 @@ function sichtTexte() {
     fuerDichLesbar: L("DATENTRAEGER.Ansicht.FuerDichLesbar"),
     lesbar: L("DATENTRAEGER.Ansicht.Lesbar"),
     niemand: L("DATENTRAEGER.Bearbeiten.Niemand"),
-    abgerissen: L("DATENTRAEGER.Ansicht.Abgerissen")
+    abgerissen: L("DATENTRAEGER.Ansicht.Abgerissen"),
+    cordex: L("DATENTRAEGER.Ansicht.Cordex")
   };
 }
 

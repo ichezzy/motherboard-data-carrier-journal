@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { baueSicht, kannLesen, niemand, gmLeser, schliesseTags } from "../scripts/sicht.mjs";
 import { luecken } from "../scripts/syntax.mjs";
-import { cordexText } from "../scripts/cordex.mjs";
+import { cordexHtml } from "../scripts/cordex.mjs";
 
 const erinys = { gm: false, ancestries: new Set(["clank"]), namen: new Set(["erinys"]), stufe: null };
 const vanya = { gm: false, ancestries: new Set(["human"]), namen: new Set(["vanya"]), stufe: null };
@@ -19,7 +19,8 @@ test("Abnahme: Erinys (Clank) liest genau die eine Stelle", () => {
   assert.ok(html.includes("Bergung nach Bedarf"));
   assert.ok(!html.includes("Front aus drei"));
   assert.ok(!html.includes("unterwegs"));
-  assert.ok(html.includes(cordexText("Front aus drei")));
+  assert.ok(html.includes(cordexHtml("Front aus drei")));
+  assert.ok(html.includes("dt-cordex-wort"));
 });
 
 test("Abnahme: Vanya sieht nur Zeichen", () => {

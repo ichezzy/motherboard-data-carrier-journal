@@ -32,3 +32,18 @@ test("wiederkehrendes Wort ist im Satz wiederzuerkennen", () => {
   const [a, , c] = t.split(" ");
   assert.equal(a, c);
 });
+
+test("SVG-Zeichen: 40 verschiedene Formen", async () => {
+  const { zeichenPfad, ANZAHL_ZEICHEN } = await import("../scripts/cordex.mjs");
+  const pfade = new Set(Array.from({ length: ANZAHL_ZEICHEN }, (_, i) => zeichenPfad(i)));
+  assert.equal(pfade.size, ANZAHL_ZEICHEN);
+});
+
+test("cordexHtml: Wörter als SVG, kein Klartext, Satzzeichen bleiben", async () => {
+  const { cordexHtml } = await import("../scripts/cordex.mjs");
+  const html = cordexHtml("Front aus drei. <b>");
+  assert.equal((html.match(/<svg /g) ?? []).length, 4);
+  assert.ok(!/Front|aus|drei/.test(html));
+  assert.ok(html.includes("&lt;"), "Sonderzeichen werden escaped");
+  assert.equal(cordexHtml("Mast"), cordexHtml("mast"));
+});
