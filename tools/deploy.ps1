@@ -47,7 +47,7 @@ foreach ($eintrag in Get-ChildItem $zwischen) {
   scp -r -q $eintrag.FullName "${hostName}:$pfad.neu/"
   if ($LASTEXITCODE -ne 0) { throw "scp fehlgeschlagen bei $($eintrag.Name)." }
 }
-ssh $hostName "set -e; cd '$eltern'; rm -rf '$pfad.alt'; if [ -d '$pfad' ]; then mv '$pfad' '$pfad.alt'; fi; mv '$pfad.neu' '$pfad'; rm -rf '$pfad.alt'; chown -R --reference=. '$pfad'"
+ssh $hostName "set -e; cd '$eltern'; rm -rf '$pfad.alt'; if [ -d '$pfad' ]; then mv '$pfad' '$pfad.alt'; fi; mv '$pfad.neu' '$pfad'; rm -rf '$pfad.alt'; chown -R --reference=. '$pfad'; chmod -R u=rwX,g=rX,o= '$pfad'"
 if ($LASTEXITCODE -ne 0) { throw "Austausch auf dem Server fehlgeschlagen." }
 
 Remove-Item $zwischen -Recurse -Force
