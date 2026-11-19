@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skin-Vorschau</title>
+<!-- Vorschau der drei Skins ohne Foundry. Aus dem Repo-Ordner über einen lokalen Webserver öffnen,
+     z. B. npx http-server . und dann /tools/vorschau.html -->
+<link rel="stylesheet" href="../styles/datentraeger.css">
+<style>
+  body {
+    margin: 0;
+    padding: 1rem;
+    font: 14px/1.4 system-ui, sans-serif;
+    color: #ddd;
+    background: radial-gradient(circle at 30% 20%, #3c4a3a, #1d2320 60%), #1d2320;
+    min-height: 100vh;
+  }
+  .steuer { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin-bottom: 1rem; }
+  .steuer label { display: flex; gap: .35rem; align-items: center; }
+  .reihe { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1rem; align-items: start; }
+  /* grobe Nachbildung eines Foundry-Journalfensters */
+  .application.journal-entry {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #ece4d4;
+    color: #222;
+    box-shadow: 0 4px 16px #0008;
+  }
+  .application .window-header { padding: .4rem .7rem; background: #23221d; color: #eee; font-weight: 600; }
+  .application .window-content { padding: 0; }
+  .application .journal-entry-content { padding: .5rem 1rem 1rem; }
+  .application .journal-header .title { font-size: 1.4rem; text-align: center; margin: .3rem 0 .6rem; }
+  button { font: inherit; }
+</style>
+</head>
+<body>
+<div class="steuer">
+  <label>Leser
+    <select id="leser">
+      <option value="vanya">Vanya (Human)</option>
+      <option value="erinys">Erinys (Clank)</option>
+      <option value="gm">GM</option>
+    </select>
+  </label>
+  <label>Ergebnis
+    <select id="stufe">
+      <option value="">–</option>
+      <option>Critical Success</option><option>Success with Hope</option><option>Success with Fear</option>
+      <option>Failure with Hope</option><option>Failure with Fear</option>
+    </select>
+  </label>
+  <label>Fenster
+    <select id="fenster"><option value="art">je nach Art</option><option value="holo">immer Hologramm</option><option value="normal">normal</option></select>
+  </label>
+  <button id="neu" type="button">Neu aufbauen</button>
+</div>
+<div class="reihe" id="ziel"></div>
+
+<script type="module">
+import { baueSicht, gmLeser } from "../scripts/sicht.mjs";
+import { starteAufbau } from "../scripts/animation.mjs";
+
+const SEITEN = {
+  anthanen: {
+    titel: "Meldung eines Melders",
+    text: "<p>MELDUNG · {{unübersetzt: Kreischer}} 7 an Station {{unübersetzt: Westhalde}}</p>"
+      + "<p>Front aus {{unübersetzt: drei}}. Verschüttet: 4.</p>"
+      + "<p>Bergung: 1 (helle Halle). {{unübersetzt | Clank: 3 (dunkle Halle) – nach Bedarf}}.</p>"
+      + "<p>{{befallen: Melder unterwegs. Melder unterwegs.}} {{zerfallen: Antwort erbeten}}</p>"
+      + "<p>{{unübersetzt | Success with Hope: Die Kapsel trägt das Siegel der Station.}}</p>"
+  },
+  signal: {
+    titel: "Unter dem Limen",
+    text: "<p>… hier spricht {{verrauscht: Draugas}}, wer das hört –</p>"
+      + "<p>Treffpunkt {{übersprochen | Clank: am alten Mast &gt;&gt; ♪ Der Ticker hält dich wach! ♪}}, wenn der Takt stolpert.</p>"
+      + "<p>Bringt {{fremd: Cordex-Schlüssel}} mit. Und sagt Rook nicht{{abgerissen}}, dass wir</p><p>Rest der Nachricht</p>"
+  },
+  modul: {
+    titel: "CDBF · Mahnung",
+    text: "<p>KENNUNG: {{geschwärzt: 4471-AX-09}}</p>"
+      + "<p>KONTOSTAND: {{gesperrt: 12 Kn}}</p>"
+      + "<p>STATUS: {{überschrieben | @Vanya: beglichen &gt;&gt; offen – 340 Kn}}</p>"
+      + "<p>LETZTER ZUGRIFF: {{beschädigt: Paralign Harkwell}}</p>"
+      + "<p>Support endet in 3 Tagen.</p>"
+  }
+};
+
+const LESER = {
+  vanya: { gm: false, ancestries: new Set(["human"]), namen: new Set(["vanya"]), stufe: null },
+  erinys: { gm: false, ancestries: new Set(["clank"]), namen: new Set(["erinys"]), stufe: null },
+  gm: gmLeser()
+};
+
+function zeichne() {
+  const leser = { ...LESER[document.getElementById("leser").value] };
+  const stufe = document.getElementById("stufe").value || null;
+  if (!leser.gm) leser.stufe = stufe;
+  const fenster = document.getElementById("fenster").value;
+  const ziel = document.getElementById("ziel");
+  ziel.innerHTML = "";
+  for (const [art, seite] of Object.entries(SEITEN)) {
+    const holo = fenster === "holo" || (fenster === "art" && art === "anthanen");
+    const { html } = baueSicht(seite.text, leser);
+    ziel.insertAdjacentHTML("beforeend", `
+      <div class="application sheet journal-entry ${holo ? "mdcj-holo" : ""}">
+        <header class="window-header">${art}</header>
+        <section class="window-content"><div class="journal-entry-content">
+          <header class="journal-header"><div class="title">${seite.titel}</div></header>
+          <article class="datentraeger-ansicht" data-art="${art}">
+            <div class="dt-buehne">
+              <div class="dt-baender" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              <div class="dt-schirm" data-art="${art}">
+                <div class="dt-schirm-kopf"><span class="dt-art-label">${art}</span></div>
+                <section class="dt-text journal-page-content">${html}</section>
+                <span class="dt-cursor" aria-hidden="true"></span>
+                <div class="dt-tuner" aria-hidden="true"><div class="dt-limen"></div><div class="dt-rauschband"></div></div>
+              </div>
+              <div class="dt-scheibe" aria-hidden="true"><div class="dt-ring"></div></div>
+            </div>
+          </article>
+        </div></section>
+      </div>`);
+  }
+  for (const a of ziel.querySelectorAll(".datentraeger-ansicht")) starteAufbau(a);
+}
+
+for (const id of ["leser", "stufe", "fenster"]) document.getElementById(id).addEventListener("change", zeichne);
+document.getElementById("neu").addEventListener("click", zeichne);
+zeichne();
+</script>
+</body>
+</html>

@@ -6,6 +6,8 @@ import { LeserFenster } from "./leser-fenster.mjs";
 import { markiereAuswahl } from "./markieren.mjs";
 import { fuerAlleAbspielen, fuerAlleStoppen } from "./audio.mjs";
 import { stufeVon, setzeStufe, stufenOptionen, zeigenDialog } from "./zeigen.mjs";
+import { starteAufbau } from "./animation.mjs";
+import { fnv1a } from "./cordex.mjs";
 
 const { JournalEntryPageHandlebarsSheet } = foundry.applications.sheets.journal;
 
@@ -67,9 +69,12 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
     footer: super.EDIT_PARTS.footer
   };
 
+  /**
+   * Kein `root: true`: Damit übernimmt Foundry nur die Kinder des Templates und das
+   * <article class="datentraeger-ansicht"> (an dem Skin und Animation hängen) fiele weg.
+   */
   static VIEW_PARTS = {
     content: {
-      root: true,
       template: `modules/${MODUL_ID}/templates/ansicht.hbs`
     }
   };
@@ -79,6 +84,9 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
 
   /** Der ProseMirror-Editor des Haupttexts (nur im Bearbeiten-Modus). */
   #editorView = null;
+
+  /** Text und Ergebnis beim letzten Aufbau – nur bei Änderung neu animieren. */
+  #aufbauSchluessel = null;
 
   /* -------------------------------------------- */
   /*  Kontext                                     */
@@ -262,5 +270,19 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
       event.preventDefault();
       fuerAlleStoppen();
     });
+
+    const ansicht = el.querySelector(".datentraeger-ansicht") ?? el;
+    el.querySelector("[data-dt-aktion='neu']")?.addEventListener("click", event => {
+      event.preventDefault();
+      starteAufbau(ansicht);
+    });
+
+    // Aufbau beim ersten Anzeigen, bei neuem Text und bei neuem Ergebnis –
+    // nicht, wenn der GM nur die Ansicht umschaltet.
+    const schluessel = `${fnv1a(this.document.system.text ?? "")}|${stufeVon(this.document) ?? ""}`;
+    if (schluessel !== this.#aufbauSchluessel) {
+      this.#aufbauSchluessel = schluessel;
+      starteAufbau(ansicht);
+    }
   }
 }

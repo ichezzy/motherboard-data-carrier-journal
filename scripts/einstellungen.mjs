@@ -1,5 +1,6 @@
 import { MODUL_ID } from "./konstanten.mjs";
 import { LeserFenster } from "./leser-fenster.mjs";
+import { aktualisiereOffeneJournale } from "./fenster.mjs";
 
 export function registriereEinstellungen() {
   game.settings.register(MODUL_ID, "bewegung", {
@@ -15,6 +16,21 @@ export function registriereEinstellungen() {
     },
     default: "system",
     onChange: wendeBewegungAn
+  });
+
+  game.settings.register(MODUL_ID, "fenster", {
+    name: "DATENTRAEGER.Einstellung.Fenster.Name",
+    hint: "DATENTRAEGER.Einstellung.Fenster.Hint",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      art: "DATENTRAEGER.Einstellung.Fenster.art",
+      holo: "DATENTRAEGER.Einstellung.Fenster.holo",
+      normal: "DATENTRAEGER.Einstellung.Fenster.normal"
+    },
+    default: "art",
+    onChange: () => aktualisiereOffeneJournale()
   });
 
   game.settings.registerMenu(MODUL_ID, "leser", {

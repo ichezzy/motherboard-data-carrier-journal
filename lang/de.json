@@ -33,7 +33,11 @@
         },
         "gmNotiz": {
           "label": "GM-Notiz",
-          "hint": "Erscheint bei keinem Spieler in der Ansicht. In Phase 1 kann ein Spieler sie über die Entwicklerkonsole trotzdem auslesen."
+          "hint": "Erscheint bei keinem Spieler in der Ansicht. Bis zum Geheimmodus (Phase 3) kann ein Spieler sie über die Entwicklerkonsole trotzdem auslesen."
+        },
+        "rauschen": {
+          "label": "Rauschteppich",
+          "hint": "Leises Rauschen unter dem Audio. 0 = aus. Jeder Spieler kann es in der Ansicht für sich leiser oder lauter stellen."
         }
       }
     },
@@ -125,6 +129,13 @@
         "system": "Wie im System",
         "an": "An",
         "aus": "Aus"
+      },
+      "Fenster": {
+        "Name": "Journalfenster",
+        "Hint": "Wie das Journalfenster aussieht, wenn es einen Datenträger zeigt.",
+        "art": "Je nach Art (Anthanen als Hologramm)",
+        "holo": "Immer als Hologramm",
+        "normal": "Normales Journal"
       },
       "Leser": {
         "Name": "Leser",

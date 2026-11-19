@@ -27,13 +27,21 @@
   </div>
   {{/if}}
 
-  <div class="dt-schirm" data-art="{{system.art}}">
-    <div class="dt-schirm-kopf">
-      <span class="dt-art-label">{{artLabel}}</span>
-      {{#if lesestand}}<span class="dt-lesestand">{{lesestand}}</span>{{/if}}
+  <div class="dt-buehne">
+    <div class="dt-baender" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="dt-schirm" data-art="{{system.art}}">
+      <div class="dt-schirm-kopf">
+        <span class="dt-art-label">{{artLabel}}</span>
+        {{#if lesestand}}<span class="dt-lesestand">{{lesestand}}</span>{{/if}}
+        <button type="button" class="dt-neu" data-dt-aktion="neu" data-tooltip="{{localize "DATENTRAEGER.Ansicht.NeuAufbauen"}}"
+                aria-label="{{localize "DATENTRAEGER.Ansicht.NeuAufbauen"}}"><i class="fa-solid fa-rotate-right" inert></i></button>
+      </div>
+      {{#if bild}}<img class="dt-bild" src="{{bild}}" alt="">{{/if}}
+      <section class="dt-text journal-page-content">{{{ansicht}}}</section>
+      <span class="dt-cursor" aria-hidden="true"></span>
+      <div class="dt-tuner" aria-hidden="true"><div class="dt-limen"></div><div class="dt-rauschband"></div></div>
     </div>
-    {{#if bild}}<img class="dt-bild" src="{{bild}}" alt="">{{/if}}
-    <section class="dt-text journal-page-content">{{{ansicht}}}</section>
+    <div class="dt-scheibe" aria-hidden="true"><div class="dt-ring"></div></div>
   </div>
 
   {{#if audio}}
