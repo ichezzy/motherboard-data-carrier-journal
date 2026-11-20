@@ -76,7 +76,9 @@
       "Vorschlag": "Vorschlag aus dem letzten Duality-Wurf ({wer}, {total}): {stufe}.",
       "OhneDifficulty": "Der Wurf hatte keine Difficulty – Success oder Failure bitte selbst wählen.",
       "KeinWurf": "Kein Duality-Wurf im Chat gefunden.",
-      "AnAlle": "Danach allen Spielern zeigen"
+      "AnAlle": "Danach allen Spielern zeigen",
+      "Total": "Gesamtwert",
+      "TotalHinweis": "Stellen mit DC öffnen sich für alle bis zu diesem Gesamtwert. Leer: Bei einem Erfolg zählt die Difficulty der Seite."
     },
     "Markieren": {
       "Knopf": "Lücke markieren",
@@ -98,7 +100,11 @@
       "Abbrechen": "Abbrechen",
       "KeinEditor": "Der Editor ist noch nicht bereit. Klick einmal in den Text und versuch es noch mal.",
       "NichtLeer": "Markiere zuerst ein Stück Text. Nur „abgerissen“ und „zerfallen“ gehen ohne.",
-      "EinAbsatz": "Eine Markierung muss innerhalb eines Absatzes bleiben."
+      "EinAbsatz": "Eine Markierung muss innerhalb eines Absatzes bleiben.",
+      "Andere": "Andere Lücken",
+      "DC": "DC",
+      "DCLeer": "Difficulty der Seite",
+      "DCHinweis": "Öffnet die Stelle für jeden, der mit mindestens diesem Gesamtwert entschlüsselt. Leer: locked, redacted, static und crosstalk nehmen die Difficulty der Seite; andere Lücken gehen per Wurf nicht auf."
     },
     "Ansicht": {
       "Als": "Ansicht",
@@ -125,7 +131,6 @@
       "UnbekannterCharakter": "Kein Charakter „{name}“ gefunden.",
       "UnbekannteAncestry": "Kein Charakter mit der Ancestry „{name}“ gefunden.",
       "ZerfallenOhneLeser": "„zerfallen“ fehlt für alle – die Leser werden ignoriert.",
-      "AndereArt": "Gehört eigentlich zur Art „{art}“.",
       "LeerText": "Kein Text markiert."
     },
     "Leser": {
@@ -234,8 +239,8 @@
       "FreigebenKnopf": "Für alle freigeben",
       "Freigegeben": "Für alle freigegeben.",
       "Geteilt": "für alle freigegeben",
-      "StatusEigen": "Du hast entschlüsselt: {stufe}",
-      "StatusGeteilt": "{name} hat entschlüsselt und freigegeben: {stufe}",
+      "StatusEigen": "Du hast entschlüsselt: {stufe} ({total})",
+      "StatusGeteilt": "{name} hat entschlüsselt und freigegeben: {stufe} ({total})",
       "StatusFremd": "{name} hat entschlüsselt – noch nicht freigegeben.",
       "StatusGM": "{name} hat entschlüsselt: {stufe} ({total} gegen {difficulty})",
       "GmMeldung": "{name} hat „{seite}“ entschlüsselt: {stufe} ({total} gegen {difficulty}).",

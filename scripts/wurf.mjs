@@ -1,7 +1,7 @@
 /**
  * Duality-Wurf → Lesestufe, und wer welche Stufe hat. Ohne Foundry, damit es testbar bleibt.
  */
-import { STUFEN, OHNE_TEXT } from "./konstanten.mjs";
+import { STUFEN, OHNE_TEXT, OHNE_LESER, DC_STANDARD } from "./konstanten.mjs";
 
 /**
  * @param {{kritisch: boolean, erfolg?: boolean, hope: boolean}} wurf
@@ -40,6 +40,36 @@ export function wirksameStufe({ gruppe = null, versuch = null } = {}, { userId =
   return stufe;
 }
 
+/** Ergebnisse, die als Erfolg zählen (Wurf mindestens so hoch wie die Difficulty). */
+export function istErfolg(stufe) {
+  return stufe === "Critical Success" || stufe === "Success with Hope" || stufe === "Success with Fear";
+}
+
+/**
+ * Welcher DC gilt für diese Lücke? Der niedrigste „DC n“ an der Stelle; sonst bei
+ * locked, redacted, static, crosstalk die Difficulty der Seite; sonst keiner (null).
+ */
+export function dcVon(luecke, difficulty = null) {
+  if (!luecke?.gueltig || OHNE_LESER.has(luecke.art)) return null;
+  const eigene = (luecke.leser ?? []).filter(r => r.art === "dc").map(r => r.wert);
+  if (eigene.length) return Math.min(...eigene);
+  return DC_STANDARD.has(luecke.art) && Number.isFinite(difficulty) ? difficulty : null;
+}
+
+/**
+ * Welcher Wurf-Gesamtwert gilt für diesen Leser? Der höhere aus
+ * - gruppe: vom GM beim Zeigen gesetzt (gilt für alle)
+ * - versuch.total: eigenes Entschlüsseln, nach „Für alle freigeben“ für alle
+ */
+export function wirksamerTotal({ gruppe = null, versuch = null } = {}, { userId = null, actorId = null } = {}) {
+  let total = Number.isFinite(gruppe) ? gruppe : null;
+  if (versuch && Number.isFinite(versuch.total)) {
+    const eigener = (userId && versuch.userId === userId) || (actorId && versuch.actorId === actorId);
+    if (versuch.geteilt || eigener) total = total === null ? versuch.total : Math.max(total, versuch.total);
+  }
+  return total;
+}
+
 /** Ist diese Lücke allein über ihre Lesestufe bei `stufe` lesbar? */
 function perStufeLesbar(luecke, stufe) {
   const i = STUFEN.indexOf(stufe);
@@ -54,12 +84,17 @@ function perStufeLesbar(luecke, stufe) {
  * @param {string} stufe
  * @param {number[]} schonZerfallen
  * @param {() => number} zufall  0 … 1
+ * @param {{total?: number|null, difficulty?: number|null}} [wurf]  Was dieser Wurf per DC öffnet, bleibt auch
  * @returns {number|null}  Nummer der Lücke
  */
-export function zerfallStelle(luecken, stufe, schonZerfallen = [], zufall = Math.random) {
+export function zerfallStelle(luecken, stufe, schonZerfallen = [], zufall = Math.random, { total = null, difficulty = null } = {}) {
   const weg = new Set(schonZerfallen);
+  const perDcLesbar = l => {
+    const dc = dcVon(l, difficulty);
+    return dc !== null && Number.isFinite(total) && total >= dc;
+  };
   const kandidaten = luecken.filter(l =>
-    l.gueltig && !OHNE_TEXT.has(l.art) && !weg.has(l.nr) && !perStufeLesbar(l, stufe));
+    l.gueltig && !OHNE_TEXT.has(l.art) && !weg.has(l.nr) && !perStufeLesbar(l, stufe) && !perDcLesbar(l));
   if (!kandidaten.length) return null;
   return kandidaten[Math.floor(zufall() * kandidaten.length)].nr;
 }

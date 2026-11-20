@@ -122,11 +122,13 @@ export function leseLeser(text) {
     .filter(Boolean)
     .map(t => {
       if (t.startsWith("@")) return { art: "charakter", name: t.slice(1).trim() };
+      const dc = /^dc\s*(\d{1,2})$/i.exec(t);
+      if (dc) return { art: "dc", wert: Number(dc[1]) };
       const stufe = STUFE_NACH_FALTE.get(falte(t));
       if (stufe) return { art: "stufe", wert: stufe };
       return { art: "ancestry", name: t };
     })
-    .filter(r => r.art === "stufe" || r.name);
+    .filter(r => r.art === "stufe" || r.art === "dc" || r.name);
 }
 
 /** Inneres einer Markierung (zwischen `{{` und `}}`) lesen. */
@@ -200,8 +202,9 @@ export function luecken(html) {
  * @param {{art: string, ancestries?: string[], charaktere?: string[], stufen?: string[], ersatz?: string}} daten
  * @returns {{vor: string, nach: string, ohneText: string}}
  */
-export function markierungsRahmen({ art, ancestries = [], charaktere = [], stufen = [], ersatz = "" }) {
+export function markierungsRahmen({ art, ancestries = [], charaktere = [], stufen = [], ersatz = "", dc = null }) {
   const leser = [
+    ...(Number.isInteger(dc) && dc > 0 ? [`DC ${dc}`] : []),
     ...ancestries.map(a => a.trim()).filter(Boolean),
     ...charaktere.map(c => c.trim()).filter(Boolean).map(c => `@${c}`),
     ...stufen

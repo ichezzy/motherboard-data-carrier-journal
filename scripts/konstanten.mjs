@@ -52,6 +52,13 @@ export function lueckenWort(art) {
 /** Lücken, bei denen hinter `>>` ein Ersatztext stehen kann. */
 export const MIT_ERSATZ = new Set(["übersprochen", "überschrieben", "gesperrt", "befallen"]);
 
+/**
+ * Lücken, die ein Entschlüsseln-Wurf öffnet, auch ohne eigene Regel:
+ * Ohne „DC n“ an der Stelle gilt die Difficulty der Seite (Schritt 1, 0.5.0).
+ * corrupted, decayed, cutoff und overwritten öffnen nur mit einem DC, den der GM setzt.
+ */
+export const DC_STANDARD = new Set(["gesperrt", "geschwärzt", "verrauscht", "übersprochen"]);
+
 /** Lücken, die für alle fehlen – Leser-Regeln werden ignoriert. */
 export const OHNE_LESER = new Set(["zerfallen"]);
 

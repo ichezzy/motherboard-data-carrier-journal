@@ -1,12 +1,12 @@
 import { MODUL_ID, LUECKEN, OHNE_LESER, OHNE_TEXT, STANDARD_ANCESTRY, lueckenWort } from "./konstanten.mjs";
 import { luecken, htmlZuText, falte } from "./syntax.mjs";
-import { beschreibeRegel } from "./sicht.mjs";
+import { beschreibeLeser } from "./sicht.mjs";
 import { spielerCharaktere, erkannteAncestries } from "./leser.mjs";
 import { LeserFenster } from "./leser-fenster.mjs";
 import { markiereAuswahl } from "./markieren.mjs";
 import { fuerAlleAbspielen, fuerAlleStoppen, laeuftFuerAlle, markierePlayer } from "./audio.mjs";
 import { stufenOptionen, zeigenDialog } from "./zeigen.mjs";
-import { stufeVon, setzeStufe, versuchVon, zustandVon, wurfVon, zuruecksetzen, sichtFuer } from "./seite.mjs";
+import { stufeVon, setzeStufe, gruppenTotalVon, versuchVon, zustandVon, wurfVon, zuruecksetzen, sichtFuer } from "./seite.mjs";
 import { starteAufbau } from "./animation.mjs";
 import { starteRauschen, setzeRauschStaerke, stoppeRauschen } from "./rauschen.mjs";
 import { fnv1a, cordexAufloesen } from "./cordex.mjs";
@@ -28,11 +28,6 @@ function anreichern(html, document, secrets) {
 function kurz(text, max = 70) {
   const t = text.replace(/\s+/g, " ").trim();
   return t.length > max ? `${t.slice(0, max - 1)}…` : t;
-}
-
-/** Zu welcher Art eine Lücke gehört. */
-function artVonLuecke(luecke) {
-  return Object.keys(LUECKEN).find(a => LUECKEN[a].includes(luecke)) ?? null;
 }
 
 /** Öffnet das Fenster „Leser“ (nur eins gleichzeitig). */
@@ -150,9 +145,9 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
       context.freigebenMoeglich = eigener && !versuch.geteilt && !zustand.zerstoert;
       if (versuch) {
         context.versuchText = eigener
-          ? F("DATENTRAEGER.Entschluesseln.StatusEigen", { stufe: versuch.stufe })
+          ? F("DATENTRAEGER.Entschluesseln.StatusEigen", { stufe: versuch.stufe, total: versuch.total })
           : versuch.geteilt
-            ? F("DATENTRAEGER.Entschluesseln.StatusGeteilt", { name: versuch.actorName, stufe: versuch.stufe })
+            ? F("DATENTRAEGER.Entschluesseln.StatusGeteilt", { name: versuch.actorName, stufe: versuch.stufe, total: versuch.total })
             : F("DATENTRAEGER.Entschluesseln.StatusFremd", { name: versuch.actorName });
       }
       context.entschluesselnLeiste = Boolean(
@@ -207,6 +202,7 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
     context.geheimAn = geheimmodusAn();
     context.lueckenHilfe = (LUECKEN[system.art] ?? []).map(lueckenWort).join(" · ");
 
+    const { difficulty } = wurfVon(page);
     const charaktere = spielerCharaktere();
     const namen = new Set(charaktere.flatMap(a => {
       const f = falte(a.name);
@@ -219,7 +215,7 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
       art: l.art ?? l.artRoh,
       wort: l.art ? lueckenWort(l.art) : l.artRoh,
       gueltig: l.gueltig,
-      leser: OHNE_LESER.has(l.art) ? "–" : (l.leser.map(beschreibeRegel).join(", ") || L("DATENTRAEGER.Bearbeiten.Niemand")),
+      leser: OHNE_LESER.has(l.art) ? "–" : (beschreibeLeser(l, difficulty).join(", ") || L("DATENTRAEGER.Bearbeiten.Niemand")),
       text: kurz(htmlZuText(l.inhalt)),
       ersatz: l.ersatz ? kurz(htmlZuText(l.ersatz)) : null,
       warnungen: this._pruefe(l, system.art, namen, ancestries)
@@ -232,9 +228,6 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
     if (!l.gueltig) w.push(F("DATENTRAEGER.Warnung.UnbekannteArt", { art: l.artRoh }));
     if (l.ueberBlock) w.push(L("DATENTRAEGER.Warnung.UeberAbsatz"));
     if (l.gueltig && !l.inhalt && !OHNE_TEXT.has(l.art)) w.push(L("DATENTRAEGER.Warnung.LeerText"));
-    if (l.gueltig && !LUECKEN[seitenArt]?.includes(l.art)) {
-      w.push(F("DATENTRAEGER.Warnung.AndereArt", { art: L(`DATENTRAEGER.Art.${artVonLuecke(l.art)}`) }));
-    }
     if (OHNE_LESER.has(l.art) && l.leser.length) w.push(L("DATENTRAEGER.Warnung.ZerfallenOhneLeser"));
     for (const regel of l.leser) {
       if (regel.art === "charakter" && !namen.has(falte(regel.name))) w.push(F("DATENTRAEGER.Warnung.UnbekannterCharakter", { name: regel.name }));
@@ -404,7 +397,7 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
     const versuch = versuchVon(page);
     const zustand = zustandVon(page);
     const schluessel = [
-      fnv1a(page.system.geheim || page.system.text || ""), stufeVon(page) ?? "",
+      fnv1a(page.system.geheim || page.system.text || ""), stufeVon(page) ?? "", gruppenTotalVon(page) ?? "",
       versuch?.stufe ?? "", versuch?.geteilt ?? "", zustand.zerstoert, zustand.zerfallen.length
     ].join("|");
     if (schluessel !== this.#aufbauSchluessel) {

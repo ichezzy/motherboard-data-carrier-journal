@@ -5,6 +5,7 @@
 import { zerlege, htmlZuText, escapeHtml, falte } from "./syntax.mjs";
 import { cordexHtml, cordexPlatzhalter, fnv1a, zufall } from "./cordex.mjs";
 import { STUFEN, STANDARD_ERSATZ, OHNE_LESER, OHNE_TEXT, lueckenWort } from "./konstanten.mjs";
+import { dcVon } from "./wurf.mjs";
 
 /**
  * @typedef {object} Leser
@@ -12,21 +13,27 @@ import { STUFEN, STANDARD_ERSATZ, OHNE_LESER, OHNE_TEXT, lueckenWort } from "./k
  * @property {Set<string>} ancestries     Gefaltete Ancestry-Namen, z. B. "clank"
  * @property {Set<string>} namen          Gefaltete Charakternamen (voll und Vorname)
  * @property {string|null} stufe          Gezeigtes Duality-Ergebnis (Phase 2)
+ * @property {number|null} [total]        Gesamtwert des Entschlüsseln-Wurfs, der für ihn gilt (0.5.0)
  */
 
 /** Ein Leser ohne Charakter: liest keine Lücke. */
 export function niemand() {
-  return { gm: false, ancestries: new Set(), namen: new Set(), stufe: null };
+  return { gm: false, ancestries: new Set(), namen: new Set(), stufe: null, total: null };
 }
 
 export function gmLeser() {
-  return { gm: true, ancestries: new Set(), namen: new Set(), stufe: null };
+  return { gm: true, ancestries: new Set(), namen: new Set(), stufe: null, total: null };
 }
 
-/** Darf dieser Leser die Lücke im Klartext sehen? Eine passende Regel reicht. */
-export function kannLesen(luecke, leser) {
+/**
+ * Darf dieser Leser die Lücke im Klartext sehen? Eine passende Regel reicht.
+ * @param {number|null} [difficulty]  Difficulty der Seite – Standard-DC für locked, redacted, static, crosstalk
+ */
+export function kannLesen(luecke, leser, difficulty = null) {
   if (leser.gm) return true;
   if (!luecke.gueltig || OHNE_LESER.has(luecke.art)) return false;
+  const dc = dcVon(luecke, difficulty);
+  if (dc !== null && Number.isFinite(leser.total) && leser.total >= dc) return true;
   return luecke.leser.some(regel => {
     switch (regel.art) {
       case "ancestry": return leser.ancestries.has(falte(regel.name));
@@ -41,6 +48,7 @@ export function kannLesen(luecke, leser) {
 export function beschreibeRegel(regel) {
   if (regel.art === "charakter") return `@${regel.name}`;
   if (regel.art === "stufe") return regel.wert;
+  if (regel.art === "dc") return `DC ${regel.wert}`;
   return regel.name;
 }
 
@@ -141,9 +149,18 @@ function gelesen(luecke, texte) {
   return `<span class="dt-gelesen" data-art="${escapeHtml(luecke.art)}" data-tooltip="${escapeHtml(tip)}">${luecke.inhalt}</span>`;
 }
 
-function gmAnsicht(luecke, texte) {
+/** Leser-Regeln für Menschen – samt Standard-DC, wenn die Stelle keinen eigenen hat. */
+export function beschreibeLeser(luecke, difficulty = null) {
+  const regeln = luecke.leser.map(beschreibeRegel);
+  const dc = dcVon(luecke, difficulty);
+  if (dc !== null && !luecke.leser.some(r => r.art === "dc")) regeln.unshift(`DC ${dc}`);
+  return regeln;
+}
+
+function gmAnsicht(luecke, texte, difficulty) {
   const art = luecke.art ?? "unbekannt";
-  const leser = luecke.leser.length ? luecke.leser.map(beschreibeRegel).join(", ") : texte.niemand;
+  const regeln = beschreibeLeser(luecke, difficulty);
+  const leser = regeln.length ? regeln.join(", ") : texte.niemand;
   const info = luecke.gueltig
     ? `${lueckenWort(art)} · ${texte.lesbar}: ${OHNE_LESER.has(art) ? "–" : leser}`
     : `? “${luecke.artRoh}”`;
@@ -208,12 +225,14 @@ function kaputt(rohHtml, art, t) {
  * @param {number[]} [zustand.zerfallen]  Failure with Hope – diese Lücken fehlen für alle
  * @param {string} [zustand.art]          Art der Seite, für die Optik von „zerstört“
  * @param {boolean} [zustand.archiv]      Für gespeicherte Seiten: Cordex als Platzhalter statt SVG
+ * @param {number} [zustand.difficulty]   Difficulty der Seite (Standard-DC, 0.5.0)
  * @returns {{html: string, gesamt: number, lesbar: number, abgeschnitten: boolean, zerstoert: boolean}}
  */
 export function baueSicht(rohHtml, leser, texte = {}, zustand = {}) {
   const t = { ...STANDARD_TEXTE, ...texte, kaputt: { ...STANDARD_TEXTE.kaputt, ...(texte.kaputt ?? {}) } };
   const zerfallen = new Set(zustand.zerfallen ?? []);
   const archiv = Boolean(zustand.archiv);
+  const difficulty = Number.isFinite(zustand.difficulty) ? zustand.difficulty : null;
   const stuecke = zerlege(rohHtml);
   const gesamt = stuecke.filter(s => s.typ === "luecke").length;
 
@@ -232,7 +251,7 @@ export function baueSicht(rohHtml, leser, texte = {}, zustand = {}) {
     }
     if (leser.gm) {
       lesbar++;
-      let gm = gmAnsicht(stueck, t);
+      let gm = gmAnsicht(stueck, t, difficulty);
       if (zerfallen.has(stueck.nr)) {
         gm = `<span class="dt-gm-zerfallen" data-tooltip="${escapeHtml(t.zerfallenFehlschlag)}">${gm}</span>`;
       }
@@ -243,7 +262,7 @@ export function baueSicht(rohHtml, leser, texte = {}, zustand = {}) {
       html += span("zerfallen", " ".repeat(laenge(htmlZuText(stueck.inhalt))), "zerfallen");
       continue;
     }
-    const kann = kannLesen(stueck, leser);
+    const kann = kannLesen(stueck, leser, difficulty);
     if (kann) lesbar++;
     if (stueck.art === "abgerissen" && !kann) {
       html += verdeckt(stueck, t, archiv);

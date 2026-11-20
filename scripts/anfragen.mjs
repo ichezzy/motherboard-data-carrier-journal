@@ -96,7 +96,7 @@ async function beantworteEntschluesseln({ uuid, messageId }, { user }) {
     flags.zerstoert = true;
     folge = "zerstoert";
   } else if (stufe === "Failure with Hope") {
-    const nr = zerfallStelle(luecken(daten.text), stufe, zustand.zerfallen);
+    const nr = zerfallStelle(luecken(daten.text), stufe, zustand.zerfallen, Math.random, { total: wurf.total, difficulty });
     if (nr !== null) {
       flags.zerfallen = [...zustand.zerfallen, nr];
       folge = "zerfallen";

@@ -10,7 +10,13 @@ const L = key => game.i18n.localize(key);
  * @returns {Promise<{art: string, ersatz: string, ancestries: string[], charaktere: string[]}|null>}
  */
 export async function markierDialog({ seitenArt, auswahl }) {
-  const arten = LUECKEN[seitenArt] ?? ALLE_LUECKEN;
+  // Alle Lücken in allen Arten – die typischen der Art zuerst.
+  const typisch = LUECKEN[seitenArt] ?? [];
+  const andere = ALLE_LUECKEN.filter(a => !typisch.includes(a));
+  const option = a => `<option value="${a}">${lueckenWort(a)}</option>`;
+  const artOptionen = typisch.length
+    ? `${typisch.map(option).join("")}<optgroup label="${escapeHtml(L("DATENTRAEGER.Markieren.Andere"))}">${andere.map(option).join("")}</optgroup>`
+    : ALLE_LUECKEN.map(option).join("");
   const charaktere = spielerCharaktere();
   const auswahlKurz = auswahl.length > 80 ? `${auswahl.slice(0, 79)}…` : auswahl;
 
@@ -20,7 +26,7 @@ export async function markierDialog({ seitenArt, auswahl }) {
       <div class="form-group">
         <label>${L("DATENTRAEGER.Markieren.ArtDerLuecke")}</label>
         <div class="form-fields">
-          <select name="art">${arten.map(a => `<option value="${a}">${lueckenWort(a)}</option>`).join("")}</select>
+          <select name="art">${artOptionen}</select>
         </div>
       </div>
       <div class="form-group">
@@ -32,6 +38,11 @@ export async function markierDialog({ seitenArt, auswahl }) {
       </div>
       <fieldset>
         <legend>${L("DATENTRAEGER.Markieren.WerLiest")}</legend>
+        <div class="form-group">
+          <label>${L("DATENTRAEGER.Markieren.DC")}</label>
+          <div class="form-fields"><input type="number" name="dc" min="1" max="40" step="1" placeholder="${escapeHtml(L("DATENTRAEGER.Markieren.DCLeer"))}"></div>
+          <p class="hint">${L("DATENTRAEGER.Markieren.DCHinweis")}</p>
+        </div>
         <div class="form-group">
           <label class="checkbox"><input type="checkbox" name="mitAncestry"> ${L("DATENTRAEGER.Markieren.Ancestry")}</label>
           <div class="form-fields"><input type="text" name="ancestry" value="${escapeHtml(STANDARD_ANCESTRY)}"></div>
@@ -78,7 +89,8 @@ export async function markierDialog({ seitenArt, auswahl }) {
             ersatz: form.elements.ersatz.value,
             ancestries: ancestry.split(",").map(s => s.trim()).filter(Boolean),
             charaktere: Array.from(form.querySelectorAll("input[name='charaktere']:checked"), i => i.value),
-            stufen: form.elements.stufe.value ? [form.elements.stufe.value] : []
+            stufen: form.elements.stufe.value ? [form.elements.stufe.value] : [],
+            dc: form.elements.dc.value ? Math.round(Number(form.elements.dc.value)) : null
           };
         }
       },

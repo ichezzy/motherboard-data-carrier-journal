@@ -76,7 +76,9 @@
       "Vorschlag": "Suggested from the last Duality roll ({wer}, {total}): {stufe}.",
       "OhneDifficulty": "The roll had no Difficulty – please choose Success or Failure yourself.",
       "KeinWurf": "No Duality roll found in the chat.",
-      "AnAlle": "Then show it to all players"
+      "AnAlle": "Then show it to all players",
+      "Total": "Total",
+      "TotalHinweis": "Passages with a DC open for everyone up to this total. Empty: on a success, the page Difficulty counts."
     },
     "Markieren": {
       "Knopf": "Mark Gap",
@@ -98,7 +100,11 @@
       "Abbrechen": "Cancel",
       "KeinEditor": "The editor isn't ready yet. Click into the text once and try again.",
       "NichtLeer": "Select some text first. Only “cutoff” and “decayed” work without it.",
-      "EinAbsatz": "A marker has to stay within one paragraph."
+      "EinAbsatz": "A marker has to stay within one paragraph.",
+      "Andere": "Other gaps",
+      "DC": "DC",
+      "DCLeer": "page Difficulty",
+      "DCHinweis": "Opens the passage for whoever decrypts with at least this total. Empty: locked, redacted, static and crosstalk use the page Difficulty; other gaps don't open by rolling."
     },
     "Ansicht": {
       "Als": "View as",
@@ -125,7 +131,6 @@
       "UnbekannterCharakter": "No character “{name}” found.",
       "UnbekannteAncestry": "No character with the ancestry “{name}” found.",
       "ZerfallenOhneLeser": "“decayed” is missing for everyone – the readers are ignored.",
-      "AndereArt": "Actually belongs to the type “{art}”.",
       "LeerText": "No text marked."
     },
     "Leser": {
@@ -234,8 +239,8 @@
       "FreigebenKnopf": "Share with Everyone",
       "Freigegeben": "Shared with everyone.",
       "Geteilt": "shared with everyone",
-      "StatusEigen": "You decrypted it: {stufe}",
-      "StatusGeteilt": "{name} decrypted and shared it: {stufe}",
+      "StatusEigen": "You decrypted it: {stufe} ({total})",
+      "StatusGeteilt": "{name} decrypted and shared it: {stufe} ({total})",
       "StatusFremd": "{name} decrypted it – not shared yet.",
       "StatusGM": "{name} decrypted it: {stufe} ({total} vs. {difficulty})",
       "GmMeldung": "{name} decrypted “{seite}”: {stufe} ({total} vs. {difficulty}).",

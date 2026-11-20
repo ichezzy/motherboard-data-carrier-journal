@@ -44,24 +44,25 @@ Foundry-VTT-Modul für *White Signal* (Daggerheart, Foundryborne). Modul-ID `mot
 ```
 
 - `{{ Art | Leser : Text >> Ersatz }}` – Pflicht sind nur Art und Text.
-- **Leser:** `Clank` = Ancestry · `@Erinys` = Charakter (passt auch auf „Erinys Vael“) · `Success with Hope` = Lesestufe (lesbar ab diesem Ergebnis: Failure with Fear < Failure with Hope < Success with Fear < Success with Hope < Critical Success). Eine Regel reicht.
+- **Leser:** `Clank` = Ancestry · `@Erinys` = Charakter (passt auch auf „Erinys Vael“) · `Success with Hope` = Lesestufe (lesbar ab diesem Ergebnis: Failure with Fear < Failure with Hope < Success with Fear < Success with Hope < Critical Success) · `DC 18` = per Wurf ab diesem Gesamtwert. Eine Regel reicht.
+- **Alle Lücken in allen Arten.** Die Art bestimmt Optik und welche Lücken der Markier-Dialog zuerst anbietet.
 - **`>> Ersatz`** bei crosstalk, overwritten, locked (Standard *Version 3.0 required*) und infested.
 - **`{{cutoff}}`** ohne Text: ab hier fehlt alles bis zum Seitenende.
 - Die Lücken heißen englisch (so schreibt sie auch der Markier-Knopf). Die alten deutschen Wörter (unübersetzt, gesperrt …) funktionieren weiter. Groß-/Kleinschreibung egal, `ue` statt `ü` geht. Eine Markierung bleibt in einem Absatz.
 - Kollidiert nicht mit Foundry (`[[/r …]]`, `@UUID[…]{…}` dürfen im markierten Text stehen) und lässt sich in Obsidian genauso schreiben.
 
-| Lücke (alt: deutsch) | Wer nicht lesen kann, sieht | Wer lesen kann |
-|---|---|---|
-| untranslated (unübersetzt) · foreign (fremd) | Cordex-Zeichen | Klartext |
-| decayed (zerfallen) | dunkle Lücke | – (fehlt für alle) |
-| infested (befallen) | blau, flackernd, stotternd – oder den Ersatz | Klartext |
-| static (verrauscht) | Rauschen ░▒▓ | Klartext |
-| crosstalk (übersprochen) | den Ersatz (Jingle) | Original |
-| cutoff (abgerissen) | nichts mehr, „– signal lost –“ | alles |
-| locked (gesperrt) | die Meldung im Kasten | Klartext |
-| redacted (geschwärzt) | Balken | Klartext |
-| overwritten (überschrieben) | nur den Ersatz, unauffällig | Original |
-| corrupted (beschädigt) | Zeichensalat | Klartext |
+| Lücke (alt: deutsch) | Wer nicht lesen kann, sieht | Wer lesen kann | Per Wurf (ohne eigenen DC) |
+|---|---|---|---|
+| untranslated (unübersetzt) · foreign (fremd) | Cordex-Zeichen | Klartext | – (später: Cordex) |
+| decayed (zerfallen) | dunkle Lücke | – (fehlt für alle) | nie, auch nicht mit DC |
+| infested (befallen) | blau, flackernd, stotternd – oder den Ersatz | Klartext | – (später: Purge) |
+| static (verrauscht) | Rauschen ░▒▓ | Klartext | Difficulty der Seite |
+| crosstalk (übersprochen) | den Ersatz (Jingle) | Original | Difficulty der Seite |
+| cutoff (abgerissen) | nichts mehr, „– signal lost –“ | alles | nur mit eigenem DC |
+| locked (gesperrt) | die Meldung im Kasten | Klartext | Difficulty der Seite |
+| redacted (geschwärzt) | Balken | Klartext | Difficulty der Seite |
+| overwritten (überschrieben) | nur den Ersatz, unauffällig | Original | nur mit eigenem DC |
+| corrupted (beschädigt) | Zeichensalat | Klartext | nur mit eigenem DC |
 
 Eine Markierung mit unbekannter Art (Tippfehler) bleibt für Spieler **zu** und wird in der Prüfliste rot gemeldet.
 
@@ -78,6 +79,8 @@ Ein Spieler liest eine Stelle mit `Clank`, wenn sein **zugewiesener Charakter** 
 ## Entschlüsseln
 
 Jede Seite hat **Trait** und **Difficulty** (Standard: Knowledge bei Anthanen, Instinct bei Signal, Finesse bei Modul; Difficulty 12). Ein Spieler mit zugewiesenem Charakter drückt **Entschlüsseln** → der normale Daggerheart-Würfeldialog → der Client des GM prüft den Wurf in der Chatnachricht selbst nach und trägt das Ergebnis ein. **Einmal pro Datenträger.** Zuerst sieht nur der Würfelnde das Ergebnis; mit **Für alle freigeben** teilt er es.
+
+**DC pro Stelle (0.5.0):** Der Gesamtwert des Wurfs wird gegen jede Stelle einzeln verglichen – `{{redacted | DC 18: …}}` öffnet sich ab 18, locked, redacted, static und crosstalk ohne eigenen DC ab der Difficulty der Seite. Ein hoher Wurf öffnet also mehr, auch bei einem Misserfolg können Stellen mit niedrigem DC aufgehen. Beim **Show…** setzt der GM optional einen Gesamtwert für alle (vorgeschlagen aus dem letzten Duality-Wurf); ohne ihn zählt bei einem Erfolg die Difficulty. Failure with Hope lässt nie eine Stelle zerfallen, die der Wurf gerade geöffnet hat.
 
 | Ergebnis | Der Würfelnde liest | Was mit dem Träger passiert |
 |---|---|---|
@@ -142,5 +145,7 @@ node tools/cordex-vorschau.mjs   # alle Cordex-Zeichen als HTML
 2. **Skins** – drei Skins mit Animation, Hologramm-Fenster, eigene Cordex-Zeichen, Rauschteppich, Lesestufe aus dem Duality-Ergebnis. ✔
 3. **Geheimmodus und Entschlüsseln** – verschlüsselter Volltext, Sicht vom GM, Entschlüsseln-Wurf mit Konsequenzen, Journal *Funde*, Beute-Item. ✔
    - 0.4.0: Datenträger auf der Karte – hinlegen, aufdecken, finden, lesen, einstecken.
-   - 0.4.1: Name „Motherboard: Data Carrier Journal“, Oberfläche und Lücken-Wörter englisch. ← jetzt
-4. Text aus Audio: Skript an der Aufnahme ausrichten (Forced Alignment), Lücken im Ton je Zuhörer.
+   - 0.4.1: Name „Motherboard: Data Carrier Journal“, Oberfläche und Lücken-Wörter englisch.
+   - 0.5.0: DC pro Stelle, alle Lücken in allen Arten. ← jetzt
+4. **Schlüssel** (geplant): Zugangskarten mit Level und Aussteller · eigenes Kompendium · Cordex-Level (nur der GM setzt sie, Clanks Level 1, Translate) · infested mit Purge-Wurf, Purge Chip und Skip.
+5. Text aus Audio: Skript an der Aufnahme ausrichten (Forced Alignment), Lücken im Ton je Zuhörer.

@@ -5,7 +5,7 @@
  */
 import { MODUL_ID, STUFEN, STANDARD_TRAIT } from "./konstanten.mjs";
 import { baueSicht } from "./sicht.mjs";
-import { wirksameStufe } from "./wurf.mjs";
+import { wirksameStufe, wirksamerTotal, istErfolg } from "./wurf.mjs";
 import { leserFuerUser } from "./leser.mjs";
 import { oeffne } from "./geheim.mjs";
 
@@ -39,9 +39,22 @@ export function stufeVon(page) {
   return STUFEN.includes(wert) ? wert : null;
 }
 
-export async function setzeStufe(page, stufe) {
-  if (STUFEN.includes(stufe)) await page.setFlag(MODUL_ID, "stufe", stufe);
-  else await page.unsetFlag(MODUL_ID, "stufe");
+/** Vom GM beim Zeigen gesetzter Wurf-Gesamtwert (für Stellen mit DC), gilt für alle. */
+export function gruppenTotalVon(page) {
+  const wert = page?.getFlag?.(MODUL_ID, "gruppenTotal");
+  return Number.isFinite(wert) ? wert : null;
+}
+
+/**
+ * Ergebnis (und optional Gesamtwert) für alle setzen. Ohne Gesamtwert gilt bei einem Erfolg
+ * die Difficulty der Seite – so öffnen sich locked, redacted, static und crosstalk ohne eigenen DC.
+ */
+export async function setzeStufe(page, stufe, total = null) {
+  const weg = globalThis._del ?? new foundry.data.operators.ForcedDeletion();
+  await page.update({ flags: { [MODUL_ID]: {
+    stufe: STUFEN.includes(stufe) ? stufe : weg,
+    gruppenTotal: STUFEN.includes(stufe) && Number.isFinite(total) ? total : weg
+  } } });
 }
 
 /** Der eine Entschlüsseln-Versuch an diesem Träger (oder null). */
@@ -72,7 +85,7 @@ export function wurfVon(page) {
 export async function zuruecksetzen(page) {
   // v14: Löschen mit ForcedDeletion (das alte "-="-Präfix ist veraltet) – so wie unsetFlag es macht.
   const weg = globalThis._del ?? new foundry.data.operators.ForcedDeletion();
-  await page.update({ flags: { [MODUL_ID]: { stufe: weg, versuch: weg, zerstoert: weg, zerfallen: weg } } });
+  await page.update({ flags: { [MODUL_ID]: { stufe: weg, gruppenTotal: weg, versuch: weg, zerstoert: weg, zerfallen: weg } } });
 }
 
 /* -------------------------------------------- */
@@ -89,13 +102,14 @@ export async function sichtFuer(page, user, { archiv = false, leser = null } = {
   const daten = await oeffne(page);
   const l = leser ?? leserFuerUser(user);
   const versuch = versuchVon(page);
+  const { difficulty } = wurfVon(page);
   if (!l.gm) {
-    l.stufe = wirksameStufe(
-      { gruppe: stufeVon(page), versuch },
-      { userId: user?.id ?? null, actorId: user?.character?.id ?? null }
-    );
+    const ids = { userId: user?.id ?? null, actorId: user?.character?.id ?? null };
+    const gruppe = stufeVon(page);
+    l.stufe = wirksameStufe({ gruppe, versuch }, ids);
+    l.total = wirksamerTotal({ gruppe: gruppenTotalVon(page) ?? (istErfolg(gruppe) ? difficulty : null), versuch }, ids);
   }
-  const sicht = baueSicht(daten.text, l, sichtTexte(), { ...zustandVon(page), archiv });
+  const sicht = baueSicht(daten.text, l, sichtTexte(), { ...zustandVon(page), archiv, difficulty });
   const eigener = versuch && user && (versuch.userId === user.id || versuch.actorId === user.character?.id);
   sicht.hinweis = !l.gm && versuch?.stufe === "Failure with Hope" && (versuch.geteilt || eigener) && daten.hinweis
     ? daten.hinweis

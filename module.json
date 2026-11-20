@@ -2,7 +2,7 @@
   "id": "motherboard-data-carrier-journal",
   "title": "Motherboard: Data Carrier Journal",
   "description": "A journal page type for found data: text with gaps that each character reads differently, plus audio, decryption rolls and data carriers on the map. For White Signal (Daggerheart).",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "authors": [
     { "name": "Chezzy" }
   ],

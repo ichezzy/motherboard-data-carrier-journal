@@ -72,6 +72,11 @@ export async function zeigenDialog(page) {
         <div class="form-fields"><select name="stufe">${optionen}</select></div>
       </div>
       <div class="form-group">
+        <label>${L("DATENTRAEGER.Stufe.Total")}</label>
+        <div class="form-fields"><input type="number" name="total" min="1" max="60" step="1" value="${vorschlag?.total ?? ""}"></div>
+        <p class="hint">${L("DATENTRAEGER.Stufe.TotalHinweis")}</p>
+      </div>
+      <div class="form-group">
         <label class="checkbox"><input type="checkbox" name="anAlle" checked> ${L("DATENTRAEGER.Stufe.AnAlle")}</label>
       </div>
     </div>`;
@@ -89,6 +94,7 @@ export async function zeigenDialog(page) {
         default: true,
         callback: (event, button) => ({
           stufe: button.form.elements.stufe.value,
+          total: button.form.elements.total.value ? Math.round(Number(button.form.elements.total.value)) : null,
           anAlle: button.form.elements.anAlle.checked
         })
       },
@@ -97,7 +103,7 @@ export async function zeigenDialog(page) {
   });
   if (!ergebnis || typeof ergebnis !== "object") return;
 
-  await setzeStufe(page, ergebnis.stufe);
+  await setzeStufe(page, ergebnis.stufe, ergebnis.total);
   if (ergebnis.anAlle) {
     const Journal = foundry.documents.collections?.Journal ?? globalThis.Journal;
     await Journal.show(page, { force: true });
