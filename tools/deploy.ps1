@@ -1,11 +1,11 @@
 ﻿<#
-  Motherboard: Data Carrier Journal auf den Foundry-Server kopieren (Hetzner, SSH-Eintrag „aetherion“).
+  Motherboard: Data Carrier Journal per scp auf den eigenen Foundry-Server kopieren (Entwicklung; Spieler installieren über die Manifest-URL).
 
   Aufruf aus dem Repo-Ordner:
     powershell -ExecutionPolicy Bypass -File tools\deploy.ps1
 
   Das Ziel steht in tools\ziel.txt (nicht im Git), z. B.
-    aetherion:/srv/foundry/Data/modules/motherboard-data-carrier-journal
+    meinserver:/pfad/zu/foundry/Data/modules/motherboard-data-carrier-journal
   Der letzte Ordnername muss die Modul-ID aus module.json sein.
 
   Ablauf: Tests → nur die Moduldateien in einen Zwischenordner →
@@ -23,7 +23,7 @@ $manifest = Get-Content module.json -Raw -Encoding UTF8 | ConvertFrom-Json
 $modulId = $manifest.id
 if (-not $Ziel) {
   $zielDatei = Join-Path $PSScriptRoot "ziel.txt"
-  if (-not (Test-Path $zielDatei)) { throw "Kein Ziel. Lege tools\ziel.txt an (z. B. aetherion:/pfad/Data/modules/$modulId)." }
+  if (-not (Test-Path $zielDatei)) { throw "Kein Ziel. Lege tools\ziel.txt an (z. B. meinserver:/pfad/Data/modules/$modulId)." }
   $Ziel = (Get-Content $zielDatei -TotalCount 1).Trim()
 }
 if ($Ziel -notmatch ('^([^:]+):(/.+/modules/' + [regex]::Escape($modulId) + ')$')) { throw "Ziel muss so aussehen: host:/…/modules/$modulId – ist: $Ziel" }

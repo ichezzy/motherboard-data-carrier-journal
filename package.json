@@ -1,9 +1,10 @@
 {
   "name": "motherboard-data-carrier-journal",
   "private": true,
-  "description": "Foundry-VTT-Modul Motherboard: Data Carrier Journal (White Signal). Kein Build nötig – package.json nur für die Tests.",
+  "description": "Foundry VTT module Motherboard: Data Carrier Journal (White Signal, Daggerheart). No build step – package.json only runs the tests and the publish script.",
   "type": "module",
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "publish": "node tools/publish.mjs"
   }
 }

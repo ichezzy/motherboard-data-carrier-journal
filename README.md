@@ -1,167 +1,114 @@
 # Motherboard: Data Carrier Journal
 
-Foundry-VTT-Modul für *White Signal* (Daggerheart, Foundryborne). Modul-ID `motherboard-data-carrier-journal`. Eine neue Journal-Seitenart **Datenträger**: Text mit Lücken, die jeder Charakter anders lesen kann, dazu Audio – mit eigenem Skin für jede der drei Arten. Die Oberfläche ist englisch (`lang/en.json`); `lang/de.json` bleibt als deutsche Übersetzung.
+A Foundry VTT module for the *White Signal* campaign (Daggerheart by Foundryborne). It adds a journal page type, **Data Carrier**: text with gaps that each character reads differently, optional audio, decryption rolls with consequences, and data carriers players can find on the map.
 
-- Foundry **v14** (geprüft gegen den Client-Code von 14.365), Daggerheart **2.12.9**
-- Reines ESM, kein Build. Tests mit `node --test`.
-- Die Seitenart heißt intern `motherboard-data-carrier-journal.datentraeger`. Seiten aus der Zeit des Arbeitstitels `datentraeger` zieht das Modul beim ersten Start selbst um (`scripts/umzug.mjs`).
+- Foundry **v14** (checked against the 14.365 client code), Daggerheart **2.12.9**
+- Plain ES modules, no build step. Tests: `node --test`
+- Module ID `motherboard-data-carrier-journal`, page type `motherboard-data-carrier-journal.datentraeger`
 
-## Installation auf dem Server
+> **Work in progress.** Version 0.6 will simplify the gap system (two carrier types, the same five gap categories for both). See *Roadmap*.
 
-1. Einmal: `tools\ziel.txt` anlegen mit dem Ziel, z. B. `aetherion:/srv/foundry/Data/modules/motherboard-data-carrier-journal`.
-2. Aus dem Repo-Ordner: `powershell -ExecutionPolicy Bypass -File tools\deploy.ps1` – führt die Tests aus und kopiert nur die Moduldateien per `scp`.
-3. Ein neues Modul braucht einen Neustart von Foundry. Updates: meist reicht F5 in der Welt.
+## Installation
 
-## Benutzen
-
-**Seite anlegen:** Im Journal *Neue Seite* → Typ **Datenträger**. Art wählen (Anthanen · Signal · Modul), Text schreiben, Audio, Rauschteppich und Bild einstellen.
-
-**Lücke markieren:** Text auswählen → **Lücke markieren** → Art der Lücke, wer lesen kann (Ancestry, Charaktere) und ab welchem Ergebnis. Das Modul schreibt die Markierung als Text um die Auswahl. Unter dem Editor steht nach dem Speichern eine Prüfliste mit Warnungen bei Tippfehlern.
-
-**Ansicht:** Jeder Spieler sieht die Seite so, wie sein zugewiesener Charakter sie lesen kann. Der GM sieht alles hervorgehoben (Tooltip: Art und Leser) und hat eine Leiste:
-- *Ansicht* – so sieht es Spieler X
-- *Leser* – wer liest wie Clank
-- *Ergebnis* und **Zeigen…** – das Ergebnis des Wurfs wählen (vorgeschlagen aus dem letzten Duality-Wurf im Chat) und die Seite allen zeigen. Stellen mit Lesestufe werden ab diesem Ergebnis für alle lesbar.
-
-**Skins:** Anthanen – Lichtbänder steigen aus der Scheibe und bauen ein Fenster aus Licht, Zeilen erscheinen nacheinander. Signal – Tuner-Schirm, Wörter steigen aus dem Rauschen über das Limen. Modul – kleiner Bernstein-Schirm, Zeile für Zeile. Der Knopf ↻ baut neu auf.
-
-**Journalfenster als Hologramm:** Zeigt ein Journal eine Datenträger-Seite, wird das Fenster selbst durchsichtig und leuchtet. Einstellung *Journalfenster*: je nach Art (nur Anthanen – Licht in der Luft ist alt) · immer · nie.
-
-**Audio:** Jeder kann im Fenster abspielen; darunter läuft der Rauschteppich (Regler daneben, nur für einen selbst). Der GM hat *Für alle abspielen* und *Für alle stoppen* – mit Rauschteppich bei allen.
-
-**Bewegung:** Einstellung *Bewegung* (System · An · Aus) schaltet alle Animationen ab; „System“ folgt *Bewegung reduzieren* des Betriebssystems.
-
-## Syntax
+In Foundry: **Add-on Modules → Install Module →** paste this manifest URL:
 
 ```
-{{untranslated: Die Front ist gefallen.}}
-{{untranslated | Clank: Die Front ist gefallen.}}
-{{untranslated | Clank, @Erinys: Bergung nach Bedarf.}}
-{{untranslated | Success with Hope: Die Kapsel trägt das Siegel der Station.}}
-{{crosstalk: Treffpunkt am Mast >> ♪ Der Ticker hält dich wach! ♪}}
-{{locked: Kontostand 12 Kn >> Version 3.0 required}}
+https://github.com/ichezzy/motherboard-data-carrier-journal/releases/latest/download/module.json
+```
+
+Then enable *Motherboard: Data Carrier Journal* in your world.
+
+## Using it
+
+**Create a page:** In a journal, *Add Page* → type **Data Carrier**. Choose the type (Anthanen · Signal · Module), write the text, set audio, noise bed and image.
+
+**Mark a gap:** Select text → **Mark Gap** → gap, who can read it, an optional DC. The module writes the marker as plain text around the selection. After saving, a checklist under the editor warns about typos.
+
+**View:** Each player sees the page the way their character can read it. The GM sees everything highlighted (tooltip: gap and readers) and gets a toolbar: *View as* a player, *Readers*, *Result* and **Show…** (pick the roll result, suggested from the last Duality roll in chat), **Enter Result…**, **Loot**.
+
+**Look:** Each type has its own animated skin; the journal window can turn into a hologram (setting *Journal Window*). *Motion* turns animations off.
+
+**Audio:** Everyone can play it in the window, with a quiet noise bed underneath. The GM can *Play for Everyone*.
+
+## Marker syntax
+
+```
+{{untranslated: The front has fallen.}}
+{{untranslated | Clank, @Erinys: Salvage on demand.}}
+{{redacted | DC 18: Name of the client}}
+{{locked | Level 2: Balance 12 Kn >> Version 3.0 required}}
 {{cutoff}}
 ```
 
-- `{{ Art | Leser : Text >> Ersatz }}` – Pflicht sind nur Art und Text.
-- **Leser:** `Clank` = Ancestry · `@Erinys` = Charakter (passt auch auf „Erinys Vael“) · `Success with Hope` = Lesestufe (lesbar ab diesem Ergebnis: Failure with Fear < Failure with Hope < Success with Fear < Success with Hope < Critical Success) · `DC 18` = per Wurf ab diesem Gesamtwert. Eine Regel reicht.
-- **Alle Lücken in allen Arten.** Die Art bestimmt Optik und welche Lücken der Markier-Dialog zuerst anbietet.
-- **`>> Ersatz`** bei crosstalk, overwritten, locked (Standard *Version 3.0 required*) und infested.
-- **`{{cutoff}}`** ohne Text: ab hier fehlt alles bis zum Seitenende.
-- Die Lücken heißen englisch (so schreibt sie auch der Markier-Knopf). Die alten deutschen Wörter (unübersetzt, gesperrt …) funktionieren weiter. Groß-/Kleinschreibung egal, `ue` statt `ü` geht. Eine Markierung bleibt in einem Absatz.
-- Kollidiert nicht mit Foundry (`[[/r …]]`, `@UUID[…]{…}` dürfen im markierten Text stehen) und lässt sich in Obsidian genauso schreiben.
+- `{{ gap | readers : text >> replacement }}` – only gap and text are required.
+- **Readers** (one rule is enough): `Clank` = ancestry · `@Erinys` = character · `Success with Hope` = readable from this roll result on · `DC 18` = readable from this decryption total on · `Level 2` = readable with an access card of level 2+.
+- `>> replacement` for crosstalk, overwritten, locked (default *Version 3.0 required*) and infested.
+- Gap words are English; the old German words still work. Case doesn't matter. A marker stays inside one paragraph. Foundry syntax (`[[/r …]]`, `@UUID[…]{…}`) may appear inside.
 
-| Lücke (alt: deutsch) | Wer nicht lesen kann, sieht | Wer lesen kann | Per Wurf (ohne eigenen DC) |
-|---|---|---|---|
-| untranslated (unübersetzt) · foreign (fremd) | Cordex-Zeichen | Klartext | – (später: Cordex) |
-| decayed (zerfallen) | dunkle Lücke | – (fehlt für alle) | nie, auch nicht mit DC |
-| infested (befallen) | blau, flackernd, stotternd – oder den Ersatz | Klartext | – (später: Purge) |
-| static (verrauscht) | Rauschen ░▒▓ | Klartext | Difficulty der Seite |
-| crosstalk (übersprochen) | den Ersatz (Jingle) | Original | Difficulty der Seite |
-| cutoff (abgerissen) | nichts mehr, „– signal lost –“ | alles | nur mit eigenem DC |
-| locked (gesperrt) | die Meldung im Kasten | Klartext | Difficulty der Seite |
-| redacted (geschwärzt) | Balken | Klartext | Difficulty der Seite |
-| overwritten (überschrieben) | nur den Ersatz, unauffällig | Original | nur mit eigenem DC |
-| corrupted (beschädigt) | Zeichensalat | Klartext | nur mit eigenem DC |
-
-Eine Markierung mit unbekannter Art (Tippfehler) bleibt für Spieler **zu** und wird in der Prüfliste rot gemeldet.
-
-**Cordex-Zeichen:** eigene Schrift aus Bausteinen (5 Grundstriche × 4 Kopfzeichen × 2 Seitenstriche = 40 Zeichen), als SVG mit feiner Leiterbahn unter jedem Wort. Ein Wort wird als Ganzes zu 2–5 Zeichen (nicht Buchstabe für Buchstabe, also nicht zu knacken). Gleiches Wort → immer dieselben Zeichen. `node tools/cordex-vorschau.mjs > cordex.html` zeigt alle Zeichen.
-
-## Clank-Regel
-
-Ein Spieler liest eine Stelle mit `Clank`, wenn sein **zugewiesener Charakter** wie Clank liest. Das Modul erkennt es so (eins reicht):
-
-1. Die Ancestry heißt „Clank“ – auch bei Mixed Ancestry („Clank/Elf“).
-2. Die Ancestry stammt vom SRD-Clank im Kompendium (`Compendium.daggerheart.ancestries.Item.ed8BoLR4SHOpeV00`) – hält auch nach Umbenennen.
-3. Häkchen im Fenster **Leser** (Knopf in der Ansicht oder *Configure Settings → Motherboard: Data Carrier Journal → Manage Readers*): Automatisch · Ja · Nein.
-
-## Entschlüsseln
-
-Jede Seite hat **Trait** und **Difficulty** (Standard: Knowledge bei Anthanen, Instinct bei Signal, Finesse bei Modul; Difficulty 12). Ein Spieler mit zugewiesenem Charakter drückt **Entschlüsseln** → der normale Daggerheart-Würfeldialog → der Client des GM prüft den Wurf in der Chatnachricht selbst nach und trägt das Ergebnis ein. **Einmal pro Datenträger.** Zuerst sieht nur der Würfelnde das Ergebnis; mit **Für alle freigeben** teilt er es.
-
-**DC pro Stelle (0.5.0):** Der Gesamtwert des Wurfs wird gegen jede Stelle einzeln verglichen – `{{redacted | DC 18: …}}` öffnet sich ab 18, locked, redacted, static und crosstalk ohne eigenen DC ab der Difficulty der Seite. Ein hoher Wurf öffnet also mehr, auch bei einem Misserfolg können Stellen mit niedrigem DC aufgehen. Beim **Show…** setzt der GM optional einen Gesamtwert für alle (vorgeschlagen aus dem letzten Duality-Wurf); ohne ihn zählt bei einem Erfolg die Difficulty. Failure with Hope lässt nie eine Stelle zerfallen, die der Wurf gerade geöffnet hat.
-
-**Würfel am Tisch (0.5.1):** Knopf **Enter Result…** in der GM-Leiste – Charakter, Gesamtwert und Hope/Fear (oder Critical) eintragen, optional gleich für alle freigeben. Das Modul behandelt es wie einen Wurf in Foundry: gleiche Folgen, nur dieser Charakter sieht das Ergebnis, bis sein Spieler freigibt. Gibt es schon einen Versuch, erst **Reset**.
-
-| Ergebnis | Der Würfelnde liest | Was mit dem Träger passiert |
+| Gap | Who can't read it sees | Opens by roll without own DC |
 |---|---|---|
-| Critical Success | alle Stellen mit Lesestufe | nichts |
-| Success with Hope | bis Success with Hope | nichts |
-| Success with Fear | bis Success with Fear | **Preis:** nur der GM sieht den Text aus dem Feld *Preis* (leer = Standard je Art) |
-| Failure with Hope | nur Stellen „ab Failure with Hope“ + Text aus *Hinweis* | **eine Stelle zerfällt** – für alle, dauerhaft |
-| Failure with Fear | nichts | **zerstört** – für alle unleserlich, auch für Clank |
+| untranslated · foreign | Cordex glyphs | – |
+| decayed | dark gap (missing for everyone) | never |
+| infested | blue, flickering, stuttering text | – |
+| static | noise ░▒▓ | page Difficulty |
+| crosstalk | the replacement (jingle) | page Difficulty |
+| cutoff | nothing from here on | only with own DC |
+| locked | the message box | page Difficulty |
+| redacted | black bars | page Difficulty |
+| overwritten | only the replacement | only with own DC |
+| corrupted | character garbage | only with own DC |
 
-Daggerheart erledigt Hope, Fear und Stress selbst. Der GM kann einen Datenträger **zurücksetzen**.
+**Cordex glyphs:** an own script built from parts (40 glyphs), drawn as SVG with a circuit trace under each word. A whole word becomes 2–5 glyphs, so it can't be decoded letter by letter.
 
-## Funde und Beute
+## Decrypting
 
-- **Journal „Findings“:** wird beim ersten Fund angelegt (für Spieler lesbar, im Ordner aus *Folder for Created Journals*; verschieben und umbenennen darfst du es jederzeit – das Modul findet es über seine ID) und bekommt eine Seite je Datenträger – mit dem, was die **ganze Gruppe** gesehen hat: beim „Zeigen…“ durch den GM und beim „Für alle freigeben“. Was nur Clank lesen kann, steht dort nicht. Cordex steht als Platzhalter darin, nie das Wort.
-- **Beute:** Knopf in der GM-Leiste legt ein Daggerheart-Loot-Item an, das auf die Seite zeigt. Es landet im Ordner aus *Folder for Created Items*. Im Item-Bogen erscheint **Read Data Carrier**. Das Item bekommt das Icon seiner Art (Disk, Empfänger, Chip – `assets/icons/`, Comic-Stil; die weißen Silhouetten liegen in `assets/icons/weiss/`), außer die Seite hat ein eigenes Bild.
+Each page has a **Trait** and a **Difficulty**. A player presses **Decrypt** → the normal Daggerheart roll dialog → the GM's client checks the roll in the chat message itself and records the result. **Once per data carrier.** At first only the roller sees the result; **Share with Everyone** shares it. The roll total is compared against every passage's DC.
 
-## Freischalten (0.5.2)
+| Result | Consequence for the data carrier |
+|---|---|
+| Critical Success / Success with Hope | none |
+| Success with Fear | **Cost** – only the GM sees the text from the *Cost* field |
+| Failure with Hope | one passage decays for everyone; the roller gets the *Hint* |
+| Failure with Fear | destroyed – unreadable for everyone |
 
-Niemand bekommt ein ganzes Journal. Wer einen Datenträger **einsteckt** (Karte), auf der Karte **liest** oder sein Loot-Item mit **Read Data Carrier** öffnet, bekommt genau diese Seite (*Observer*) und das Journal nur *Limited* – andere Seiten im selben Journal bleiben zu. Der Browser des GM prüft vorher nach (Token nah genug bzw. ein eigener Charakter trägt das Item). Gibt ein Spieler das Item weiter, bekommt der neue Träger die Seite beim ersten Lesen.
+**Dice at the table:** **Enter Result…** lets the GM record a physical roll (character, total, Hope/Fear/Critical) with the same consequences.
 
-## Zugangskarten (0.5.2)
+## Findings, loot, the map
 
-- **Ausstellen:** Knopf **Access Card** oben in der Items-Seitenleiste (nur GM) → Level 1–3, optional Aussteller (z. B. CTC), Name. Das Loot-Item bekommt das Keycard-Icon seines Levels und landet im Item-Ordner.
-- **Markieren:** `{{locked | Level 2: …}}` öffnet sich für jede Karte ab Level 2, `{{locked | CTC Level 3: …}}` nur für CTC-Karten ab Level 3 – sofort, ohne Wurf, nur für den Träger. Der Markier-Dialog hat dafür Felder; Karte und DC lassen sich kombinieren (eine Regel reicht).
-- **Auf der Karte:** Eine Karte aus der Seitenleiste auf die Szene ziehen → Tile; Spieler finden und **Pick Up** wie bei Datenträgern (der Charakter bekommt eine Kopie).
-- **Fälschungsschutz:** Level und Aussteller stehen in einer Welt-Einstellung, die nur der GM schreiben kann. Eine selbst gebaute Karte zählt nicht.
+- **Findings journal:** gets one page per data carrier with what the whole group has seen (after *Show…* or *Share with Everyone*). It is found by its ID – move or rename it freely.
+- **Loot:** creates a loot item pointing to the page (icon by type). The item sheet gets **Read Data Carrier**.
+- **On the map:** drag a data carrier page or its loot item onto a scene → a tile, hidden at first (right-click → eye reveals it). Players double-click it within *Very Close* range and can **Read** or **Pick Up**; the GM's client checks token, range and visibility.
+- **Unlocking:** whoever picks up or reads a data carrier gets exactly that page (*Observer*, journal *Limited*) – other pages in the same journal stay closed.
+- **Access cards:** **Access Card** button at the top of the Items sidebar (GM): level 1–3, optional issuer. Cards are registered in a GM-only setting, so self-made cards don't count.
+- **Settings:** folders for created items and journals, size on the map.
 
-## Auf der Karte
+## Secrecy – honestly
 
-- **Hinlegen:** Eine Datenträger-Seite (oder ihr Beute-Item) aus dem Journal auf die Karte ziehen. Es entsteht ein Tile mit dem Icon der Art, eingerastet auf die Feldmitte (mit Shift genau an der Stelle), standardmäßig ein halbes Feld groß (Einstellung *Size on the Map*). Es liegt zuerst **versteckt** da.
-- **Aufdecken:** Rechtsklick auf das Tile → **Auge**.
-- **Finden:** Spieler doppelklicken das aufgedeckte Tile – ihr Token steht daneben, nicht darauf (ein Doppelklick auf einen Token öffnet dessen Bogen). Technisch hängt sich das Modul in Foundrys Doppelklick der Token-Ebene ein (`TokenLayer#_onClickLeft2`, mit libWrapper, wenn aktiv). Sie müssen es sehen können (kein Nebel, keine Wand dazwischen), und ihr Token muss in Reichweite **Very Close** stehen – so, wie Daggerheart sie für die Szene einstellt (Standard 15 ft). Ein verstecktes Tile reagiert nicht.
-- **Lesen** öffnet die Seite. **Einstecken** fragt den GM: Sein Browser prüft Token, Reichweite und Tile selbst nach, legt das Beute-Item beim Charakter an und nimmt das Tile von der Karte. Der GM muss dafür online sein.
+Foundry v14 sends **every** user all journals, all settings and all compendium contents – permissions only hide things in the interface (checked in the server code).
 
-## Geheimhaltung – ehrlich
+**Secret Mode** (*Configure Settings → Motherboard: Data Carrier Journal → Secret Mode*): text, GM note, cost and hint are stored **encrypted** in the world (AES-GCM, key derived from your passphrase with PBKDF2). The passphrase stays in your browser and never reaches the server. Players ask your client via `User#query` – the server forwards the request only to you, with the real sender – and get only their own view back. **The GM has to be online** and have entered the passphrase.
 
-Foundry 14 schickt **jedem** Benutzer alle Journale, alle Einstellungen und die Inhalte aller Kompendien – Rechte verstecken nur in der Oberfläche (im Server-Code geprüft).
+- Write the passphrase down – without it, encrypted pages can't be opened again.
+- Name, type, image and audio of a page are not encrypted.
+- Without Secret Mode, filtering happens in the player's browser and is readable via the developer console.
 
-**Geheimmodus** (*Configure Settings → Motherboard: Data Carrier Journal → Secret Mode*): Text, GM-Notiz, Preis und Hinweis liegen nur **verschlüsselt** in der Welt (AES-GCM, Schlüssel aus deinem Geheimwort per PBKDF2). Das Geheimwort bleibt in deinem Browser und erreicht nie den Server. Spieler fragen deinen Client per `User#query` – der Server leitet die Anfrage nur an dich weiter und nennt dir den echten Absender – und bekommen nur ihre eigene Sicht zurück. **Der GM muss online sein** und das Geheimwort in seinem Browser eingegeben haben.
-
-- Schreib das Geheimwort auf – ohne es lassen sich verschlüsselte Seiten nicht mehr öffnen.
-- Auf einem anderen Gerät: im Fenster *Geheimmodus* einmal eingeben.
-- Was ein Spieler einmal gesehen hat, liegt in seinem Browser – das ist gewollt.
-- Name, Art, Bild und Audio einer Seite sind nicht verschlüsselt (Dateien in Foundrys Datenordner sind für jeden abrufbar).
-- Ohne Geheimmodus gilt das Verhalten aus Phase 1: Filtern im Browser, über die Entwicklerkonsole lesbar.
-
-## Entwicklung
+## Development
 
 ```
-node --test                      # Parser, Sicht, Cordex, Lesestufe, Karte
-node tools/cordex-vorschau.mjs   # alle Cordex-Zeichen als HTML
+node --test                        # parser, view, Cordex, rolls, map geometry, access cards
+node tools/cordex-vorschau.mjs     # all Cordex glyphs as HTML
 ```
 
-`tools/vorschau.html` zeigt die drei Skins samt Animation und Hologramm-Fenster ohne Foundry – über einen lokalen Webserver aus dem Repo-Ordner öffnen (z. B. `npx http-server .` → `/tools/vorschau.html`).
+- **Publish a release:** double-click `Modul veröffentlichen.bat` – runs the tests, checks for uncommitted changes, shows what's new since the last release, asks, then packages the module (`tools/zip.mjs`, no dependencies) and creates a GitHub release with `module.json` and the ZIP. The version comes from `module.json`.
+- **Copy to your own server for testing:** `tools/deploy.ps1` (target in `tools/ziel.txt`, not in git, e.g. `myserver:/path/to/foundry/Data/modules/motherboard-data-carrier-journal`).
+- `tools/vorschau.html` previews the skins without Foundry.
+- Code layout: pure, testable logic in `scripts/syntax.mjs`, `sicht.mjs`, `cordex.mjs`, `wurf.mjs`, `karte-logik.mjs`, `konstanten.mjs`; Foundry glue in the rest (`sheet.mjs` for the page sheet, `anfragen.mjs` for GM queries, `geheim.mjs` + `krypto.mjs` for Secret Mode). Console API: `game.modules.get("motherboard-data-carrier-journal").api`
 
-- `scripts/syntax.mjs` · `sicht.mjs` · `cordex.mjs` · `wurf.mjs` · `konstanten.mjs` – ohne Foundry, testbar
-- `scripts/leser.mjs` – Ancestry und Charakter aus Foundry lesen
-- `scripts/sheet.mjs` – Ansicht und Bearbeiten (`JournalEntryPageHandlebarsSheet`; die Ansicht absichtlich ohne `root: true`)
-- `scripts/markieren.mjs` – Knopf und Dialog; Editor-Zugriff über das `plugins`-Event des `<prose-mirror>` (Listener in `sheet.mjs`, wie Foundrys Text-Sheet)
-- `scripts/zeigen.mjs` – Lesestufe, letzter Duality-Wurf, „Zeigen…“
-- `scripts/animation.mjs` · `fenster.mjs` – Aufbau-Animation und Hologramm-Fenster
-- `scripts/audio.mjs` · `rauschen.mjs` – Socket „für alle“, Rauschteppich (Web Audio)
-- `scripts/krypto.mjs` · `geheim.mjs` · `geheim-fenster.mjs` – Geheimmodus
-- `scripts/anfragen.mjs` – Anfragen an den GM (Sicht, Entschlüsseln, Freigeben)
-- `scripts/seite.mjs` – Flags einer Seite und die Sicht für einen Benutzer
-- `scripts/entschluesseln.mjs` · `funde.mjs` · `beute.mjs`
-- `scripts/karte.mjs` · `karte-logik.mjs` – Fundstücke als Tile auf der Karte (Geometrie ohne Foundry, testbar)
-- `scripts/karten.mjs` – Zugangskarten · `scripts/ordner.mjs` – Standard-Ordner · `scripts/vonhand.mjs` – Ergebnis von Hand
-- In der Konsole: `game.modules.get("motherboard-data-carrier-journal").api`
+## Roadmap
 
-## Phasen
-
-1. **Grundgerüst** – Seitenart, Markieren, Ansicht je Spieler mit Clank-Regel, Audio, schlichter Skin. ✔
-2. **Skins** – drei Skins mit Animation, Hologramm-Fenster, eigene Cordex-Zeichen, Rauschteppich, Lesestufe aus dem Duality-Ergebnis. ✔
-3. **Geheimmodus und Entschlüsseln** – verschlüsselter Volltext, Sicht vom GM, Entschlüsseln-Wurf mit Konsequenzen, Journal *Funde*, Beute-Item. ✔
-   - 0.4.0: Datenträger auf der Karte – hinlegen, aufdecken, finden, lesen, einstecken.
-   - 0.4.1: Name „Motherboard: Data Carrier Journal“, Oberfläche und Lücken-Wörter englisch.
-   - 0.5.0: DC pro Stelle, alle Lücken in allen Arten.
-   - 0.5.1: Ergebnis von Hand, Doppelklick auf der Karte repariert, Größe auf der Karte, bunte Icons.
-   - 0.5.2: Freischalten pro Spieler und Seite, Standard-Ordner für Items und Journale, Zugangskarten (Schritt 2). ← jetzt
-4. **Schlüssel** (geplant): Zugangskarten mit Level und Aussteller · eigenes Kompendium · Cordex-Level (nur der GM setzt sie, Clanks Level 1, Translate) · infested mit Purge-Wurf, Purge Chip und Skip.
-5. Text aus Audio: Skript an der Aufnahme ausrichten (Forced Alignment), Lücken im Ton je Zuhörer.
+1. ✔ Page type, markers, per-reader view, Clank rule, audio
+2. ✔ Skins, hologram window, Cordex glyphs, noise bed, read levels from the Duality result
+3. ✔ Secret Mode, decryption roll with consequences, Findings, loot, map, DC per passage, manual results, access cards (0.5.2)
+4. **0.6 – simplification:** two types (*Anthanen Disc* with audio, always in Cordex · *CTC Module* without audio; Signal pages become Anthanen discs), the same gap categories for both (corrupted · overwritten · redacted · locked · untranslated), automatic unlocking when a character receives the item, a player inbox folder, access cards bound to one module
+5. **0.7 – Cordex:** Cordex level 0–3 per character (set by the GM, Clanks start at 1), Translate roll, compendium with the Cordex feature
+6. Later: text from audio (forced alignment), gaps in the audio per listener
