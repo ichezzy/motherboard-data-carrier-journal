@@ -2,7 +2,7 @@
   "id": "motherboard-data-carrier-journal",
   "title": "Motherboard Data Carrier Journal",
   "description": "Eine Journal-Seitenart für Funde: Text mit Lücken, die jeder Charakter anders lesen kann, dazu Audio. Für White Signal (Daggerheart).",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "authors": [
     { "name": "Chezzy" }
   ],

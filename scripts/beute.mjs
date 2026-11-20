@@ -9,10 +9,11 @@ import { escapeHtml } from "./syntax.mjs";
 const L = key => game.i18n.localize(key);
 const F = (key, data) => game.i18n.format(key, data);
 
+/** Eigene Icons je Art (weiße Silhouetten wie die Foundry-Standard-Icons). */
 const SYMBOL = {
-  anthanen: "icons/svg/sun.svg",
-  signal: "icons/svg/sound.svg",
-  modul: "icons/svg/book.svg"
+  anthanen: `modules/${MODUL_ID}/assets/icons/anthanen.webp`,
+  signal: `modules/${MODUL_ID}/assets/icons/signal.webp`,
+  modul: `modules/${MODUL_ID}/assets/icons/modul.webp`
 };
 
 /** Legt das Beute-Item an (nur GM) und öffnet es. */

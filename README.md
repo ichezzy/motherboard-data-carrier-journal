@@ -92,7 +92,7 @@ Daggerheart erledigt Hope, Fear und Stress selbst. Der GM kann einen Datenträge
 ## Funde und Beute
 
 - **Journal „Funde“:** wird beim ersten Fund angelegt (für Spieler lesbar) und bekommt eine Seite je Datenträger – mit dem, was die **ganze Gruppe** gesehen hat: beim „Zeigen…“ durch den GM und beim „Für alle freigeben“. Was nur Clank lesen kann, steht dort nicht. Cordex steht als Platzhalter darin, nie das Wort.
-- **Beute:** Knopf in der GM-Leiste legt ein Daggerheart-Loot-Item an, das auf die Seite zeigt. Im Item-Bogen erscheint **Datenträger lesen**. Damit Spieler die Seite öffnen können, setzt das Modul das Journal auf „Beobachter“.
+- **Beute:** Knopf in der GM-Leiste legt ein Daggerheart-Loot-Item an, das auf die Seite zeigt. Im Item-Bogen erscheint **Datenträger lesen**. Damit Spieler die Seite öffnen können, setzt das Modul das Journal auf „Beobachter“. Das Item bekommt das Icon seiner Art (Disk, Empfänger, Chip – `assets/icons/`), außer die Seite hat ein eigenes Bild.
 
 ## Geheimhaltung – ehrlich
 
