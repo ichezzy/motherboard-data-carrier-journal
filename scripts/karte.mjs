@@ -1,18 +1,18 @@
 /**
- * Datenträger auf der Karte (0.4.0).
+ * Fundstücke auf der Karte (0.4.0, Gegenstände seit 0.5.2).
  *
- *  Hinlegen   – Der GM zieht eine Datenträger-Seite oder ihr Beute-Item auf die Karte. Es entsteht
- *               ein Tile mit dem Icon der Art, zuerst versteckt (Rechtsklick → Auge deckt es auf).
+ *  Hinlegen   – Der GM zieht eine Datenträger-Seite, ihr Loot-Item oder eine Zugangskarte auf die
+ *               Karte. Es entsteht ein Tile mit dem Icon, zuerst versteckt (Rechtsklick → Auge).
  *  Finden     – Ein Spieler doppelklickt das aufgedeckte Tile. Er muss es sehen können und sein
  *               Token muss in Reichweite Very Close stehen (Daggerheart-Einstellung der Szene).
- *  Lesen      – öffnet die Seite (Entschlüsseln usw. wie gewohnt).
- *  Einstecken – fragt den GM; dessen Browser prüft alles selbst nach, legt das Beute-Item beim
- *               Charakter an und nimmt das Tile von der Karte.
+ *  Lesen      – nur Datenträger: Der GM schaltet dem Spieler die Seite frei, dann öffnet sie sich.
+ *  Einstecken – fragt den GM; dessen Browser prüft alles selbst nach, legt das Item beim
+ *               Charakter an, schaltet die Seite frei und nimmt das Tile von der Karte.
  */
 import { MODUL_ID, SEITEN_TYP, QUERY } from "./konstanten.mjs";
 import { istFund } from "./geheim.mjs";
 import { escapeHtml } from "./syntax.mjs";
-import { symbolFuer, beuteDaten, fuerSpielerOeffnen } from "./beute.mjs";
+import { symbolFuer, beuteDaten, freischalten, warneOhneGeheimmodus, seiteOeffnen } from "./beute.mjs";
 import { tileRechteck, tokenRechteck, enthaelt, inReichweite } from "./karte-logik.mjs";
 
 const L = key => game.i18n.localize(key);
@@ -23,6 +23,7 @@ const inArbeit = new Set();
 
 export function registriereKarte() {
   CONFIG.queries[QUERY.einstecken] = beantworteEinstecken;
+  CONFIG.queries[QUERY.lesenKarte] = beantworteLesenKarte;
   game.settings.register(MODUL_ID, "kartenGroesse", {
     name: "DATENTRAEGER.Einstellung.KartenGroesse.Name",
     hint: "DATENTRAEGER.Einstellung.KartenGroesse.Hint",
@@ -41,7 +42,7 @@ export function registriereKarte() {
   Hooks.once("ready", haengeDoppelklickEin);
 }
 
-/** Größe eines Datenträgers auf der Karte, als Anteil eines Feldes. */
+/** Größe eines Fundstücks auf der Karte, als Anteil eines Feldes. */
 function kartenGroesse() {
   const f = Number(game.settings.get(MODUL_ID, "kartenGroesse"));
   return [0.25, 0.5, 0.75, 1].includes(f) ? f : 0.5;
@@ -79,8 +80,18 @@ function haengeDoppelklickEin() {
 /*  Hilfen                                      */
 /* -------------------------------------------- */
 
+/** Datenträger-Tile: zeigt auf eine Seite. */
 function traegerUuid(tile) {
   return tile?.getFlag?.(MODUL_ID, "traeger") ?? null;
+}
+
+/** Gegenstand-Tile (z. B. Zugangskarte): zeigt auf ein Item in der Seitenleiste. */
+function gegenstandUuid(tile) {
+  return tile?.getFlag?.(MODUL_ID, "gegenstand") ?? null;
+}
+
+function istFundstueck(tile) {
+  return Boolean(traegerUuid(tile) || gegenstandUuid(tile));
 }
 
 function rechteckVonTile(tile) {
@@ -108,12 +119,17 @@ function nahGenug(tokenDoc, tile) {
   });
 }
 
-function seiteSync(uuid) {
+function sync(uuid) {
   try { return fromUuidSync(uuid); } catch { return null; }
 }
 
 function istTraegerSeite(page) {
   return page?.documentName === "JournalEntryPage" && page.type === SEITEN_TYP && !istFund(page);
+}
+
+/** Zugangskarte (oder anderes Modul-Item, das man aufheben kann)? */
+function istGegenstand(item) {
+  return item?.documentName === "Item" && Boolean(item.getFlag?.(MODUL_ID, "zugang"));
 }
 
 /* -------------------------------------------- */
@@ -123,41 +139,63 @@ function istTraegerSeite(page) {
 /** Hook „dropCanvasData“ – muss synchron false liefern, damit Foundry keine Notiz anlegt. */
 function beimAblegen(_canvas, data, event) {
   if (!game.user.isGM || !data?.uuid) return;
-  let page = null;
-  if (data.type === "JournalEntryPage") page = seiteSync(data.uuid);
-  else if (data.type === "Item") {
-    const uuid = seiteSync(data.uuid)?.getFlag?.(MODUL_ID, "seite");
-    if (!uuid) return;
-    page = seiteSync(uuid);
-    if (!page) {
-      ui.notifications.warn("DATENTRAEGER.Beute.Fehlt", { localize: true });
-      return false;
-    }
-  } else return;
-  if (!istTraegerSeite(page)) return;
-  traegerHinlegen(page, { x: data.x, y: data.y }, { einrasten: !event?.shiftKey })
-    .catch(err => { console.error(`${MODUL_ID} | Placing on the map`, err); ui.notifications.error(err.message); });
+  const punkt = { x: data.x, y: data.y };
+  const optionen = { einrasten: !event?.shiftKey };
+  const fehler = err => { console.error(`${MODUL_ID} | Placing on the map`, err); ui.notifications.error(err.message); };
+
+  if (data.type === "JournalEntryPage") {
+    const page = sync(data.uuid);
+    if (!istTraegerSeite(page)) return;
+    traegerHinlegen(page, punkt, optionen).catch(fehler);
+    return false;
+  }
+  if (data.type !== "Item") return;
+  const item = sync(data.uuid);
+  if (istGegenstand(item)) {
+    gegenstandHinlegen(item, punkt, optionen).catch(fehler);
+    return false;
+  }
+  const uuid = item?.getFlag?.(MODUL_ID, "seite");
+  if (!uuid) return;
+  const page = sync(uuid);
+  if (!istTraegerSeite(page)) {
+    ui.notifications.warn("DATENTRAEGER.Beute.Fehlt", { localize: true });
+    return false;
+  }
+  traegerHinlegen(page, punkt, optionen).catch(fehler);
   return false;
 }
 
-/** Legt den Datenträger als Tile auf die aktuelle Szene (zuerst versteckt). */
-export async function traegerHinlegen(page, { x, y }, { einrasten = true, versteckt = true } = {}) {
-  if (!game.user.isGM || !canvas?.ready || !istTraegerSeite(page)) return null;
+/** Tile anlegen: eingerastet auf die Feldmitte, so groß wie eingestellt, zuerst versteckt. */
+async function tileAnlegen({ name, src, flags }, { x, y }, { einrasten = true, versteckt = true } = {}) {
+  if (!game.user.isGM || !canvas?.ready) return null;
   const groesse = Math.max(8, Math.round(canvas.dimensions.size * kartenGroesse()));
   if (einrasten) ({ x, y } = canvas.grid.getSnappedPoint({ x, y }, { mode: CONST.GRID_SNAPPING_MODES.CENTER }));
   if (!canvas.dimensions.rect.contains(x, y)) return null;
-
   const [tile] = await canvas.scene.createEmbeddedDocuments("Tile", [{
-    name: page.name,
-    texture: { src: symbolFuer(page.system.art), anchorX: 0.5, anchorY: 0.5 },
+    name,
+    texture: { src, anchorX: 0.5, anchorY: 0.5 },
     x: Math.round(x), y: Math.round(y), width: groesse, height: groesse,
     hidden: versteckt,
     sort: Math.max(canvas.tiles.getMaxSort() + 1, 0),
-    flags: { [MODUL_ID]: { traeger: page.uuid } }
+    flags: { [MODUL_ID]: flags }
   }]);
-  await fuerSpielerOeffnen(page);
-  ui.notifications.info(F(versteckt ? "DATENTRAEGER.Karte.HingelegtVersteckt" : "DATENTRAEGER.Karte.Hingelegt", { name: page.name }));
+  ui.notifications.info(F(versteckt ? "DATENTRAEGER.Karte.HingelegtVersteckt" : "DATENTRAEGER.Karte.Hingelegt", { name }));
   return tile;
+}
+
+/** Legt den Datenträger als Tile auf die aktuelle Szene (zuerst versteckt). */
+export async function traegerHinlegen(page, punkt, optionen = {}) {
+  if (!istTraegerSeite(page)) return null;
+  const tile = await tileAnlegen({ name: page.name, src: symbolFuer(page.system.art), flags: { traeger: page.uuid } }, punkt, optionen);
+  if (tile) warneOhneGeheimmodus();
+  return tile;
+}
+
+/** Legt einen Gegenstand (z. B. Zugangskarte) als Tile auf die aktuelle Szene. */
+export async function gegenstandHinlegen(item, punkt, optionen = {}) {
+  if (!istGegenstand(item)) return null;
+  return tileAnlegen({ name: item.name, src: item.img, flags: { gegenstand: item.uuid } }, punkt, optionen);
 }
 
 /* -------------------------------------------- */
@@ -179,7 +217,7 @@ function meinToken() {
 async function beimDoppelklick(punkt) {
   if (game.user.isGM || !canvas?.ready || !canvas.scene) return;
   const tile = canvas.scene.tiles.contents
-    .filter(t => traegerUuid(t) && !t.hidden && enthaelt(rechteckVonTile(t), punkt))
+    .filter(t => istFundstueck(t) && !t.hidden && enthaelt(rechteckVonTile(t), punkt))
     .sort((a, b) => b.sort - a.sort)[0];
   if (!tile) return;
 
@@ -190,6 +228,18 @@ async function beimDoppelklick(punkt) {
   const token = meinToken();
   if (!token) return ui.notifications.warn("DATENTRAEGER.Karte.KeinToken", { localize: true });
   if (!nahGenug(token.document, tile)) return ui.notifications.warn("DATENTRAEGER.Karte.ZuWeit", { localize: true });
+
+  // Gegenstand: nur einstecken.
+  if (gegenstandUuid(tile)) {
+    const wahl = await foundry.applications.api.DialogV2.wait({
+      window: { title: L("DATENTRAEGER.Karte.GefundenGegenstand"), icon: "fa-solid fa-id-card" },
+      content: `<p><strong>${escapeHtml(tile.name ?? "")}</strong></p>`,
+      buttons: [{ action: "einstecken", label: L("DATENTRAEGER.Karte.Einstecken"), icon: "fa-solid fa-hand", default: true }],
+      rejectClose: false
+    });
+    if (wahl === "einstecken") await einstecken(tile, token);
+    return;
+  }
 
   const page = await fromUuid(traegerUuid(tile));
   if (!istTraegerSeite(page)) return ui.notifications.warn("DATENTRAEGER.Beute.Fehlt", { localize: true });
@@ -203,8 +253,9 @@ async function beimDoppelklick(punkt) {
     ],
     rejectClose: false
   });
-  if (wahl === "lesen") page.parent.sheet.render({ force: true, pageId: page.id });
-  else if (wahl === "einstecken") await einstecken(tile, token);
+  if (wahl === "lesen") {
+    await seiteOeffnen(page, { name: QUERY.lesenKarte, daten: { tileUuid: tile.uuid, tokenUuid: token.document.uuid } });
+  } else if (wahl === "einstecken") await einstecken(tile, token);
 }
 
 async function einstecken(tile, token) {
@@ -219,35 +270,64 @@ async function einstecken(tile, token) {
 }
 
 /* -------------------------------------------- */
-/*  Einstecken (beim GM)                        */
+/*  Beim GM                                     */
 /* -------------------------------------------- */
 
-/** Der GM prüft alles selbst nach – dem Spieler-Client wird nichts geglaubt. */
+/**
+ * Der GM prüft alles selbst nach – dem Spieler-Client wird nichts geglaubt:
+ * Tile da und aufgedeckt, Token gehört dem Spieler, steht auf derselben Szene und nah genug.
+ */
+async function pruefeFund({ tileUuid, tokenUuid }, user) {
+  const tile = await fromUuid(tileUuid);
+  if (tile?.documentName !== "Tile" || !istFundstueck(tile) || tile.hidden) throw new Error(L("DATENTRAEGER.Karte.Weg"));
+  const tokenDoc = await fromUuid(tokenUuid);
+  const besitzer = CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER;
+  if (tokenDoc?.documentName !== "Token" || tokenDoc.parent !== tile.parent || !tokenDoc.testUserPermission(user, besitzer)) {
+    throw new Error(L("DATENTRAEGER.Karte.KeinToken"));
+  }
+  if (!nahGenug(tokenDoc, tile)) throw new Error(L("DATENTRAEGER.Karte.ZuWeit"));
+  return { tile, tokenDoc };
+}
+
+async function beantworteLesenKarte(daten, { user }) {
+  if (!game.user.isGM) throw new Error(L("DATENTRAEGER.Anfrage.NurGM"));
+  const { tile } = await pruefeFund(daten, user);
+  const page = await fromUuid(traegerUuid(tile));
+  if (!istTraegerSeite(page)) throw new Error(L("DATENTRAEGER.Beute.Fehlt"));
+  await freischalten(page, user);
+  return { ok: true };
+}
+
 async function beantworteEinstecken({ tileUuid, tokenUuid }, { user }) {
   if (!game.user.isGM) throw new Error(L("DATENTRAEGER.Anfrage.NurGM"));
   if (inArbeit.has(tileUuid)) throw new Error(L("DATENTRAEGER.Karte.Weg"));
   inArbeit.add(tileUuid);
   try {
-    const tile = await fromUuid(tileUuid);
-    if (tile?.documentName !== "Tile" || !traegerUuid(tile) || tile.hidden) throw new Error(L("DATENTRAEGER.Karte.Weg"));
-    const page = await fromUuid(traegerUuid(tile));
-    if (!istTraegerSeite(page)) throw new Error(L("DATENTRAEGER.Beute.Fehlt"));
+    const { tile, tokenDoc } = await pruefeFund({ tileUuid, tokenUuid }, user);
 
-    const tokenDoc = await fromUuid(tokenUuid);
-    const besitzer = CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER;
-    if (tokenDoc?.documentName !== "Token" || tokenDoc.parent !== tile.parent || !tokenDoc.testUserPermission(user, besitzer)) {
-      throw new Error(L("DATENTRAEGER.Karte.KeinToken"));
+    // Was dort liegt: Datenträger (Loot-Item zur Seite) oder Gegenstand (Kopie des Items).
+    let itemDaten;
+    let page = null;
+    if (traegerUuid(tile)) {
+      page = await fromUuid(traegerUuid(tile));
+      if (!istTraegerSeite(page)) throw new Error(L("DATENTRAEGER.Beute.Fehlt"));
+      itemDaten = beuteDaten(page);
+    } else {
+      const vorlage = await fromUuid(gegenstandUuid(tile));
+      if (!istGegenstand(vorlage)) throw new Error(L("DATENTRAEGER.Karte.Weg"));
+      itemDaten = vorlage.toObject();
+      for (const k of ["_id", "folder", "sort", "ownership", "_stats"]) delete itemDaten[k];
     }
-    if (!nahGenug(tokenDoc, tile)) throw new Error(L("DATENTRAEGER.Karte.ZuWeit"));
 
     // Wer dort steht, bekommt es – bei verknüpften Tokens der Charakter dahinter.
+    const besitzer = CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER;
     const actor = (tokenDoc.actorLink && tokenDoc.actor) || user.character;
     if (!actor || !actor.testUserPermission(user, besitzer)) throw new Error(L("DATENTRAEGER.Entschluesseln.KeinCharakter"));
 
-    const [item] = await actor.createEmbeddedDocuments("Item", [beuteDaten(page)]);
+    const [item] = await actor.createEmbeddedDocuments("Item", [itemDaten]);
     await tile.delete();
-    await fuerSpielerOeffnen(page, { warnen: false });
-    const antwort = { name: item?.name ?? page.name, actor: actor.name };
+    if (page) await freischalten(page, user);
+    const antwort = { name: item?.name ?? itemDaten.name, actor: actor.name };
     ui.notifications.info(F("DATENTRAEGER.Karte.GmEingesteckt", antwort));
     return antwort;
   } finally {

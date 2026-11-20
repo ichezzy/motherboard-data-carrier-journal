@@ -98,7 +98,9 @@ export const QUERY = {
   sicht: `${MODUL_ID}.sicht`,
   entschluesseln: `${MODUL_ID}.entschluesseln`,
   freigeben: `${MODUL_ID}.freigeben`,
-  einstecken: `${MODUL_ID}.einstecken`
+  einstecken: `${MODUL_ID}.einstecken`,
+  lesenKarte: `${MODUL_ID}.lesenKarte`,
+  lesenBeute: `${MODUL_ID}.lesenBeute`
 };
 
 /** Daggerheart-Traits (Schlüssel wie im System). */

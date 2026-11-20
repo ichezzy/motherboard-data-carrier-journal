@@ -124,11 +124,14 @@ export function leseLeser(text) {
       if (t.startsWith("@")) return { art: "charakter", name: t.slice(1).trim() };
       const dc = /^dc\s*(\d{1,2})$/i.exec(t);
       if (dc) return { art: "dc", wert: Number(dc[1]) };
+      // Zugangskarte: „Level 2“ (jede Karte ab Level 2) oder „CTC Level 2“ (nur Karten dieses Ausstellers)
+      const karte = /^(?:(.+?)\s+)?level\s*([1-3])$/i.exec(t);
+      if (karte) return { art: "zugang", level: Number(karte[2]), aussteller: karte[1]?.trim() || null };
       const stufe = STUFE_NACH_FALTE.get(falte(t));
       if (stufe) return { art: "stufe", wert: stufe };
       return { art: "ancestry", name: t };
     })
-    .filter(r => r.art === "stufe" || r.art === "dc" || r.name);
+    .filter(r => r.art === "stufe" || r.art === "dc" || r.art === "zugang" || r.name);
 }
 
 /** Inneres einer Markierung (zwischen `{{` und `}}`) lesen. */
@@ -202,9 +205,12 @@ export function luecken(html) {
  * @param {{art: string, ancestries?: string[], charaktere?: string[], stufen?: string[], ersatz?: string}} daten
  * @returns {{vor: string, nach: string, ohneText: string}}
  */
-export function markierungsRahmen({ art, ancestries = [], charaktere = [], stufen = [], ersatz = "", dc = null }) {
+export function markierungsRahmen({ art, ancestries = [], charaktere = [], stufen = [], ersatz = "", dc = null, zugang = null }) {
+  const aussteller = zugang?.aussteller?.trim();
+  const karte = [1, 2, 3].includes(zugang?.level) ? [`${aussteller ? `${aussteller} ` : ""}Level ${zugang.level}`] : [];
   const leser = [
     ...(Number.isInteger(dc) && dc > 0 ? [`DC ${dc}`] : []),
+    ...karte,
     ...ancestries.map(a => a.trim()).filter(Boolean),
     ...charaktere.map(c => c.trim()).filter(Boolean).map(c => `@${c}`),
     ...stufen

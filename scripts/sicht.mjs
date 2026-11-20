@@ -14,6 +14,7 @@ import { dcVon } from "./wurf.mjs";
  * @property {Set<string>} namen          Gefaltete Charakternamen (voll und Vorname)
  * @property {string|null} stufe          Gezeigtes Duality-Ergebnis (Phase 2)
  * @property {number|null} [total]        Gesamtwert des Entschlüsseln-Wurfs, der für ihn gilt (0.5.0)
+ * @property {{level: number, aussteller: string|null}[]} [zugang]  Zugangskarten im Inventar (0.5.2)
  */
 
 /** Ein Leser ohne Charakter: liest keine Lücke. */
@@ -39,6 +40,8 @@ export function kannLesen(luecke, leser, difficulty = null) {
       case "ancestry": return leser.ancestries.has(falte(regel.name));
       case "charakter": return leser.namen.has(falte(regel.name));
       case "stufe": return Boolean(leser.stufe) && STUFEN.indexOf(leser.stufe) >= STUFEN.indexOf(regel.wert);
+      case "zugang": return (leser.zugang ?? []).some(k => k.level >= regel.level
+        && (!regel.aussteller || falte(k.aussteller ?? "") === falte(regel.aussteller)));
       default: return false;
     }
   });
@@ -49,6 +52,7 @@ export function beschreibeRegel(regel) {
   if (regel.art === "charakter") return `@${regel.name}`;
   if (regel.art === "stufe") return regel.wert;
   if (regel.art === "dc") return `DC ${regel.wert}`;
+  if (regel.art === "zugang") return `${regel.aussteller ? `${regel.aussteller} ` : ""}Level ${regel.level}`;
   return regel.name;
 }
 

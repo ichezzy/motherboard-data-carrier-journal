@@ -664,3 +664,8 @@ body.dt-bewegung-aus .mdcj-holo::after { animation: none !important; }
 
 /* Beute-Item: Knopf im Item-Bogen */
 .dt-beute-lesen { width: auto; margin: 0.4rem 0.5rem 0; }
+
+/* ---------- Zugangskarten (0.5.2): Knopf in der Items-Seitenleiste ---------- */
+
+.directory .header-actions:has(.dt-karte-anlegen) { flex-wrap: wrap; }
+.directory .header-actions .dt-karte-anlegen { flex: 0 0 100%; }

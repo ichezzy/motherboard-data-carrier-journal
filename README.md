@@ -96,8 +96,19 @@ Daggerheart erledigt Hope, Fear und Stress selbst. Der GM kann einen Datenträge
 
 ## Funde und Beute
 
-- **Journal „Funde“:** wird beim ersten Fund angelegt (für Spieler lesbar) und bekommt eine Seite je Datenträger – mit dem, was die **ganze Gruppe** gesehen hat: beim „Zeigen…“ durch den GM und beim „Für alle freigeben“. Was nur Clank lesen kann, steht dort nicht. Cordex steht als Platzhalter darin, nie das Wort.
-- **Beute:** Knopf in der GM-Leiste legt ein Daggerheart-Loot-Item an, das auf die Seite zeigt. Im Item-Bogen erscheint **Datenträger lesen**. Damit Spieler die Seite öffnen können, setzt das Modul das Journal auf „Beobachter“. Das Item bekommt das Icon seiner Art (Disk, Empfänger, Chip – `assets/icons/`, Comic-Stil; die weißen Silhouetten liegen in `assets/icons/weiss/`), außer die Seite hat ein eigenes Bild.
+- **Journal „Findings“:** wird beim ersten Fund angelegt (für Spieler lesbar, im Ordner aus *Folder for Created Journals*; verschieben und umbenennen darfst du es jederzeit – das Modul findet es über seine ID) und bekommt eine Seite je Datenträger – mit dem, was die **ganze Gruppe** gesehen hat: beim „Zeigen…“ durch den GM und beim „Für alle freigeben“. Was nur Clank lesen kann, steht dort nicht. Cordex steht als Platzhalter darin, nie das Wort.
+- **Beute:** Knopf in der GM-Leiste legt ein Daggerheart-Loot-Item an, das auf die Seite zeigt. Es landet im Ordner aus *Folder for Created Items*. Im Item-Bogen erscheint **Read Data Carrier**. Das Item bekommt das Icon seiner Art (Disk, Empfänger, Chip – `assets/icons/`, Comic-Stil; die weißen Silhouetten liegen in `assets/icons/weiss/`), außer die Seite hat ein eigenes Bild.
+
+## Freischalten (0.5.2)
+
+Niemand bekommt ein ganzes Journal. Wer einen Datenträger **einsteckt** (Karte), auf der Karte **liest** oder sein Loot-Item mit **Read Data Carrier** öffnet, bekommt genau diese Seite (*Observer*) und das Journal nur *Limited* – andere Seiten im selben Journal bleiben zu. Der Browser des GM prüft vorher nach (Token nah genug bzw. ein eigener Charakter trägt das Item). Gibt ein Spieler das Item weiter, bekommt der neue Träger die Seite beim ersten Lesen.
+
+## Zugangskarten (0.5.2)
+
+- **Ausstellen:** Knopf **Access Card** oben in der Items-Seitenleiste (nur GM) → Level 1–3, optional Aussteller (z. B. CTC), Name. Das Loot-Item bekommt das Keycard-Icon seines Levels und landet im Item-Ordner.
+- **Markieren:** `{{locked | Level 2: …}}` öffnet sich für jede Karte ab Level 2, `{{locked | CTC Level 3: …}}` nur für CTC-Karten ab Level 3 – sofort, ohne Wurf, nur für den Träger. Der Markier-Dialog hat dafür Felder; Karte und DC lassen sich kombinieren (eine Regel reicht).
+- **Auf der Karte:** Eine Karte aus der Seitenleiste auf die Szene ziehen → Tile; Spieler finden und **Pick Up** wie bei Datenträgern (der Charakter bekommt eine Kopie).
+- **Fälschungsschutz:** Level und Aussteller stehen in einer Welt-Einstellung, die nur der GM schreiben kann. Eine selbst gebaute Karte zählt nicht.
 
 ## Auf der Karte
 
@@ -138,7 +149,8 @@ node tools/cordex-vorschau.mjs   # alle Cordex-Zeichen als HTML
 - `scripts/anfragen.mjs` – Anfragen an den GM (Sicht, Entschlüsseln, Freigeben)
 - `scripts/seite.mjs` – Flags einer Seite und die Sicht für einen Benutzer
 - `scripts/entschluesseln.mjs` · `funde.mjs` · `beute.mjs`
-- `scripts/karte.mjs` · `karte-logik.mjs` – Datenträger als Tile auf der Karte (Geometrie ohne Foundry, testbar)
+- `scripts/karte.mjs` · `karte-logik.mjs` – Fundstücke als Tile auf der Karte (Geometrie ohne Foundry, testbar)
+- `scripts/karten.mjs` – Zugangskarten · `scripts/ordner.mjs` – Standard-Ordner · `scripts/vonhand.mjs` – Ergebnis von Hand
 - In der Konsole: `game.modules.get("motherboard-data-carrier-journal").api`
 
 ## Phasen
@@ -149,6 +161,7 @@ node tools/cordex-vorschau.mjs   # alle Cordex-Zeichen als HTML
    - 0.4.0: Datenträger auf der Karte – hinlegen, aufdecken, finden, lesen, einstecken.
    - 0.4.1: Name „Motherboard: Data Carrier Journal“, Oberfläche und Lücken-Wörter englisch.
    - 0.5.0: DC pro Stelle, alle Lücken in allen Arten.
-   - 0.5.1: Ergebnis von Hand, Doppelklick auf der Karte repariert, Größe auf der Karte, bunte Icons. ← jetzt
+   - 0.5.1: Ergebnis von Hand, Doppelklick auf der Karte repariert, Größe auf der Karte, bunte Icons.
+   - 0.5.2: Freischalten pro Spieler und Seite, Standard-Ordner für Items und Journale, Zugangskarten (Schritt 2). ← jetzt
 4. **Schlüssel** (geplant): Zugangskarten mit Level und Aussteller · eigenes Kompendium · Cordex-Level (nur der GM setzt sie, Clanks Level 1, Translate) · infested mit Purge-Wurf, Purge Chip und Skip.
 5. Text aus Audio: Skript an der Aufnahme ausrichten (Forced Alignment), Lücken im Ton je Zuhörer.

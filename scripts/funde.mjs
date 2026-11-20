@@ -10,6 +10,7 @@ import { MODUL_ID, SEITEN_TYP } from "./konstanten.mjs";
 import { niemand } from "./sicht.mjs";
 import { sichtFuer, versuchVon } from "./seite.mjs";
 import { escapeHtml } from "./syntax.mjs";
+import { ordnerId } from "./ordner.mjs";
 
 const L = key => game.i18n.localize(key);
 
@@ -25,6 +26,7 @@ async function fundeJournal() {
   const journal = await CONFIG.JournalEntry.documentClass.create({
     name: L("DATENTRAEGER.Funde.Name"),
     ownership: { default: CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER },
+    folder: ordnerId("JournalEntry"),
     flags: { [MODUL_ID]: { funde: true } }
   });
   await game.settings.set(MODUL_ID, "fundeJournal", journal.id);

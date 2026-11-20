@@ -104,7 +104,10 @@
       "Andere": "Andere Lücken",
       "DC": "DC",
       "DCLeer": "Difficulty der Seite",
-      "DCHinweis": "Öffnet die Stelle für jeden, der mit mindestens diesem Gesamtwert entschlüsselt. Leer: locked, redacted, static und crosstalk nehmen die Difficulty der Seite; andere Lücken gehen per Wurf nicht auf."
+      "DCHinweis": "Öffnet die Stelle für jeden, der mit mindestens diesem Gesamtwert entschlüsselt. Leer: locked, redacted, static und crosstalk nehmen die Difficulty der Seite; andere Lücken gehen per Wurf nicht auf.",
+      "Karte": "Zugangskarte",
+      "KarteKeine": "– keine –",
+      "KarteHinweis": "Öffnet die Stelle ohne Wurf für jeden, der eine Karte mit mindestens diesem Level trägt. Mit Aussteller zählen nur dessen Karten."
     },
     "Ansicht": {
       "Als": "Ansicht",
@@ -173,6 +176,17 @@
         "halb": "Halbes Feld",
         "dreiviertel": "Drei Viertel",
         "ganz": "Ganzes Feld"
+      },
+      "Ordner": {
+        "Keiner": "— oberste Ebene —",
+        "Item": {
+          "Name": "Ordner für erstellte Items",
+          "Hint": "Loot-Items vom Knopf „Loot“ und neue Zugangskarten landen hier."
+        },
+        "JournalEntry": {
+          "Name": "Ordner für erstellte Journale",
+          "Hint": "Das Journal „Findings“ landet hier, wenn das Modul es anlegt. Verschieben kannst du es danach trotzdem."
+        }
       }
     },
     "Audio": {
@@ -291,7 +305,6 @@
       "Tip": "Ein Loot-Item anlegen, das auf diesen Datenträger zeigt",
       "Lesen": "Datenträger lesen",
       "Fehlt": "Der Datenträger zu diesem Item existiert nicht mehr.",
-      "Freigegeben": "Das Journal „{journal}“ ist jetzt für Spieler sichtbar (Beobachter), damit sie den Datenträger öffnen können.",
       "OhneGeheimmodus": "Ohne Geheimmodus kann ein Spieler den ganzen Text über die Entwicklerkonsole lesen.",
       "Beschreibung": {
         "anthanen": "Eine flache, runde Scheibe aus dunklem Metall. Auf ihr liegt kein Staub.",
@@ -309,7 +322,8 @@
       "ZuWeit": "Zu weit weg – geh näher heran (Very Close).",
       "Weg": "Der Datenträger ist nicht mehr da.",
       "Eingesteckt": "{actor} hat „{name}“ eingesteckt.",
-      "GmEingesteckt": "{actor} hat „{name}“ von der Karte eingesteckt."
+      "GmEingesteckt": "{actor} hat „{name}“ von der Karte eingesteckt.",
+      "GefundenGegenstand": "Gegenstand gefunden"
     },
     "Umzug": {
       "Fertig": "Motherboard: Data Carrier Journal: {seiten} Seite(n) und {haekchen} Häkchen aus dem alten Modul „datentraeger“ übernommen.",
@@ -333,6 +347,25 @@
       "KeinTotal": "Bitte den Gesamtwert eintragen.",
       "SchonVersucht": "An diesem Datenträger gibt es schon einen Versuch – erst zurücksetzen.",
       "Marke": "von Hand eingetragen"
+    },
+    "Freischalten": {
+      "Gm": "{name} kann jetzt „{seite}“ lesen.",
+      "NichtDein": "Dein Charakter trägt diesen Datenträger nicht."
+    },
+    "Karten": {
+      "Knopf": "Zugangskarte",
+      "Tip": "Eine Zugangskarte (Level 1–3) anlegen, die gesperrte Stellen ohne Wurf öffnet",
+      "Titel": "Zugangskarte anlegen",
+      "Level": "Level",
+      "Aussteller": "Aussteller",
+      "AusstellerHinweis": "Optional, z. B. CTC. Eine Karte mit Aussteller öffnet „CTC Level 2“ und einfaches „Level 2“; eine ohne nur einfaches „Level n“.",
+      "NameFeld": "Name",
+      "NameLeer": "leer = Access Card – Level n",
+      "Name": "Access Card – Level {level}",
+      "NameMit": "{aussteller} Access Card – Level {level}",
+      "Beschreibung": "Eine Zugangskarte, Level {level}.",
+      "BeschreibungMit": "Eine Zugangskarte von {aussteller}, Level {level}.",
+      "Ok": "Anlegen"
     }
   }
 }

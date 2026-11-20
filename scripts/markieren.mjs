@@ -39,6 +39,17 @@ export async function markierDialog({ seitenArt, auswahl }) {
       <fieldset>
         <legend>${L("DATENTRAEGER.Markieren.WerLiest")}</legend>
         <div class="form-group">
+          <label>${L("DATENTRAEGER.Markieren.Karte")}</label>
+          <div class="form-fields">
+            <select name="kartenLevel">
+              <option value="">${L("DATENTRAEGER.Markieren.KarteKeine")}</option>
+              <option value="1">Level 1</option><option value="2">Level 2</option><option value="3">Level 3</option>
+            </select>
+            <input type="text" name="aussteller" placeholder="${escapeHtml(L("DATENTRAEGER.Karten.Aussteller"))}">
+          </div>
+          <p class="hint">${L("DATENTRAEGER.Markieren.KarteHinweis")}</p>
+        </div>
+        <div class="form-group">
           <label>${L("DATENTRAEGER.Markieren.DC")}</label>
           <div class="form-fields"><input type="number" name="dc" min="1" max="40" step="1" placeholder="${escapeHtml(L("DATENTRAEGER.Markieren.DCLeer"))}"></div>
           <p class="hint">${L("DATENTRAEGER.Markieren.DCHinweis")}</p>
@@ -90,7 +101,10 @@ export async function markierDialog({ seitenArt, auswahl }) {
             ancestries: ancestry.split(",").map(s => s.trim()).filter(Boolean),
             charaktere: Array.from(form.querySelectorAll("input[name='charaktere']:checked"), i => i.value),
             stufen: form.elements.stufe.value ? [form.elements.stufe.value] : [],
-            dc: form.elements.dc.value ? Math.round(Number(form.elements.dc.value)) : null
+            dc: form.elements.dc.value ? Math.round(Number(form.elements.dc.value)) : null,
+            zugang: form.elements.kartenLevel.value
+              ? { level: Number(form.elements.kartenLevel.value), aussteller: form.elements.aussteller.value }
+              : null
           };
         }
       },

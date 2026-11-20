@@ -104,7 +104,10 @@
       "Andere": "Other gaps",
       "DC": "DC",
       "DCLeer": "page Difficulty",
-      "DCHinweis": "Opens the passage for whoever decrypts with at least this total. Empty: locked, redacted, static and crosstalk use the page Difficulty; other gaps don't open by rolling."
+      "DCHinweis": "Opens the passage for whoever decrypts with at least this total. Empty: locked, redacted, static and crosstalk use the page Difficulty; other gaps don't open by rolling.",
+      "Karte": "Access Card",
+      "KarteKeine": "– none –",
+      "KarteHinweis": "Opens the passage for anyone carrying a card of at least this level, without a roll. With an issuer, only that issuer's cards count."
     },
     "Ansicht": {
       "Als": "View as",
@@ -173,6 +176,17 @@
         "halb": "Half square",
         "dreiviertel": "Three quarters",
         "ganz": "Full square"
+      },
+      "Ordner": {
+        "Keiner": "— top level —",
+        "Item": {
+          "Name": "Folder for Created Items",
+          "Hint": "Loot items from the Loot button and new access cards land here."
+        },
+        "JournalEntry": {
+          "Name": "Folder for Created Journals",
+          "Hint": "The Findings journal lands here when the module creates it. You can still move it anywhere later."
+        }
       }
     },
     "Audio": {
@@ -291,7 +305,6 @@
       "Tip": "Create a loot item that points to this data carrier",
       "Lesen": "Read Data Carrier",
       "Fehlt": "The data carrier for this item no longer exists.",
-      "Freigegeben": "The journal “{journal}” is now visible to players (Observer) so they can open the data carrier.",
       "OhneGeheimmodus": "Without Secret Mode, a player can read the full text through the developer console.",
       "Beschreibung": {
         "anthanen": "A flat, round disc of dark metal. No dust settles on it.",
@@ -309,7 +322,8 @@
       "ZuWeit": "Too far away – get closer (Very Close).",
       "Weg": "The data carrier is gone.",
       "Eingesteckt": "{actor} picked up “{name}”.",
-      "GmEingesteckt": "{actor} picked up “{name}” from the map."
+      "GmEingesteckt": "{actor} picked up “{name}” from the map.",
+      "GefundenGegenstand": "Item Found"
     },
     "Umzug": {
       "Fertig": "Motherboard: Data Carrier Journal – took over {seiten} page(s) and {haekchen} checkmark(s) from the old “datentraeger” module.",
@@ -333,6 +347,25 @@
       "KeinTotal": "Please enter the total.",
       "SchonVersucht": "This data carrier already has a decryption attempt – reset it first.",
       "Marke": "entered by hand"
+    },
+    "Freischalten": {
+      "Gm": "{name} can now read “{seite}”.",
+      "NichtDein": "Your character doesn't carry this data carrier."
+    },
+    "Karten": {
+      "Knopf": "Access Card",
+      "Tip": "Create an access card (Level 1–3) that opens locked passages without a roll",
+      "Titel": "Create Access Card",
+      "Level": "Level",
+      "Aussteller": "Issuer",
+      "AusstellerHinweis": "Optional, e.g. CTC. A card with an issuer opens “CTC Level 2” and plain “Level 2”; a card without one opens only plain “Level n”.",
+      "NameFeld": "Name",
+      "NameLeer": "empty = Access Card – Level n",
+      "Name": "Access Card – Level {level}",
+      "NameMit": "{aussteller} Access Card – Level {level}",
+      "Beschreibung": "An access card, Level {level}.",
+      "BeschreibungMit": "An access card issued by {aussteller}, Level {level}.",
+      "Ok": "Create"
     }
   }
 }

@@ -10,6 +10,7 @@
 import { MODUL_ID, CLANK_UUID, STANDARD_ANCESTRY } from "./konstanten.mjs";
 import { falte } from "./syntax.mjs";
 import { niemand, gmLeser } from "./sicht.mjs";
+import { zugangskartenVon } from "./karten.mjs";
 
 const CLANK = falte(STANDARD_ANCESTRY);
 
@@ -52,7 +53,9 @@ export function leserFuerActor(actor) {
     gm: false,
     ancestries: ancestriesVon(actor),
     namen: new Set([voll, voll.split(" ")[0]]),
-    stufe: null
+    stufe: null,
+    total: null,
+    zugang: zugangskartenVon(actor)
   };
 }
 
