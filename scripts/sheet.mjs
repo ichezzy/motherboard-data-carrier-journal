@@ -64,7 +64,8 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
     header: super.EDIT_PARTS.header,
     inhalt: {
       template: `modules/${MODUL_ID}/templates/bearbeiten.hbs`,
-      classes: ["standard-form"],
+      // „scrollable“ als Klasse: Foundry schneidet den Inhalt von Seitensheets sonst ab
+      classes: ["standard-form", "scrollable"],
       scrollable: [""]
     },
     footer: super.EDIT_PARTS.footer

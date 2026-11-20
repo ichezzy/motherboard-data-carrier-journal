@@ -538,8 +538,9 @@ body.dt-bewegung-aus .mdcj-holo::after { animation: none !important; }
   gap: 0.5rem;
 }
 .datentraeger .dt-bearbeiten .dt-werkzeug button { flex: 0 0 auto; width: auto; }
-.datentraeger .dt-bearbeiten prose-mirror.dt-editor { min-height: 260px; }
-.datentraeger .dt-bearbeiten prose-mirror.dt-editor-klein { min-height: 120px; }
+/* Feste Höhen: Der Text scrollt im Editor, das Formular scrollt im Fenster. */
+.datentraeger .dt-bearbeiten prose-mirror.dt-editor { flex: none; height: 380px; min-height: 0; }
+.datentraeger .dt-bearbeiten prose-mirror.dt-editor-klein { height: 170px; }
 
 .datentraeger .dt-markierungen h4 { margin: 0.5rem 0 0.25rem; }
 .datentraeger .dt-markierungen ol { margin: 0; padding-left: 1.5rem; }
