@@ -165,6 +165,14 @@
         "Name": "Leser",
         "Label": "Leser verwalten",
         "Hint": "Welche Charaktere wie Clank lesen."
+      },
+      "KartenGroesse": {
+        "Name": "Größe auf der Karte",
+        "Hint": "Wie groß ein Datenträger erscheint, wenn du ihn auf eine Szene ziehst – als Anteil eines Feldes. Gilt für neu hingelegte.",
+        "viertel": "Viertel Feld",
+        "halb": "Halbes Feld",
+        "dreiviertel": "Drei Viertel",
+        "ganz": "Ganzes Feld"
       }
     },
     "Audio": {
@@ -306,6 +314,25 @@
     "Umzug": {
       "Fertig": "Motherboard: Data Carrier Journal: {seiten} Seite(n) und {haekchen} Häkchen aus dem alten Modul „datentraeger“ übernommen.",
       "Fehler": "Motherboard: Data Carrier Journal: Umzug fehlgeschlagen in: {journale}. Details in der Konsole (F12)."
+    },
+    "VonHand": {
+      "Knopf": "Ergebnis eintragen…",
+      "Tip": "Für Würfel am Tisch: das Ergebnis des Entschlüsselns von Hand eintragen",
+      "Titel": "Ergebnis eintragen",
+      "Hinweis": "Für Würfel am Tisch. Das Modul behandelt es wie einen Entschlüsseln-Wurf in Foundry – mit denselben Folgen, und nur dieser Charakter sieht das Ergebnis, bis sein Spieler es freigibt.",
+      "Wurf": "Wurf: {trait} gegen Difficulty {difficulty}",
+      "Charakter": "Charakter",
+      "Total": "Gesamtwert",
+      "Ausgang": "Ergebnis",
+      "MitHope": "with Hope",
+      "MitFear": "with Fear",
+      "Kritisch": "Critical Success",
+      "AusgangHinweis": "Welcher Würfel höher war. Success oder Failure ergibt sich aus Gesamtwert und Difficulty.",
+      "Teilen": "Gleich für alle freigeben",
+      "Ok": "Eintragen",
+      "KeinTotal": "Bitte den Gesamtwert eintragen.",
+      "SchonVersucht": "An diesem Datenträger gibt es schon einen Versuch – erst zurücksetzen.",
+      "Marke": "von Hand eingetragen"
     }
   }
 }

@@ -23,13 +23,56 @@ const inArbeit = new Set();
 
 export function registriereKarte() {
   CONFIG.queries[QUERY.einstecken] = beantworteEinstecken;
-  Hooks.on("dropCanvasData", beimAblegen);
-  // Das Spielfeld (#board) bleibt beim Szenenwechsel dasselbe – ein Listener genügt.
-  Hooks.once("canvasReady", () => {
-    document.getElementById("board")?.addEventListener("dblclick", event => {
-      beimDoppelklick(event).catch(err => console.error(`${MODUL_ID} | Double-click`, err));
-    });
+  game.settings.register(MODUL_ID, "kartenGroesse", {
+    name: "DATENTRAEGER.Einstellung.KartenGroesse.Name",
+    hint: "DATENTRAEGER.Einstellung.KartenGroesse.Hint",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      "0.25": "DATENTRAEGER.Einstellung.KartenGroesse.viertel",
+      "0.5": "DATENTRAEGER.Einstellung.KartenGroesse.halb",
+      "0.75": "DATENTRAEGER.Einstellung.KartenGroesse.dreiviertel",
+      "1": "DATENTRAEGER.Einstellung.KartenGroesse.ganz"
+    },
+    default: "0.5"
   });
+  Hooks.on("dropCanvasData", beimAblegen);
+  Hooks.once("ready", haengeDoppelklickEin);
+}
+
+/** Größe eines Datenträgers auf der Karte, als Anteil eines Feldes. */
+function kartenGroesse() {
+  const f = Number(game.settings.get(MODUL_ID, "kartenGroesse"));
+  return [0.25, 0.5, 0.75, 1].includes(f) ? f : 0.5;
+}
+
+/**
+ * Doppelklick auf die Karte. Foundry wertet ihn selbst aus und meldet ihn der aktiven Ebene –
+ * für Spieler ist das die Token-Ebene. Dort hängen wir uns ein (so macht es auch Monk's Active
+ * Tiles); ein eigener Listener am Spielfeld kommt nicht zuverlässig an.
+ */
+function haengeDoppelklickEin() {
+  const vorher = event => {
+    const punkt = event?.getLocalPosition?.(canvas.stage) ?? event?.interactionData?.origin;
+    if (!punkt || !Number.isFinite(punkt.x) || !Number.isFinite(punkt.y)) return;
+    beimDoppelklick({ x: punkt.x, y: punkt.y }).catch(err => console.error(`${MODUL_ID} | Double-click`, err));
+  };
+  const pfad = "foundry.canvas.layers.TokenLayer.prototype._onClickLeft2";
+  if (globalThis.libWrapper) {
+    libWrapper.register(MODUL_ID, pfad, function (wrapped, ...args) {
+      vorher(args[0]);
+      return wrapped(...args);
+    }, "WRAPPER");
+    return;
+  }
+  const proto = foundry.canvas?.layers?.TokenLayer?.prototype;
+  if (!proto) return;
+  const original = proto._onClickLeft2;
+  proto._onClickLeft2 = function (event) {
+    vorher(event);
+    return original.call(this, event);
+  };
 }
 
 /* -------------------------------------------- */
@@ -100,7 +143,7 @@ function beimAblegen(_canvas, data, event) {
 /** Legt den Datenträger als Tile auf die aktuelle Szene (zuerst versteckt). */
 export async function traegerHinlegen(page, { x, y }, { einrasten = true, versteckt = true } = {}) {
   if (!game.user.isGM || !canvas?.ready || !istTraegerSeite(page)) return null;
-  const groesse = canvas.dimensions.size;
+  const groesse = Math.max(8, Math.round(canvas.dimensions.size * kartenGroesse()));
   if (einrasten) ({ x, y } = canvas.grid.getSnappedPoint({ x, y }, { mode: CONST.GRID_SNAPPING_MODES.CENTER }));
   if (!canvas.dimensions.rect.contains(x, y)) return null;
 
@@ -132,9 +175,9 @@ function meinToken() {
     ?? null;
 }
 
-async function beimDoppelklick(event) {
+/** @param {{x: number, y: number}} punkt  Stelle auf der Karte (Canvas-Koordinaten) */
+async function beimDoppelklick(punkt) {
   if (game.user.isGM || !canvas?.ready || !canvas.scene) return;
-  const punkt = canvas.canvasCoordinatesFromClient({ x: event.clientX, y: event.clientY });
   const tile = canvas.scene.tiles.contents
     .filter(t => traegerUuid(t) && !t.hidden && enthaelt(rechteckVonTile(t), punkt))
     .sort((a, b) => b.sort - a.sort)[0];

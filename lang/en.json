@@ -165,6 +165,14 @@
         "Name": "Readers",
         "Label": "Manage Readers",
         "Hint": "Which characters read like Clank."
+      },
+      "KartenGroesse": {
+        "Name": "Size on the Map",
+        "Hint": "How big a data carrier appears when you drag it onto a scene, as a share of one grid square. Applies to newly placed ones.",
+        "viertel": "Quarter square",
+        "halb": "Half square",
+        "dreiviertel": "Three quarters",
+        "ganz": "Full square"
       }
     },
     "Audio": {
@@ -306,6 +314,25 @@
     "Umzug": {
       "Fertig": "Motherboard: Data Carrier Journal – took over {seiten} page(s) and {haekchen} checkmark(s) from the old “datentraeger” module.",
       "Fehler": "Motherboard: Data Carrier Journal – migration failed in: {journale}. Details in the console (F12)."
+    },
+    "VonHand": {
+      "Knopf": "Enter Result…",
+      "Tip": "For dice rolled at the table: enter the decryption result by hand",
+      "Titel": "Enter Decryption Result",
+      "Hinweis": "For dice rolled at the table. The module treats it like a decryption rolled in Foundry – with the same consequences, and only this character sees the result until their player shares it.",
+      "Wurf": "Roll: {trait} vs. Difficulty {difficulty}",
+      "Charakter": "Character",
+      "Total": "Total",
+      "Ausgang": "Result",
+      "MitHope": "with Hope",
+      "MitFear": "with Fear",
+      "Kritisch": "Critical Success",
+      "AusgangHinweis": "Which die rolled higher. Success or Failure follows from the total and the Difficulty.",
+      "Teilen": "Share with everyone right away",
+      "Ok": "Enter",
+      "KeinTotal": "Please enter the total.",
+      "SchonVersucht": "This data carrier already has a decryption attempt – reset it first.",
+      "Marke": "entered by hand"
     }
   }
 }

@@ -14,6 +14,7 @@ import { GEHEIME_FELDER } from "./datenmodell.mjs";
 import { oeffne, istVerschluesselt, istFund, geheimmodusAn, schluesselBereit, speicherWerte } from "./geheim.mjs";
 import { entschluesseln, entschluesselnSperre, freigeben, sichtVomGM } from "./entschluesseln.mjs";
 import { beuteAnlegen } from "./beute.mjs";
+import { vonHandDialog } from "./vonhand.mjs";
 
 const { JournalEntryPageHandlebarsSheet } = foundry.applications.sheets.journal;
 
@@ -179,8 +180,10 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
     if (versuch) {
       context.versuchText = F("DATENTRAEGER.Entschluesseln.StatusGM", {
         name: versuch.actorName, stufe: versuch.stufe, total: versuch.total, difficulty: versuch.difficulty
-      }) + (versuch.geteilt ? ` · ${L("DATENTRAEGER.Entschluesseln.Geteilt")}` : "");
+      }) + (versuch.vonHand ? ` · ${L("DATENTRAEGER.VonHand.Marke")}` : "")
+        + (versuch.geteilt ? ` · ${L("DATENTRAEGER.Entschluesseln.Geteilt")}` : "");
     }
+    context.vonHandMoeglich = !versuch && !zustand.zerstoert;
     if (sicht?.gesamt) {
       context.lesestand = `${alsUser ? F("DATENTRAEGER.Ansicht.SoSiehtEs", { name: alsUser.name }) + " · " : ""}`
         + `${sicht.lesbar}/${sicht.gesamt} ${L("DATENTRAEGER.Ansicht.Lesbar")}`;
@@ -343,6 +346,7 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
     });
     klick("leser", () => oeffneLeserFenster());
     klick("zeigen", () => zeigenDialog(page));
+    klick("von-hand", () => vonHandDialog(page));
     klick("entschluesseln", () => entschluesseln(page));
     klick("freigeben", () => freigeben(page));
     klick("beute", () => beuteAnlegen(page));

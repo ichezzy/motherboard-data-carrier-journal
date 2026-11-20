@@ -82,6 +82,8 @@ Jede Seite hat **Trait** und **Difficulty** (Standard: Knowledge bei Anthanen, I
 
 **DC pro Stelle (0.5.0):** Der Gesamtwert des Wurfs wird gegen jede Stelle einzeln verglichen – `{{redacted | DC 18: …}}` öffnet sich ab 18, locked, redacted, static und crosstalk ohne eigenen DC ab der Difficulty der Seite. Ein hoher Wurf öffnet also mehr, auch bei einem Misserfolg können Stellen mit niedrigem DC aufgehen. Beim **Show…** setzt der GM optional einen Gesamtwert für alle (vorgeschlagen aus dem letzten Duality-Wurf); ohne ihn zählt bei einem Erfolg die Difficulty. Failure with Hope lässt nie eine Stelle zerfallen, die der Wurf gerade geöffnet hat.
 
+**Würfel am Tisch (0.5.1):** Knopf **Enter Result…** in der GM-Leiste – Charakter, Gesamtwert und Hope/Fear (oder Critical) eintragen, optional gleich für alle freigeben. Das Modul behandelt es wie einen Wurf in Foundry: gleiche Folgen, nur dieser Charakter sieht das Ergebnis, bis sein Spieler freigibt. Gibt es schon einen Versuch, erst **Reset**.
+
 | Ergebnis | Der Würfelnde liest | Was mit dem Träger passiert |
 |---|---|---|
 | Critical Success | alle Stellen mit Lesestufe | nichts |
@@ -95,13 +97,13 @@ Daggerheart erledigt Hope, Fear und Stress selbst. Der GM kann einen Datenträge
 ## Funde und Beute
 
 - **Journal „Funde“:** wird beim ersten Fund angelegt (für Spieler lesbar) und bekommt eine Seite je Datenträger – mit dem, was die **ganze Gruppe** gesehen hat: beim „Zeigen…“ durch den GM und beim „Für alle freigeben“. Was nur Clank lesen kann, steht dort nicht. Cordex steht als Platzhalter darin, nie das Wort.
-- **Beute:** Knopf in der GM-Leiste legt ein Daggerheart-Loot-Item an, das auf die Seite zeigt. Im Item-Bogen erscheint **Datenträger lesen**. Damit Spieler die Seite öffnen können, setzt das Modul das Journal auf „Beobachter“. Das Item bekommt das Icon seiner Art (Disk, Empfänger, Chip – `assets/icons/`), außer die Seite hat ein eigenes Bild.
+- **Beute:** Knopf in der GM-Leiste legt ein Daggerheart-Loot-Item an, das auf die Seite zeigt. Im Item-Bogen erscheint **Datenträger lesen**. Damit Spieler die Seite öffnen können, setzt das Modul das Journal auf „Beobachter“. Das Item bekommt das Icon seiner Art (Disk, Empfänger, Chip – `assets/icons/`, Comic-Stil; die weißen Silhouetten liegen in `assets/icons/weiss/`), außer die Seite hat ein eigenes Bild.
 
 ## Auf der Karte
 
-- **Hinlegen:** Eine Datenträger-Seite (oder ihr Beute-Item) aus dem Journal auf die Karte ziehen. Es entsteht ein Tile mit dem Icon der Art, eingerastet auf die Feldmitte (mit Shift genau an der Stelle). Es liegt zuerst **versteckt** da.
+- **Hinlegen:** Eine Datenträger-Seite (oder ihr Beute-Item) aus dem Journal auf die Karte ziehen. Es entsteht ein Tile mit dem Icon der Art, eingerastet auf die Feldmitte (mit Shift genau an der Stelle), standardmäßig ein halbes Feld groß (Einstellung *Size on the Map*). Es liegt zuerst **versteckt** da.
 - **Aufdecken:** Rechtsklick auf das Tile → **Auge**.
-- **Finden:** Spieler doppelklicken das aufgedeckte Tile. Sie müssen es sehen können (kein Nebel, keine Wand dazwischen), und ihr Token muss in Reichweite **Very Close** stehen – so, wie Daggerheart sie für die Szene einstellt (Standard 15 ft). Ein verstecktes Tile reagiert nicht.
+- **Finden:** Spieler doppelklicken das aufgedeckte Tile – ihr Token steht daneben, nicht darauf (ein Doppelklick auf einen Token öffnet dessen Bogen). Technisch hängt sich das Modul in Foundrys Doppelklick der Token-Ebene ein (`TokenLayer#_onClickLeft2`, mit libWrapper, wenn aktiv). Sie müssen es sehen können (kein Nebel, keine Wand dazwischen), und ihr Token muss in Reichweite **Very Close** stehen – so, wie Daggerheart sie für die Szene einstellt (Standard 15 ft). Ein verstecktes Tile reagiert nicht.
 - **Lesen** öffnet die Seite. **Einstecken** fragt den GM: Sein Browser prüft Token, Reichweite und Tile selbst nach, legt das Beute-Item beim Charakter an und nimmt das Tile von der Karte. Der GM muss dafür online sein.
 
 ## Geheimhaltung – ehrlich
@@ -146,6 +148,7 @@ node tools/cordex-vorschau.mjs   # alle Cordex-Zeichen als HTML
 3. **Geheimmodus und Entschlüsseln** – verschlüsselter Volltext, Sicht vom GM, Entschlüsseln-Wurf mit Konsequenzen, Journal *Funde*, Beute-Item. ✔
    - 0.4.0: Datenträger auf der Karte – hinlegen, aufdecken, finden, lesen, einstecken.
    - 0.4.1: Name „Motherboard: Data Carrier Journal“, Oberfläche und Lücken-Wörter englisch.
-   - 0.5.0: DC pro Stelle, alle Lücken in allen Arten. ← jetzt
+   - 0.5.0: DC pro Stelle, alle Lücken in allen Arten.
+   - 0.5.1: Ergebnis von Hand, Doppelklick auf der Karte repariert, Größe auf der Karte, bunte Icons. ← jetzt
 4. **Schlüssel** (geplant): Zugangskarten mit Level und Aussteller · eigenes Kompendium · Cordex-Level (nur der GM setzt sie, Clanks Level 1, Translate) · infested mit Purge-Wurf, Purge Chip und Skip.
 5. Text aus Audio: Skript an der Aufnahme ausrichten (Forced Alignment), Lücken im Ton je Zuhörer.

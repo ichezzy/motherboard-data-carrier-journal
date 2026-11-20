@@ -80,13 +80,30 @@ async function beantworteEntschluesseln({ uuid, messageId }, { user }) {
   if (!actor) throw new Error(L("DATENTRAEGER.Entschluesseln.KeinCharakter"));
 
   const wurf = pruefeWurf(messageId, user);
+  return versuchEintragen(page, {
+    userId: user.id, actor, total: wurf.total, kritisch: wurf.isCritical, hope: wurf.withHope, messageId
+  });
+}
+
+/**
+ * Ergebnis eines Entschlüsselns eintragen – samt Folgen (zerstört, Zerfall, Preis).
+ * Gemeinsam für den Wurf in Foundry und das Eintragen von Hand (Würfel am Tisch). Nur beim GM.
+ * @param {JournalEntryPage} page
+ * @param {{userId: string|null, actor: Actor, total: number, kritisch: boolean, hope: boolean,
+ *          messageId?: string|null, vonHand?: boolean, geteilt?: boolean}} wurf
+ */
+export async function versuchEintragen(page, { userId, actor, total, kritisch, hope, messageId = null, vonHand = false, geteilt = false }) {
+  nurGM();
+  if (versuchVon(page)) throw new Error(L("DATENTRAEGER.Entschluesseln.SchonVersucht"));
+  const zustand = zustandVon(page);
+  if (zustand.zerstoert) throw new Error(L("DATENTRAEGER.Entschluesseln.Zerstoert"));
   const { difficulty } = wurfVon(page);
-  const erfolg = wurf.isCritical || wurf.total >= difficulty;
-  const { stufe } = stufeAusWurf({ kritisch: wurf.isCritical, erfolg, hope: wurf.withHope });
+  const erfolg = Boolean(kritisch) || total >= difficulty;
+  const { stufe } = stufeAusWurf({ kritisch: Boolean(kritisch), erfolg, hope: Boolean(hope) });
 
   const versuch = {
-    stufe, userId: user.id, actorId: actor.id, actorName: actor.name,
-    messageId, total: wurf.total, difficulty, zeit: Date.now(), geteilt: false
+    stufe, userId, actorId: actor.id, actorName: actor.name,
+    messageId, total, difficulty, zeit: Date.now(), geteilt: Boolean(geteilt), vonHand: Boolean(vonHand)
   };
   const flags = { versuch };
   let folge = null;
@@ -96,7 +113,7 @@ async function beantworteEntschluesseln({ uuid, messageId }, { user }) {
     flags.zerstoert = true;
     folge = "zerstoert";
   } else if (stufe === "Failure with Hope") {
-    const nr = zerfallStelle(luecken(daten.text), stufe, zustand.zerfallen, Math.random, { total: wurf.total, difficulty });
+    const nr = zerfallStelle(luecken(daten.text), stufe, zustand.zerfallen, Math.random, { total, difficulty });
     if (nr !== null) {
       flags.zerfallen = [...zustand.zerfallen, nr];
       folge = "zerfallen";
@@ -105,6 +122,7 @@ async function beantworteEntschluesseln({ uuid, messageId }, { user }) {
     folge = "preis";
   }
   await page.update({ flags: { [MODUL_ID]: flags } });
+  if (versuch.geteilt) await fundeAktualisieren(page);
   meldeGM(page, versuch, folge, daten);
   return { stufe, folge };
 }

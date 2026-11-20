@@ -25,6 +25,9 @@
       </select>
     </label>
     <button type="button" data-dt-aktion="zeigen"><i class="fa-solid fa-eye" inert></i> {{localize "DATENTRAEGER.Stufe.Zeigen"}}</button>
+    {{#if vonHandMoeglich}}
+    <button type="button" data-dt-aktion="von-hand" data-tooltip="{{localize "DATENTRAEGER.VonHand.Tip"}}"><i class="fa-solid fa-hand" inert></i> {{localize "DATENTRAEGER.VonHand.Knopf"}}</button>
+    {{/if}}
     <button type="button" data-dt-aktion="beute" data-tooltip="{{localize "DATENTRAEGER.Beute.Tip"}}"><i class="fa-solid fa-sack" inert></i> {{localize "DATENTRAEGER.Beute.Knopf"}}</button>
   </div>
   {{#if versuchText}}
