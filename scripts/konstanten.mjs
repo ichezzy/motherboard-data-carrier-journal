@@ -67,7 +67,8 @@ export const CLANK_UUID = "Compendium.daggerheart.ancestries.Item.ed8BoLR4SHOpeV
 export const QUERY = {
   sicht: `${MODUL_ID}.sicht`,
   entschluesseln: `${MODUL_ID}.entschluesseln`,
-  freigeben: `${MODUL_ID}.freigeben`
+  freigeben: `${MODUL_ID}.freigeben`,
+  einstecken: `${MODUL_ID}.einstecken`
 };
 
 /** Daggerheart-Traits (Schlüssel wie im System). */

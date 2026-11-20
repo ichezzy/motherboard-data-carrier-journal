@@ -286,6 +286,18 @@
         "modul": "Ein graues Plättchen, kaum größer als ein Fingerglied, an einer Kante blanke Kontakte."
       }
     },
+    "Karte": {
+      "HingelegtVersteckt": "„{name}“ liegt versteckt auf der Karte. Rechtsklick auf das Symbol, dann das Auge – schon können die Spieler es finden.",
+      "Hingelegt": "„{name}“ liegt auf der Karte.",
+      "Gefunden": "Datenträger gefunden",
+      "Lesen": "Lesen",
+      "Einstecken": "Einstecken",
+      "KeinToken": "Dafür brauchst du einen eigenen Token auf dieser Karte.",
+      "ZuWeit": "Zu weit weg – geh näher heran (Very Close).",
+      "Weg": "Der Datenträger ist nicht mehr da.",
+      "Eingesteckt": "{actor} hat „{name}“ eingesteckt.",
+      "GmEingesteckt": "{actor} hat „{name}“ von der Karte eingesteckt."
+    },
     "Umzug": {
       "Fertig": "Motherboard Data Carrier Journal: {seiten} Seite(n) und {haekchen} Häkchen aus dem alten Modul „datentraeger“ übernommen.",
       "Fehler": "Motherboard Data Carrier Journal: Umzug fehlgeschlagen in: {journale}. Details in der Konsole (F12)."

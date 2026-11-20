@@ -16,27 +16,42 @@ const SYMBOL = {
   modul: `modules/${MODUL_ID}/assets/icons/modul.webp`
 };
 
-/** Legt das Beute-Item an (nur GM) und öffnet es. */
-export async function beuteAnlegen(page) {
-  if (!game.user.isGM) return;
+/** Icon der Art (für Item und Tile auf der Karte). */
+export function symbolFuer(art) {
+  return SYMBOL[art] ?? "icons/svg/book.svg";
+}
+
+/** Daten für das Loot-Item, das auf die Seite zeigt – gleich für Beute-Knopf und Einstecken auf der Karte. */
+export function beuteDaten(page) {
   const typ = "loot" in (CONFIG.Item.dataModels ?? {}) ? "loot" : Object.keys(CONFIG.Item.dataModels ?? {})[0];
-  const item = await CONFIG.Item.documentClass.create({
+  return {
     name: page.name,
     type: typ,
-    img: page.system.bild || SYMBOL[page.system.art] || "icons/svg/book.svg",
+    img: page.system.bild || symbolFuer(page.system.art),
     system: { description: `<p>${escapeHtml(L(`DATENTRAEGER.Beute.Beschreibung.${page.system.art}`))}</p><p>@UUID[${page.uuid}]{${escapeHtml(page.name)}}</p>` },
     flags: { [MODUL_ID]: { seite: page.uuid } }
-  });
+  };
+}
 
-  // Damit Spieler die Seite öffnen können, braucht ihr Journal mindestens „Beobachter“.
+/**
+ * Damit Spieler die Seite öffnen können, braucht ihr Journal mindestens „Beobachter“.
+ * Warnt außerdem, wenn der Geheimmodus aus ist.
+ */
+export async function fuerSpielerOeffnen(page, { warnen = true } = {}) {
   const journal = page.parent;
   const beobachter = CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER;
   if ((journal.ownership.default ?? 0) < beobachter) {
     await journal.update({ "ownership.default": beobachter });
     ui.notifications.info(F("DATENTRAEGER.Beute.Freigegeben", { journal: journal.name }));
   }
-  if (!geheimmodusAn()) ui.notifications.warn("DATENTRAEGER.Beute.OhneGeheimmodus", { localize: true });
+  if (warnen && !geheimmodusAn()) ui.notifications.warn("DATENTRAEGER.Beute.OhneGeheimmodus", { localize: true });
+}
 
+/** Legt das Beute-Item an (nur GM) und öffnet es. */
+export async function beuteAnlegen(page) {
+  if (!game.user.isGM) return;
+  const item = await CONFIG.Item.documentClass.create(beuteDaten(page));
+  await fuerSpielerOeffnen(page);
   item?.sheet?.render({ force: true });
   return item;
 }

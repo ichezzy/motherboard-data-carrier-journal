@@ -94,6 +94,13 @@ Daggerheart erledigt Hope, Fear und Stress selbst. Der GM kann einen Datenträge
 - **Journal „Funde“:** wird beim ersten Fund angelegt (für Spieler lesbar) und bekommt eine Seite je Datenträger – mit dem, was die **ganze Gruppe** gesehen hat: beim „Zeigen…“ durch den GM und beim „Für alle freigeben“. Was nur Clank lesen kann, steht dort nicht. Cordex steht als Platzhalter darin, nie das Wort.
 - **Beute:** Knopf in der GM-Leiste legt ein Daggerheart-Loot-Item an, das auf die Seite zeigt. Im Item-Bogen erscheint **Datenträger lesen**. Damit Spieler die Seite öffnen können, setzt das Modul das Journal auf „Beobachter“. Das Item bekommt das Icon seiner Art (Disk, Empfänger, Chip – `assets/icons/`), außer die Seite hat ein eigenes Bild.
 
+## Auf der Karte
+
+- **Hinlegen:** Eine Datenträger-Seite (oder ihr Beute-Item) aus dem Journal auf die Karte ziehen. Es entsteht ein Tile mit dem Icon der Art, eingerastet auf die Feldmitte (mit Shift genau an der Stelle). Es liegt zuerst **versteckt** da.
+- **Aufdecken:** Rechtsklick auf das Tile → **Auge**.
+- **Finden:** Spieler doppelklicken das aufgedeckte Tile. Sie müssen es sehen können (kein Nebel, keine Wand dazwischen), und ihr Token muss in Reichweite **Very Close** stehen – so, wie Daggerheart sie für die Szene einstellt (Standard 15 ft). Ein verstecktes Tile reagiert nicht.
+- **Lesen** öffnet die Seite. **Einstecken** fragt den GM: Sein Browser prüft Token, Reichweite und Tile selbst nach, legt das Beute-Item beim Charakter an und nimmt das Tile von der Karte. Der GM muss dafür online sein.
+
 ## Geheimhaltung – ehrlich
 
 Foundry 14 schickt **jedem** Benutzer alle Journale, alle Einstellungen und die Inhalte aller Kompendien – Rechte verstecken nur in der Oberfläche (im Server-Code geprüft).
@@ -109,7 +116,7 @@ Foundry 14 schickt **jedem** Benutzer alle Journale, alle Einstellungen und die 
 ## Entwicklung
 
 ```
-node --test                      # Parser, Sicht, Cordex, Lesestufe
+node --test                      # Parser, Sicht, Cordex, Lesestufe, Karte
 node tools/cordex-vorschau.mjs   # alle Cordex-Zeichen als HTML
 ```
 
@@ -126,11 +133,13 @@ node tools/cordex-vorschau.mjs   # alle Cordex-Zeichen als HTML
 - `scripts/anfragen.mjs` – Anfragen an den GM (Sicht, Entschlüsseln, Freigeben)
 - `scripts/seite.mjs` – Flags einer Seite und die Sicht für einen Benutzer
 - `scripts/entschluesseln.mjs` · `funde.mjs` · `beute.mjs`
+- `scripts/karte.mjs` · `karte-logik.mjs` – Datenträger als Tile auf der Karte (Geometrie ohne Foundry, testbar)
 - In der Konsole: `game.modules.get("motherboard-data-carrier-journal").api`
 
 ## Phasen
 
 1. **Grundgerüst** – Seitenart, Markieren, Ansicht je Spieler mit Clank-Regel, Audio, schlichter Skin. ✔
 2. **Skins** – drei Skins mit Animation, Hologramm-Fenster, eigene Cordex-Zeichen, Rauschteppich, Lesestufe aus dem Duality-Ergebnis. ✔
-3. **Geheimmodus und Entschlüsseln** – verschlüsselter Volltext, Sicht vom GM, Entschlüsseln-Wurf mit Konsequenzen, Journal *Funde*, Beute-Item. ✔ ← jetzt
+3. **Geheimmodus und Entschlüsseln** – verschlüsselter Volltext, Sicht vom GM, Entschlüsseln-Wurf mit Konsequenzen, Journal *Funde*, Beute-Item. ✔
+   - 0.4.0: Datenträger auf der Karte – hinlegen, aufdecken, finden, lesen, einstecken. ← jetzt
 4. Text aus Audio: Skript an der Aufnahme ausrichten (Forced Alignment), Lücken im Ton je Zuhörer.

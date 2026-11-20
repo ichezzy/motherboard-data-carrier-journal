@@ -10,6 +10,7 @@ import { GeheimFenster } from "./geheim-fenster.mjs";
 import { registriereAnfragen } from "./anfragen.mjs";
 import { registriereFundeEinstellung, fundeAktualisieren } from "./funde.mjs";
 import { registriereBeute, beuteAnlegen } from "./beute.mjs";
+import { registriereKarte, traegerHinlegen } from "./karte.mjs";
 import * as syntax from "./syntax.mjs";
 import * as sicht from "./sicht.mjs";
 import * as leser from "./leser.mjs";
@@ -32,12 +33,13 @@ Hooks.once("init", () => {
   registriereAnfragen();
   registriereFenster();
   registriereBeute();
+  registriereKarte();
 
   // Für Makros und zum Nachsehen in der Konsole: game.modules.get("motherboard-data-carrier-journal").api
   game.modules.get(MODUL_ID).api = {
     syntax, sicht, leser, cordexText, cordexHtml,
     oeffneLeserFenster, fuerAlleAbspielen, fuerAlleStoppen, letzterDualityWurf, zeigenDialog,
-    geheimStand, fundeAktualisieren, beuteAnlegen
+    geheimStand, fundeAktualisieren, beuteAnlegen, traegerHinlegen
   };
 });
 
