@@ -64,7 +64,7 @@ export async function fundeAktualisieren(page) {
     if (alt) await alt.update(daten);
     else await journal.createEmbeddedDocuments("JournalEntryPage", [daten]);
   } catch (err) {
-    console.error(`${MODUL_ID} | Funde konnten nicht aktualisiert werden`, err);
+    console.error(`${MODUL_ID} | Could not update the Findings journal`, err);
     ui.notifications.warn("DATENTRAEGER.Funde.Fehler", { localize: true });
   }
 }

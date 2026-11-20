@@ -54,7 +54,7 @@ async function spieleLokal(src, { rauschen = 0, art = "signal" } = {}) {
     sound.addEventListener?.("end", ende, { once: true });
     sound.addEventListener?.("stop", ende, { once: true });
   } catch (err) {
-    console.error("Motherboard Data Carrier Journal | Audio konnte nicht abgespielt werden", src, err);
+    console.error("motherboard-data-carrier-journal | Could not play audio", src, err);
     setzeFuerAlle(false);
   }
 }
@@ -65,7 +65,7 @@ function stoppeLokal({ freigeben = true } = {}) {
   try {
     sound?.stop?.();
   } catch (err) {
-    console.warn("Motherboard Data Carrier Journal | Audio ließ sich nicht stoppen", err);
+    console.warn("motherboard-data-carrier-journal | Could not stop audio", err);
   }
   stoppeRauschen();
   if (freigeben) setzeFuerAlle(false);

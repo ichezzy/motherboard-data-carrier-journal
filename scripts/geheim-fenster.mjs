@@ -7,7 +7,7 @@ import {
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 const L = key => game.i18n.localize(key);
 
-/** Fenster „Geheimmodus“ (Einstellungen → Motherboard Data Carrier Journal). */
+/** Fenster „Geheimmodus“ (Einstellungen → Motherboard: Data Carrier Journal). */
 export class GeheimFenster extends HandlebarsApplicationMixin(ApplicationV2) {
   static DEFAULT_OPTIONS = {
     id: "datentraeger-geheim",

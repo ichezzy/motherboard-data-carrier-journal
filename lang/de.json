@@ -197,7 +197,7 @@
       "AusschaltenFrage": "Alle Datenträger werden entschlüsselt und liegen danach wieder im Klartext in der Welt.",
       "ZuKurz": "Das Geheimwort braucht mindestens 8 Zeichen.",
       "Ungleich": "Die beiden Eingaben stimmen nicht überein.",
-      "WortFalsch": "Motherboard Data Carrier Journal: Das Geheimwort passt nicht.",
+      "WortFalsch": "Motherboard: Data Carrier Journal: Das Geheimwort passt nicht.",
       "Eingerichtet": "Geheimmodus eingerichtet – {n} Seite(n) verschlüsselt.",
       "Entsperrt": "Geheimwort angenommen.",
       "Verschluesselt": "{n} Seite(n) verschlüsselt.",
@@ -205,7 +205,7 @@
       "KeinKrypto": "Dieser Browser bietet keine Verschlüsselung (WebCrypto). Foundry muss über https laufen.",
       "KeinSchluessel": "Der Datenträger ist verschlüsselt, und dieser Browser kennt das Geheimwort nicht.",
       "NurGM": "Nur der GM kann diesen Datenträger öffnen.",
-      "FehltHinweis": "Einstellungen → Motherboard Data Carrier Journal → Geheimmodus. Bis dahin ist der Text gesperrt, damit nichts überschrieben wird.",
+      "FehltHinweis": "Einstellungen → Motherboard: Data Carrier Journal → Geheimmodus. Bis dahin ist der Text gesperrt, damit nichts überschrieben wird.",
       "BeimSpeichern": "Geheimmodus an: Text, Preis, Hinweis und GM-Notiz werden beim Speichern verschlüsselt.",
       "SeiteZu": "Verschlüsselt",
       "SeiteOffen": "Nicht verschlüsselt – über die Entwicklerkonsole lesbar"
@@ -299,8 +299,8 @@
       "GmEingesteckt": "{actor} hat „{name}“ von der Karte eingesteckt."
     },
     "Umzug": {
-      "Fertig": "Motherboard Data Carrier Journal: {seiten} Seite(n) und {haekchen} Häkchen aus dem alten Modul „datentraeger“ übernommen.",
-      "Fehler": "Motherboard Data Carrier Journal: Umzug fehlgeschlagen in: {journale}. Details in der Konsole (F12)."
+      "Fertig": "Motherboard: Data Carrier Journal: {seiten} Seite(n) und {haekchen} Häkchen aus dem alten Modul „datentraeger“ übernommen.",
+      "Fehler": "Motherboard: Data Carrier Journal: Umzug fehlgeschlagen in: {journale}. Details in der Konsole (F12)."
     }
   }
 }

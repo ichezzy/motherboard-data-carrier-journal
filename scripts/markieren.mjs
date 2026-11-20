@@ -1,4 +1,4 @@
-import { LUECKEN, ALLE_LUECKEN, MIT_ERSATZ, OHNE_TEXT, STANDARD_ANCESTRY, STANDARD_ERSATZ, STUFEN } from "./konstanten.mjs";
+import { LUECKEN, ALLE_LUECKEN, MIT_ERSATZ, OHNE_TEXT, STANDARD_ANCESTRY, STANDARD_ERSATZ, STUFEN, lueckenWort } from "./konstanten.mjs";
 import { escapeHtml, markierungsRahmen } from "./syntax.mjs";
 import { spielerCharaktere } from "./leser.mjs";
 
@@ -16,11 +16,11 @@ export async function markierDialog({ seitenArt, auswahl }) {
 
   const content = `
     <div class="dt-dialog">
-      ${auswahl ? `<p class="hint">${L("DATENTRAEGER.Markieren.Auswahl")}: „${escapeHtml(auswahlKurz)}“</p>` : ""}
+      ${auswahl ? `<p class="hint">${L("DATENTRAEGER.Markieren.Auswahl")}: “${escapeHtml(auswahlKurz)}”</p>` : ""}
       <div class="form-group">
         <label>${L("DATENTRAEGER.Markieren.ArtDerLuecke")}</label>
         <div class="form-fields">
-          <select name="art">${arten.map(a => `<option value="${a}">${a}</option>`).join("")}</select>
+          <select name="art">${arten.map(a => `<option value="${a}">${lueckenWort(a)}</option>`).join("")}</select>
         </div>
       </div>
       <div class="form-group">

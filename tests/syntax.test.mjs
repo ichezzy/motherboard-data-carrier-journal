@@ -100,13 +100,27 @@ test("leseLeser ignoriert Leeres", () => {
   assert.deepEqual(leseLeser(" , Clank ,, @ "), [{ art: "ancestry", name: "Clank" }]);
 });
 
-test("Rahmen für den Markier-Knopf", () => {
+test("Rahmen für den Markier-Knopf – schreibt die englischen Wörter", () => {
   const r = markierungsRahmen({ art: "unübersetzt", ancestries: ["Clank"], charaktere: ["Erinys"] });
-  assert.equal(r.vor, "{{unübersetzt | Clank, @Erinys: ");
+  assert.equal(r.vor, "{{untranslated | Clank, @Erinys: ");
   assert.equal(r.nach, "}}");
-  const g = markierungsRahmen({ art: "gesperrt", ersatz: "Version 3.0 erforderlich" });
-  assert.equal(g.vor + "Kontostand" + g.nach, "{{gesperrt: Kontostand >> Version 3.0 erforderlich}}");
-  assert.equal(markierungsRahmen({ art: "abgerissen", ancestries: ["Clank"] }).ohneText, "{{abgerissen | Clank}}");
+  const g = markierungsRahmen({ art: "gesperrt", ersatz: "Version 3.0 required" });
+  assert.equal(g.vor + "Balance" + g.nach, "{{locked: Balance >> Version 3.0 required}}");
+  assert.equal(markierungsRahmen({ art: "abgerissen", ancestries: ["Clank"] }).ohneText, "{{cutoff | Clank}}");
+});
+
+test("Englische und alte deutsche Wörter meinen dieselbe Lücke", () => {
+  const paare = [["untranslated", "unübersetzt"], ["decayed", "zerfallen"], ["infested", "befallen"],
+    ["static", "verrauscht"], ["crosstalk", "übersprochen"], ["cutoff", "abgerissen"], ["foreign", "fremd"],
+    ["locked", "gesperrt"], ["redacted", "geschwärzt"], ["overwritten", "überschrieben"], ["corrupted", "beschädigt"]];
+  for (const [en, de] of paare) {
+    assert.equal(erkenneLuecke(en), de, en);
+    assert.equal(erkenneLuecke(de), de, de);
+    assert.equal(erkenneLuecke(en.toUpperCase()), de, en.toUpperCase());
+  }
+  const [l] = luecken("{{Locked | Clank: Balance >> Version 3.0 required}}");
+  assert.equal(l.art, "gesperrt");
+  assert.equal(l.ersatz, "Version 3.0 required");
 });
 
 test("Rahmen und Parser passen zusammen", () => {

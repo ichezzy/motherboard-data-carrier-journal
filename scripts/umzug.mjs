@@ -1,5 +1,5 @@
 /**
- * Umzug vom Arbeitstitel „datentraeger“ zum Motherboard Data Carrier Journal.
+ * Umzug vom Arbeitstitel „datentraeger“ zum Motherboard: Data Carrier Journal.
  *
  * Seiten vom alten Typ `datentraeger.datentraeger` sind ohne das alte Modul „ungültig“:
  * Foundry behält ihre Rohdaten (im _source des Journals), zeigt sie aber nicht an.
@@ -38,7 +38,7 @@ export async function zieheAlteDatenUm() {
       await entry.deleteEmbeddedDocuments("JournalEntryPage", alte.map(p => p._id));
       seiten += alte.length;
     } catch (err) {
-      console.error(`${MODUL_ID} | Umzug im Journal „${entry.name}“ fehlgeschlagen`, err);
+      console.error(`${MODUL_ID} | Migration failed in journal “${entry.name}”`, err);
       fehler.push(entry.name);
     }
   }

@@ -1,0 +1,306 @@
+{
+  "TYPES": {
+    "JournalEntryPage": {
+      "motherboard-data-carrier-journal": {
+        "datentraeger": "Data Carrier"
+      }
+    }
+  },
+  "DATENTRAEGER": {
+    "Sheet": "Data Carrier",
+    "Art": {
+      "anthanen": "Anthanen",
+      "signal": "Signal",
+      "modul": "Module"
+    },
+    "Daten": {
+      "FIELDS": {
+        "art": {
+          "label": "Type",
+          "hint": "Sets the look and which gaps the marking dialog offers."
+        },
+        "text": {
+          "label": "Text",
+          "hint": "Text with markers in double curly braces."
+        },
+        "audio": {
+          "label": "Audio",
+          "hint": "An mp3 or ogg file, optional."
+        },
+        "bild": {
+          "label": "Image",
+          "hint": "Optional."
+        },
+        "gmNotiz": {
+          "label": "GM Note",
+          "hint": "Never shown to players. Encrypted in Secret Mode; otherwise readable through the developer console."
+        },
+        "preis": {
+          "label": "Cost on Success with Fear",
+          "hint": "Only you see it when a player decrypts with Success with Fear. Empty = default per type (Anthanen: the Motherboard is listening · Signal: the transmitter traces back · Module: PHI logs the access)."
+        },
+        "hinweis": {
+          "label": "Hint on Failure with Hope",
+          "hint": "The roller gets this instead of more text: what they would need to read more – e.g. a Netzpfeiler terminal or someone who reads Cordex."
+        },
+        "entschluesseln": {
+          "trait": {
+            "label": "Trait",
+            "hint": "The trait used to decrypt. Default: Knowledge for Anthanen, Instinct for Signal, Finesse for Module."
+          },
+          "difficulty": {
+            "label": "Difficulty",
+            "hint": "The module checks the roll against this Difficulty itself."
+          }
+        },
+        "rauschen": {
+          "label": "Noise Bed",
+          "hint": "Quiet noise under the audio. 0 = off. Each player can turn it up or down for themselves in the view."
+        }
+      }
+    },
+    "Bearbeiten": {
+      "LueckenDieserArt": "Gaps for this type",
+      "Markierungen": "Markers",
+      "KeineMarkierungen": "No markers yet.",
+      "NachSpeichern": "As of the last save.",
+      "Niemand": "GM only",
+      "Syntax": "Syntax: {{gap | reader: text >> replacement}} – readers: Clank (ancestry), @Name (character), Success with Hope (read level). {{cutoff}} cuts off everything after it."
+    },
+    "Stufe": {
+      "Label": "Result",
+      "Keins": "– no result –",
+      "Zeigen": "Show…",
+      "ZeigenTitel": "Show Page",
+      "ZeigenHinweis": "Passages with a read level become readable for everyone from this result on.",
+      "Vorschlag": "Suggested from the last Duality roll ({wer}, {total}): {stufe}.",
+      "OhneDifficulty": "The roll had no Difficulty – please choose Success or Failure yourself.",
+      "KeinWurf": "No Duality roll found in the chat.",
+      "AnAlle": "Then show it to all players"
+    },
+    "Markieren": {
+      "Knopf": "Mark Gap",
+      "Titel": "Mark Gap",
+      "Auswahl": "Selected",
+      "ArtDerLuecke": "Gap",
+      "Ersatz": "Replacement Text",
+      "ErsatzHinweis": "Only for crosstalk, overwritten, locked and infested: whoever can't read it sees this instead of the original.",
+      "WerLiest": "Who can read it? One rule is enough.",
+      "Ancestry": "Ancestry",
+      "AncestryHinweis": "Separate several with commas.",
+      "Charaktere": "Characters",
+      "KeineCharaktere": "No characters in this world.",
+      "Stufe": "Readable from Result",
+      "StufeKeine": "– no read level –",
+      "StufeHinweis": "Becomes readable for everyone when you show this result or a better one.",
+      "ZerfallenHinweis": "A “decayed” gap is missing for everyone.",
+      "Ok": "Mark",
+      "Abbrechen": "Cancel",
+      "KeinEditor": "The editor isn't ready yet. Click into the text once and try again.",
+      "NichtLeer": "Select some text first. Only “cutoff” and “decayed” work without it.",
+      "EinAbsatz": "A marker has to stay within one paragraph."
+    },
+    "Ansicht": {
+      "Als": "View as",
+      "GmAlles": "GM – everything",
+      "KeinCharakter": "no character",
+      "Leser": "Readers",
+      "FuerAlle": "Play for Everyone",
+      "StoppAlle": "Stop for Everyone",
+      "GmNotiz": "GM Note",
+      "SignalVerloren": "– signal lost –",
+      "FuerDichLesbar": "Readable for you",
+      "SoSiehtEs": "As {name} sees it",
+      "LiestAls": "reads as {name}",
+      "Lesbar": "readable",
+      "Abgerissen": "cutoff – everything after this is missing",
+      "NeuAufbauen": "Rebuild",
+      "Rauschen": "Noise",
+      "Cordex": "Cordex",
+      "LaeuftFuerAlle": "Playing for everyone"
+    },
+    "Warnung": {
+      "UnbekannteArt": "Unknown gap “{art}” – players see a dark gap here.",
+      "UeberAbsatz": "Spans several paragraphs – better to mark each paragraph on its own.",
+      "UnbekannterCharakter": "No character “{name}” found.",
+      "UnbekannteAncestry": "No character with the ancestry “{name}” found.",
+      "ZerfallenOhneLeser": "“decayed” is missing for everyone – the readers are ignored.",
+      "AndereArt": "Actually belongs to the type “{art}”.",
+      "LeerText": "No text marked."
+    },
+    "Leser": {
+      "Titel": "Readers",
+      "Hinweis": "Who reads like Clank? The module detects it from the ancestry. “Yes” or “No” sets it by hand.",
+      "Charakter": "Character",
+      "Spieler": "Player",
+      "Ancestry": "Ancestry",
+      "Erkannt": "Detected",
+      "LiestWieClank": "Reads like Clank",
+      "Auto": "Automatic",
+      "Ja": "Yes",
+      "Nein": "No",
+      "Keine": "No player characters in this world."
+    },
+    "Einstellung": {
+      "Bewegung": {
+        "Name": "Motion",
+        "Hint": "Flicker and other animations in data carriers. “System” follows your operating system's “reduce motion” setting.",
+        "system": "Follow System",
+        "an": "On",
+        "aus": "Off"
+      },
+      "Fenster": {
+        "Name": "Journal Window",
+        "Hint": "How the journal window looks while it shows a data carrier.",
+        "art": "By type (Anthanen as hologram)",
+        "holo": "Always as hologram",
+        "normal": "Normal journal"
+      },
+      "Leser": {
+        "Name": "Readers",
+        "Label": "Manage Readers",
+        "Hint": "Which characters read like Clank."
+      }
+    },
+    "Audio": {
+      "KeineDatei": "This page has no audio file."
+    },
+    "Trait": {
+      "standard": "Default for type",
+      "agility": "Agility",
+      "strength": "Strength",
+      "finesse": "Finesse",
+      "instinct": "Instinct",
+      "presence": "Presence",
+      "knowledge": "Knowledge"
+    },
+    "Geheim": {
+      "Name": "Secret Mode",
+      "Label": "Set Up Secret Mode",
+      "Hint": "Text, GM note, cost and hint are stored only in encrypted form. Players receive from the GM only what they may see (the GM has to be online).",
+      "Erklaerung": "Foundry sends every player all journals – hidden ones included. In Secret Mode, texts are therefore stored only in encrypted form. The key comes from your passphrase; it stays in your browser and never reaches the server. Players ask your client and receive only their own view.",
+      "StandAn": "Secret Mode on",
+      "StandAus": "Secret Mode off",
+      "Verschluesselt2": "pages encrypted",
+      "Einrichten": "Set Passphrase",
+      "Wort": "Passphrase",
+      "Wiederholung": "Repeat",
+      "WortHinweis": "At least 8 characters. Write it down – without the passphrase, encrypted pages can't be opened again. Afterwards all data carriers are encrypted.",
+      "EinrichtenKnopf": "Set Up and Encrypt All Pages",
+      "Entsperren": "Enter the passphrase on this device",
+      "EntsperrenHinweis": "Secret Mode is on, but this browser doesn't know the passphrase yet.",
+      "EntsperrenKnopf": "Unlock",
+      "OffeneVerschluesseln": "Encrypt Open Pages",
+      "Vergessen": "Forget Passphrase in This Browser",
+      "Ausschalten": "Turn Off Secret Mode",
+      "AusschaltenTitel": "Turn off Secret Mode?",
+      "AusschaltenFrage": "All data carriers will be decrypted and stored as plain text in the world again.",
+      "ZuKurz": "The passphrase needs at least 8 characters.",
+      "Ungleich": "The two entries don't match.",
+      "WortFalsch": "Motherboard: Data Carrier Journal – the passphrase doesn't match.",
+      "Eingerichtet": "Secret Mode set up – {n} page(s) encrypted.",
+      "Entsperrt": "Passphrase accepted.",
+      "Verschluesselt": "{n} page(s) encrypted.",
+      "Ausgeschaltet": "Secret Mode off – {n} page(s) decrypted.",
+      "KeinKrypto": "This browser offers no encryption (WebCrypto). Foundry has to run over https.",
+      "KeinSchluessel": "This data carrier is encrypted, and this browser doesn't know the passphrase.",
+      "NurGM": "Only the GM can open this data carrier.",
+      "FehltHinweis": "Configure Settings → Motherboard: Data Carrier Journal → Secret Mode. Until then the text stays locked so nothing gets overwritten.",
+      "BeimSpeichern": "Secret Mode on: text, cost, hint and GM note are encrypted when you save.",
+      "SeiteZu": "Encrypted",
+      "SeiteOffen": "Not encrypted – readable through the developer console"
+    },
+    "Anfrage": {
+      "KeinGM": "The data carrier is silent – the GM is not online.",
+      "GmOhneSchluessel": "The data carrier is silent – the GM has to enter the passphrase first.",
+      "KeineSeite": "This page is not a data carrier.",
+      "NurGM": "Only the GM can answer this."
+    },
+    "Entschluesseln": {
+      "Titel": "Decrypt",
+      "Erklaerung": "A player can decrypt each data carrier once. They roll with their character; the module checks the roll and records the result. At first only they see it – they decide whether to share it with everyone.",
+      "Knopf": "Decrypt",
+      "Difficulty": "Difficulty",
+      "WurfTitel": "Decrypt: {name}",
+      "WurfFehler": "The roll couldn't be started.",
+      "KeinCharakter": "You have no character assigned.",
+      "SchonVersucht": "This data carrier has already been decrypted.",
+      "Zerstoert": "The data carrier is destroyed.",
+      "ZerstoertKurz": "destroyed",
+      "WurfFehlt": "The roll wasn't found.",
+      "WurfAlt": "The roll is too old – please decrypt again.",
+      "WurfVerbraucht": "This roll has already been used.",
+      "NichtDein": "You didn't decrypt this.",
+      "FreigebenKnopf": "Share with Everyone",
+      "Freigegeben": "Shared with everyone.",
+      "Geteilt": "shared with everyone",
+      "StatusEigen": "You decrypted it: {stufe}",
+      "StatusGeteilt": "{name} decrypted and shared it: {stufe}",
+      "StatusFremd": "{name} decrypted it – not shared yet.",
+      "StatusGM": "{name} decrypted it: {stufe} ({total} vs. {difficulty})",
+      "GmMeldung": "{name} decrypted “{seite}”: {stufe} ({total} vs. {difficulty}).",
+      "Zuruecksetzen": "Reset",
+      "ZuruecksetzenTitel": "Reset data carrier?",
+      "ZuruecksetzenFrage": "Result, decryption attempt and all damage are removed – the data carrier is as good as new.",
+      "PreisTitel": "Success with Fear – the Cost",
+      "Verstanden": "Understood",
+      "ZerfallenTip": "decayed during decryption",
+      "Preis": {
+        "anthanen": "The Motherboard is listening. Something answers – maybe not now, but it knows who read.",
+        "signal": "The transmitter traces back. Whoever is sending now knows where you are.",
+        "modul": "PHI logs the access. The reader's ID has been reported."
+      },
+      "Folge": {
+        "zerstoert": "The data carrier is destroyed.",
+        "zerfallen": "A passage has decayed.",
+        "preis": ""
+      },
+      "Ergebnis": {
+        "lesbar": "Decrypted: {stufe}.",
+        "preis": "Decrypted: {stufe}. The access did not go unnoticed.",
+        "zerfallen": "{stufe}: A piece of the carrier has decayed.",
+        "zerstoert": "{stufe}: The data carrier is destroyed."
+      },
+      "Kaputt": {
+        "anthanen": "The pulse breaks. Blue light devours the lines.",
+        "signal": "– signal lost –",
+        "modul": "DATA CARRIER DAMAGED · UNABLE TO READ"
+      }
+    },
+    "Funde": {
+      "Name": "Findings",
+      "Kurz": "Finding",
+      "Entschluesselt": "Decrypted by {name}: {stufe}",
+      "Fehler": "The “Findings” journal couldn't be updated (details in the console)."
+    },
+    "Beute": {
+      "Knopf": "Loot",
+      "Tip": "Create a loot item that points to this data carrier",
+      "Lesen": "Read Data Carrier",
+      "Fehlt": "The data carrier for this item no longer exists.",
+      "Freigegeben": "The journal “{journal}” is now visible to players (Observer) so they can open the data carrier.",
+      "OhneGeheimmodus": "Without Secret Mode, a player can read the full text through the developer console.",
+      "Beschreibung": {
+        "anthanen": "A flat, round disc of dark metal. No dust settles on it.",
+        "signal": "A recording from the buffer of a relay mast.",
+        "modul": "A grey chip, barely bigger than a finger joint, with bare contacts along one edge."
+      }
+    },
+    "Karte": {
+      "HingelegtVersteckt": "“{name}” lies hidden on the map. Right-click the icon, then the eye – and players can find it.",
+      "Hingelegt": "“{name}” lies on the map.",
+      "Gefunden": "Data Carrier Found",
+      "Lesen": "Read",
+      "Einstecken": "Pick Up",
+      "KeinToken": "You need your own token on this map for that.",
+      "ZuWeit": "Too far away – get closer (Very Close).",
+      "Weg": "The data carrier is gone.",
+      "Eingesteckt": "{actor} picked up “{name}”.",
+      "GmEingesteckt": "{actor} picked up “{name}” from the map."
+    },
+    "Umzug": {
+      "Fertig": "Motherboard: Data Carrier Journal – took over {seiten} page(s) and {haekchen} checkmark(s) from the old “datentraeger” module.",
+      "Fehler": "Motherboard: Data Carrier Journal – migration failed in: {journale}. Details in the console (F12)."
+    }
+  }
+}

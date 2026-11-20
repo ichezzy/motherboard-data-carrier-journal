@@ -26,6 +26,29 @@ export const LUECKEN = {
 
 export const ALLE_LUECKEN = Object.values(LUECKEN).flat();
 
+/**
+ * Das englische Wort jeder Lücke – so steht sie im Text und in der Oberfläche.
+ * Intern bleiben die deutschen Namen (CSS, Flags); der Parser versteht beide.
+ */
+export const LUECKEN_WORT = {
+  "unübersetzt": "untranslated",
+  zerfallen: "decayed",
+  befallen: "infested",
+  verrauscht: "static",
+  "übersprochen": "crosstalk",
+  abgerissen: "cutoff",
+  fremd: "foreign",
+  gesperrt: "locked",
+  "geschwärzt": "redacted",
+  "überschrieben": "overwritten",
+  "beschädigt": "corrupted"
+};
+
+/** Anzeige-Wort einer Lücke (unbekannte bleiben, wie sie sind). */
+export function lueckenWort(art) {
+  return LUECKEN_WORT[art] ?? art;
+}
+
 /** Lücken, bei denen hinter `>>` ein Ersatztext stehen kann. */
 export const MIT_ERSATZ = new Set(["übersprochen", "überschrieben", "gesperrt", "befallen"]);
 
@@ -37,7 +60,7 @@ export const OHNE_TEXT = new Set(["abgerissen", "zerfallen"]);
 
 /** Ersatztext, wenn keiner angegeben ist. */
 export const STANDARD_ERSATZ = {
-  gesperrt: "Version 3.0 erforderlich",
+  gesperrt: "Version 3.0 required",
   übersprochen: "♪ … ♪"
 };
 

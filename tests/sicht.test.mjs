@@ -75,7 +75,7 @@ test("überschrieben: unauffälliger Ersatz", () => {
 });
 
 test("gesperrt ohne Ersatz nutzt die Standardmeldung", () => {
-  assert.ok(baueSicht("{{gesperrt: Kontostand}}", vanya).html.includes("Version 3.0 erforderlich"));
+  assert.ok(baueSicht("{{gesperrt: Kontostand}}", vanya).html.includes("Version 3.0 required"));
 });
 
 test("abgerissen schneidet ab und schließt die Tags", () => {

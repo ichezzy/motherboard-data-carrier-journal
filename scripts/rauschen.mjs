@@ -70,7 +70,7 @@ export function starteRauschen(staerke, art = "signal") {
     quelle.start();
     laufend = { quelle, pegel };
   } catch (err) {
-    console.warn("Motherboard Data Carrier Journal | Rauschteppich nicht möglich", err);
+    console.warn("motherboard-data-carrier-journal | Noise bed not available", err);
   }
 }
 

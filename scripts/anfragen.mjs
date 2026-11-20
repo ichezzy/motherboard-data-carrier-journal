@@ -51,7 +51,7 @@ async function beantworteSicht({ uuid }, { user }) {
   try {
     s = await sichtFuer(page, user);
   } catch (err) {
-    console.warn(`${MODUL_ID} | Sicht für ${user.name} nicht möglich`, err);
+    console.warn(`${MODUL_ID} | Could not build the view for ${user.name}`, err);
     throw new Error(L("DATENTRAEGER.Anfrage.GmOhneSchluessel"));
   }
   return { html: s.html, gesamt: s.gesamt, lesbar: s.lesbar, abgeschnitten: s.abgeschnitten, zerstoert: s.zerstoert, hinweis: s.hinweis };

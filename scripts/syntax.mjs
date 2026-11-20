@@ -9,7 +9,7 @@
  *
  * Leser: `Clank` = Ancestry · `@Erinys` = Charakter · `Success with Hope` = Lesestufe (Phase 2).
  */
-import { ALLE_LUECKEN, MIT_ERSATZ, STUFEN, OHNE_TEXT } from "./konstanten.mjs";
+import { ALLE_LUECKEN, LUECKEN_WORT, MIT_ERSATZ, STUFEN, OHNE_TEXT, lueckenWort } from "./konstanten.mjs";
 
 /**
  * @typedef {{art: "ancestry", name: string} | {art: "charakter", name: string} | {art: "stufe", wert: string}} LeserRegel
@@ -39,10 +39,14 @@ export function falte(s) {
     .trim();
 }
 
-const LUECKE_NACH_FALTE = new Map(ALLE_LUECKEN.map(l => [falte(l), l]));
+// Beide Schreibweisen: englisch (Standard) und die alten deutschen Wörter.
+const LUECKE_NACH_FALTE = new Map([
+  ...ALLE_LUECKEN.map(l => [falte(l), l]),
+  ...Object.entries(LUECKEN_WORT).map(([intern, wort]) => [falte(wort), intern])
+]);
 const STUFE_NACH_FALTE = new Map(STUFEN.map(s => [falte(s), s]));
 
-/** "Unuebersetzt" → "unübersetzt"; unbekannt → null. */
+/** "Untranslated" oder "Unuebersetzt" → "unübersetzt" (intern); unbekannt → null. */
 export function erkenneLuecke(wort) {
   return LUECKE_NACH_FALTE.get(falte(wort)) ?? null;
 }
@@ -202,7 +206,7 @@ export function markierungsRahmen({ art, ancestries = [], charaktere = [], stufe
     ...charaktere.map(c => c.trim()).filter(Boolean).map(c => `@${c}`),
     ...stufen
   ];
-  const kopf = art + (leser.length ? ` | ${leser.join(", ")}` : "");
+  const kopf = lueckenWort(art) + (leser.length ? ` | ${leser.join(", ")}` : "");
   const e = MIT_ERSATZ.has(art) && ersatz?.trim() ? ` >> ${ersatz.trim()}` : "";
   return {
     vor: `{{${kopf}: `,

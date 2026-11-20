@@ -35,7 +35,7 @@ export async function entschluesseln(page) {
       roll: { type: "trait", trait, difficulty }
     });
   } catch (err) {
-    console.error("Motherboard Data Carrier Journal | Wurf fehlgeschlagen", err);
+    console.error("motherboard-data-carrier-journal | Roll failed", err);
     return ui.notifications.error("DATENTRAEGER.Entschluesseln.WurfFehler", { localize: true });
   }
   const nachricht = ergebnis?.message;

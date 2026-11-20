@@ -30,9 +30,9 @@
     <ol>
       {{#each markierungen}}
       <li class="{{#unless gueltig}}dt-ungueltig{{/unless}}">
-        <span class="dt-m-art" data-art="{{art}}">{{art}}</span>
+        <span class="dt-m-art" data-art="{{art}}">{{wort}}</span>
         <span class="dt-m-leser"><i class="fa-solid fa-glasses" inert></i> {{leser}}</span>
-        <span class="dt-m-text">„{{text}}“{{#if ersatz}} → „{{ersatz}}“{{/if}}</span>
+        <span class="dt-m-text">“{{text}}”{{#if ersatz}} → “{{ersatz}}”{{/if}}</span>
         {{#each warnungen}}
         <span class="dt-m-warnung"><i class="fa-solid fa-triangle-exclamation" inert></i> {{this}}</span>
         {{/each}}

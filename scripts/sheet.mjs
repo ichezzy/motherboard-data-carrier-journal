@@ -1,4 +1,4 @@
-import { MODUL_ID, LUECKEN, OHNE_LESER, OHNE_TEXT, STANDARD_ANCESTRY } from "./konstanten.mjs";
+import { MODUL_ID, LUECKEN, OHNE_LESER, OHNE_TEXT, STANDARD_ANCESTRY, lueckenWort } from "./konstanten.mjs";
 import { luecken, htmlZuText, falte } from "./syntax.mjs";
 import { beschreibeRegel } from "./sicht.mjs";
 import { spielerCharaktere, erkannteAncestries } from "./leser.mjs";
@@ -205,7 +205,7 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
     }
     context.edit = daten;
     context.geheimAn = geheimmodusAn();
-    context.lueckenHilfe = (LUECKEN[system.art] ?? []).join(" · ");
+    context.lueckenHilfe = (LUECKEN[system.art] ?? []).map(lueckenWort).join(" · ");
 
     const charaktere = spielerCharaktere();
     const namen = new Set(charaktere.flatMap(a => {
@@ -217,6 +217,7 @@ export class DatentraegerSheet extends JournalEntryPageHandlebarsSheet {
     context.markierungen = luecken(daten.text).map(l => ({
       nr: l.nr + 1,
       art: l.art ?? l.artRoh,
+      wort: l.art ? lueckenWort(l.art) : l.artRoh,
       gueltig: l.gueltig,
       leser: OHNE_LESER.has(l.art) ? "–" : (l.leser.map(beschreibeRegel).join(", ") || L("DATENTRAEGER.Bearbeiten.Niemand")),
       text: kurz(htmlZuText(l.inhalt)),

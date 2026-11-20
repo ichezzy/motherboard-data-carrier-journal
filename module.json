@@ -1,8 +1,8 @@
 {
   "id": "motherboard-data-carrier-journal",
-  "title": "Motherboard Data Carrier Journal",
-  "description": "Eine Journal-Seitenart für Funde: Text mit Lücken, die jeder Charakter anders lesen kann, dazu Audio. Für White Signal (Daggerheart).",
-  "version": "0.4.0",
+  "title": "Motherboard: Data Carrier Journal",
+  "description": "A journal page type for found data: text with gaps that each character reads differently, plus audio, decryption rolls and data carriers on the map. For White Signal (Daggerheart).",
+  "version": "0.4.1",
   "authors": [
     { "name": "Chezzy" }
   ],
@@ -11,20 +11,33 @@
     "verified": "14.365",
     "maximum": "14"
   },
-  "esmodules": ["scripts/main.mjs"],
-  "styles": ["styles/datentraeger.css"],
+  "esmodules": [
+    "scripts/main.mjs"
+  ],
+  "styles": [
+    "styles/datentraeger.css"
+  ],
   "languages": [
-    { "lang": "de", "name": "Deutsch", "path": "lang/de.json" },
-    { "lang": "en", "name": "English", "path": "lang/de.json" }
+    { "lang": "en", "name": "English", "path": "lang/en.json" },
+    { "lang": "de", "name": "Deutsch", "path": "lang/de.json" }
   ],
   "socket": true,
   "documentTypes": {
     "JournalEntryPage": {
       "datentraeger": {
-        "htmlFields": ["text", "gmNotiz", "preis", "hinweis"],
+        "htmlFields": [
+          "text",
+          "gmNotiz",
+          "preis",
+          "hinweis"
+        ],
         "filePathFields": {
-          "audio": ["AUDIO"],
-          "bild": ["IMAGE"]
+          "audio": [
+            "AUDIO"
+          ],
+          "bild": [
+            "IMAGE"
+          ]
         }
       }
     }

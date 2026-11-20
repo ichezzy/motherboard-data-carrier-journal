@@ -27,7 +27,7 @@ export function registriereKarte() {
   // Das Spielfeld (#board) bleibt beim Szenenwechsel dasselbe – ein Listener genügt.
   Hooks.once("canvasReady", () => {
     document.getElementById("board")?.addEventListener("dblclick", event => {
-      beimDoppelklick(event).catch(err => console.error(`${MODUL_ID} | Doppelklick`, err));
+      beimDoppelklick(event).catch(err => console.error(`${MODUL_ID} | Double-click`, err));
     });
   });
 }
@@ -93,7 +93,7 @@ function beimAblegen(_canvas, data, event) {
   } else return;
   if (!istTraegerSeite(page)) return;
   traegerHinlegen(page, { x: data.x, y: data.y }, { einrasten: !event?.shiftKey })
-    .catch(err => { console.error(`${MODUL_ID} | Hinlegen`, err); ui.notifications.error(err.message); });
+    .catch(err => { console.error(`${MODUL_ID} | Placing on the map`, err); ui.notifications.error(err.message); });
   return false;
 }
 

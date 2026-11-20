@@ -1,6 +1,6 @@
-# Motherboard Data Carrier Journal
+# Motherboard: Data Carrier Journal
 
-Foundry-VTT-Modul für *White Signal* (Daggerheart, Foundryborne). Modul-ID `motherboard-data-carrier-journal`. Eine neue Journal-Seitenart **Datenträger**: Text mit Lücken, die jeder Charakter anders lesen kann, dazu Audio – mit eigenem Skin für jede der drei Arten.
+Foundry-VTT-Modul für *White Signal* (Daggerheart, Foundryborne). Modul-ID `motherboard-data-carrier-journal`. Eine neue Journal-Seitenart **Datenträger**: Text mit Lücken, die jeder Charakter anders lesen kann, dazu Audio – mit eigenem Skin für jede der drei Arten. Die Oberfläche ist englisch (`lang/en.json`); `lang/de.json` bleibt als deutsche Übersetzung.
 
 - Foundry **v14** (geprüft gegen den Client-Code von 14.365), Daggerheart **2.12.9**
 - Reines ESM, kein Build. Tests mit `node --test`.
@@ -34,34 +34,34 @@ Foundry-VTT-Modul für *White Signal* (Daggerheart, Foundryborne). Modul-ID `mot
 ## Syntax
 
 ```
-{{unübersetzt: Die Front ist gefallen.}}
-{{unübersetzt | Clank: Die Front ist gefallen.}}
-{{unübersetzt | Clank, @Erinys: Bergung nach Bedarf.}}
-{{unübersetzt | Success with Hope: Die Kapsel trägt das Siegel der Station.}}
-{{übersprochen: Treffpunkt am Mast >> ♪ Der Ticker hält dich wach! ♪}}
-{{gesperrt: Kontostand 12 Kn >> Version 3.0 erforderlich}}
-{{abgerissen}}
+{{untranslated: Die Front ist gefallen.}}
+{{untranslated | Clank: Die Front ist gefallen.}}
+{{untranslated | Clank, @Erinys: Bergung nach Bedarf.}}
+{{untranslated | Success with Hope: Die Kapsel trägt das Siegel der Station.}}
+{{crosstalk: Treffpunkt am Mast >> ♪ Der Ticker hält dich wach! ♪}}
+{{locked: Kontostand 12 Kn >> Version 3.0 required}}
+{{cutoff}}
 ```
 
 - `{{ Art | Leser : Text >> Ersatz }}` – Pflicht sind nur Art und Text.
 - **Leser:** `Clank` = Ancestry · `@Erinys` = Charakter (passt auch auf „Erinys Vael“) · `Success with Hope` = Lesestufe (lesbar ab diesem Ergebnis: Failure with Fear < Failure with Hope < Success with Fear < Success with Hope < Critical Success). Eine Regel reicht.
-- **`>> Ersatz`** bei übersprochen, überschrieben, gesperrt (Standard *Version 3.0 erforderlich*) und befallen.
-- **`{{abgerissen}}`** ohne Text: ab hier fehlt alles bis zum Seitenende.
-- Groß-/Kleinschreibung egal, `ue` statt `ü` geht. Eine Markierung bleibt in einem Absatz.
+- **`>> Ersatz`** bei crosstalk, overwritten, locked (Standard *Version 3.0 required*) und infested.
+- **`{{cutoff}}`** ohne Text: ab hier fehlt alles bis zum Seitenende.
+- Die Lücken heißen englisch (so schreibt sie auch der Markier-Knopf). Die alten deutschen Wörter (unübersetzt, gesperrt …) funktionieren weiter. Groß-/Kleinschreibung egal, `ue` statt `ü` geht. Eine Markierung bleibt in einem Absatz.
 - Kollidiert nicht mit Foundry (`[[/r …]]`, `@UUID[…]{…}` dürfen im markierten Text stehen) und lässt sich in Obsidian genauso schreiben.
 
-| Lücke | Wer nicht lesen kann, sieht | Wer lesen kann |
+| Lücke (alt: deutsch) | Wer nicht lesen kann, sieht | Wer lesen kann |
 |---|---|---|
-| unübersetzt · fremd | Cordex-Zeichen | Klartext |
-| zerfallen | dunkle Lücke | – (fehlt für alle) |
-| befallen | blau, flackernd, stotternd – oder den Ersatz | Klartext |
-| verrauscht | Rauschen ░▒▓ | Klartext |
-| übersprochen | den Ersatz (Jingle) | Original |
-| abgerissen | nichts mehr, „– Signal verloren –“ | alles |
-| gesperrt | die Meldung im Kasten | Klartext |
-| geschwärzt | Balken | Klartext |
-| überschrieben | nur den Ersatz, unauffällig | Original |
-| beschädigt | Zeichensalat | Klartext |
+| untranslated (unübersetzt) · foreign (fremd) | Cordex-Zeichen | Klartext |
+| decayed (zerfallen) | dunkle Lücke | – (fehlt für alle) |
+| infested (befallen) | blau, flackernd, stotternd – oder den Ersatz | Klartext |
+| static (verrauscht) | Rauschen ░▒▓ | Klartext |
+| crosstalk (übersprochen) | den Ersatz (Jingle) | Original |
+| cutoff (abgerissen) | nichts mehr, „– signal lost –“ | alles |
+| locked (gesperrt) | die Meldung im Kasten | Klartext |
+| redacted (geschwärzt) | Balken | Klartext |
+| overwritten (überschrieben) | nur den Ersatz, unauffällig | Original |
+| corrupted (beschädigt) | Zeichensalat | Klartext |
 
 Eine Markierung mit unbekannter Art (Tippfehler) bleibt für Spieler **zu** und wird in der Prüfliste rot gemeldet.
 
@@ -73,7 +73,7 @@ Ein Spieler liest eine Stelle mit `Clank`, wenn sein **zugewiesener Charakter** 
 
 1. Die Ancestry heißt „Clank“ – auch bei Mixed Ancestry („Clank/Elf“).
 2. Die Ancestry stammt vom SRD-Clank im Kompendium (`Compendium.daggerheart.ancestries.Item.ed8BoLR4SHOpeV00`) – hält auch nach Umbenennen.
-3. Häkchen im Fenster **Leser** (Knopf in der Ansicht oder *Einstellungen → Motherboard Data Carrier Journal → Leser verwalten*): Automatisch · Ja · Nein.
+3. Häkchen im Fenster **Leser** (Knopf in der Ansicht oder *Configure Settings → Motherboard: Data Carrier Journal → Manage Readers*): Automatisch · Ja · Nein.
 
 ## Entschlüsseln
 
@@ -105,7 +105,7 @@ Daggerheart erledigt Hope, Fear und Stress selbst. Der GM kann einen Datenträge
 
 Foundry 14 schickt **jedem** Benutzer alle Journale, alle Einstellungen und die Inhalte aller Kompendien – Rechte verstecken nur in der Oberfläche (im Server-Code geprüft).
 
-**Geheimmodus** (*Einstellungen → Motherboard Data Carrier Journal → Geheimmodus*): Text, GM-Notiz, Preis und Hinweis liegen nur **verschlüsselt** in der Welt (AES-GCM, Schlüssel aus deinem Geheimwort per PBKDF2). Das Geheimwort bleibt in deinem Browser und erreicht nie den Server. Spieler fragen deinen Client per `User#query` – der Server leitet die Anfrage nur an dich weiter und nennt dir den echten Absender – und bekommen nur ihre eigene Sicht zurück. **Der GM muss online sein** und das Geheimwort in seinem Browser eingegeben haben.
+**Geheimmodus** (*Configure Settings → Motherboard: Data Carrier Journal → Secret Mode*): Text, GM-Notiz, Preis und Hinweis liegen nur **verschlüsselt** in der Welt (AES-GCM, Schlüssel aus deinem Geheimwort per PBKDF2). Das Geheimwort bleibt in deinem Browser und erreicht nie den Server. Spieler fragen deinen Client per `User#query` – der Server leitet die Anfrage nur an dich weiter und nennt dir den echten Absender – und bekommen nur ihre eigene Sicht zurück. **Der GM muss online sein** und das Geheimwort in seinem Browser eingegeben haben.
 
 - Schreib das Geheimwort auf – ohne es lassen sich verschlüsselte Seiten nicht mehr öffnen.
 - Auf einem anderen Gerät: im Fenster *Geheimmodus* einmal eingeben.
@@ -141,5 +141,6 @@ node tools/cordex-vorschau.mjs   # alle Cordex-Zeichen als HTML
 1. **Grundgerüst** – Seitenart, Markieren, Ansicht je Spieler mit Clank-Regel, Audio, schlichter Skin. ✔
 2. **Skins** – drei Skins mit Animation, Hologramm-Fenster, eigene Cordex-Zeichen, Rauschteppich, Lesestufe aus dem Duality-Ergebnis. ✔
 3. **Geheimmodus und Entschlüsseln** – verschlüsselter Volltext, Sicht vom GM, Entschlüsseln-Wurf mit Konsequenzen, Journal *Funde*, Beute-Item. ✔
-   - 0.4.0: Datenträger auf der Karte – hinlegen, aufdecken, finden, lesen, einstecken. ← jetzt
+   - 0.4.0: Datenträger auf der Karte – hinlegen, aufdecken, finden, lesen, einstecken.
+   - 0.4.1: Name „Motherboard: Data Carrier Journal“, Oberfläche und Lücken-Wörter englisch. ← jetzt
 4. Text aus Audio: Skript an der Aufnahme ausrichten (Forced Alignment), Lücken im Ton je Zuhörer.

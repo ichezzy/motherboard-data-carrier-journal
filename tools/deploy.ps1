@@ -1,5 +1,5 @@
 ﻿<#
-  Motherboard Data Carrier Journal auf den Foundry-Server kopieren (Hetzner, SSH-Eintrag „aetherion“).
+  Motherboard: Data Carrier Journal auf den Foundry-Server kopieren (Hetzner, SSH-Eintrag „aetherion“).
 
   Aufruf aus dem Repo-Ordner:
     powershell -ExecutionPolicy Bypass -File tools\deploy.ps1

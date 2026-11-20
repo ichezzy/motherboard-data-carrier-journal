@@ -4,7 +4,7 @@
  */
 import { zerlege, htmlZuText, escapeHtml, falte } from "./syntax.mjs";
 import { cordexHtml, cordexPlatzhalter, fnv1a, zufall } from "./cordex.mjs";
-import { STUFEN, STANDARD_ERSATZ, OHNE_LESER, OHNE_TEXT } from "./konstanten.mjs";
+import { STUFEN, STANDARD_ERSATZ, OHNE_LESER, OHNE_TEXT, lueckenWort } from "./konstanten.mjs";
 
 /**
  * @typedef {object} Leser
@@ -137,7 +137,7 @@ function verdeckt(luecke, texte, archiv = false) {
 
 function gelesen(luecke, texte) {
   if (luecke.ueberBlock) return luecke.inhalt;
-  const tip = `${texte.fuerDichLesbar} (${luecke.art})`;
+  const tip = `${texte.fuerDichLesbar} (${lueckenWort(luecke.art)})`;
   return `<span class="dt-gelesen" data-art="${escapeHtml(luecke.art)}" data-tooltip="${escapeHtml(tip)}">${luecke.inhalt}</span>`;
 }
 
@@ -145,8 +145,8 @@ function gmAnsicht(luecke, texte) {
   const art = luecke.art ?? "unbekannt";
   const leser = luecke.leser.length ? luecke.leser.map(beschreibeRegel).join(", ") : texte.niemand;
   const info = luecke.gueltig
-    ? `${art} · ${texte.lesbar}: ${OHNE_LESER.has(art) ? "–" : leser}`
-    : `? „${luecke.artRoh}“`;
+    ? `${lueckenWort(art)} · ${texte.lesbar}: ${OHNE_LESER.has(art) ? "–" : leser}`
+    : `? “${luecke.artRoh}”`;
   const klassen = ["dt-gm", luecke.gueltig ? "" : "dt-gm-fehler"].filter(Boolean).join(" ");
   const attr = `class="${klassen}" data-art="${escapeHtml(art)}" data-tooltip="${escapeHtml(info)}"`;
 
@@ -165,17 +165,17 @@ function gmAnsicht(luecke, texte) {
 /* -------------------------------------------- */
 
 const STANDARD_TEXTE = {
-  signalVerloren: "– Signal verloren –",
-  fuerDichLesbar: "Für dich lesbar",
-  lesbar: "lesbar",
-  niemand: "nur GM",
-  abgerissen: "abgerissen – ab hier fehlt alles",
+  signalVerloren: "– signal lost –",
+  fuerDichLesbar: "Readable for you",
+  lesbar: "readable",
+  niemand: "GM only",
+  abgerissen: "cutoff – everything after this is missing",
   cordex: "Cordex",
-  zerfallenFehlschlag: "zerfallen beim Entschlüsseln",
+  zerfallenFehlschlag: "decayed during decryption",
   kaputt: {
-    anthanen: "Der Takt bricht. Blaues Licht frisst die Zeilen.",
-    signal: "– Signal verloren –",
-    modul: "DATENTRÄGER BESCHÄDIGT · LESEN NICHT MÖGLICH"
+    anthanen: "The pulse breaks. Blue light devours the lines.",
+    signal: "– signal lost –",
+    modul: "DATA CARRIER DAMAGED · UNABLE TO READ"
   }
 };
 
